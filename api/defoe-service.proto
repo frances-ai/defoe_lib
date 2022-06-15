@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+service Defoe {
+  rpc SubmitJob (SubmitRequest) returns (SubmitResponse) {}
+}
+
+message SubmitRequest {
+  string id = 1;
+  string model_name = 2;
+  string query_name = 3;
+  string endpoint = 4;
+}
+
+message SubmitResponse {
+  bool success = 1;
+  string error = 2;
+  string result = 3;
+}
+
+message StatusResponse {
+  bool success = 1;
+  string error = 2;
+  bool done = 3;
+  int64 progress = 4;
+  string result = 5;
+}
+

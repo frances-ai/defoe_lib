@@ -7,6 +7,10 @@ from SPARQLWrapper import SPARQLWrapper, JSON
 
 def filename_to_object(filename, context):
     sparql_endpoint=open(filename).readline().rstrip()
+    return endpoint_to_object(sparql_endpoint)
+
+
+def endpoint_to_object(sparql_endpoint, context):
     sparql = SPARQLWrapper(sparql_endpoint)
     query="""
     PREFIX eb: <https://w3id.org/eb#>
