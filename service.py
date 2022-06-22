@@ -1,4 +1,5 @@
 from concurrent import futures
+import threading
 import tempfile
 import yaml
 import os
@@ -8,46 +9,74 @@ import defoe_service_pb2
 import grpc
 
 import importlib
-from pyspark import SparkContext, SparkConf
+from pyspark.sql import SparkSession
 
 num_cores = 34
-executor_memory = "12g"
-driver_memory = "12g"
+executor_memory = "6g"
+driver_memory = "6g"
+
+jobs = {}
+
+class Job:
+  def __init__(self, id):
+    self.id = id
+    self.result = ""
+    self.done = False
+    self._lock = threading.Lock()
 
 
 class DefoeService(defoe_service_pb2_grpc.DefoeServicer):
 
   def SubmitJob(self, req, context):
+    if req.id in jobs:
+      return defoe_service_pb2.SubmitResponse(error="job id already exists")
+    jobs[req.id] = Job(req.id)
     
-    result = run_job(req.model_name, req.query_name, req.endpoint)
-    return defoe_service_pb2.SubmitResponse(success=True, result=result)
+    args = (req.id, req.model_name, req.query_name, req.query_config, req.data_endpoint)
+    work = threading.Thread(target=self.run_job, args=args)
+    work.start()
+    
+    return defoe_service_pb2.SubmitResponse(id=req.id)
 
+  def GetStatus(self, req, context):
+    if req.id not in jobs:
+      return defoe_service_pb2.StatusResponse(error="job id not found")
+    
+    job = jobs[req.id]
+    with job._lock:
+      return defoe_service_pb2.StatusResponse(done=job.done, result=job.result, progress=40)
 
-def run_job(model_name, query_name, endpoint):
-    root_module = "defoe"
-    setup_module = "setup"
-    query_config_file = None # not yet supported
-    
-    setup = importlib.import_module(root_module +
-                                    "." +
-                                    model_name +
-                                    "." +
-                                    setup_module)
-    query = importlib.import_module(query_name)
-    
-    conf = SparkConf()
-    conf.setAppName(model_name)
-    conf.set("spark.cores.max", num_cores)
-    conf.set("spark.executor.memory", executor_memory)
-    conf.set("spark.driver.memory", driver_memory)
-    
-    context = SparkContext(conf=conf)
-    log = context._jvm.org.apache.log4j.LogManager.getLogger(__name__)  # pylint: disable=protected-access
-    
-    # Note this skips some checks.
-    ok_data = setup.endpoint_to_object(endpoint, context)
-    results = query.do_query(ok_data, query_config_file, log, context)
-    return yaml.safe_dump(dict(results))
+  def run_job(self, id, model_name, query_name, query_config, data_endpoint):
+      root_module = "defoe"
+      setup_module = "setup"
+      setup = importlib.import_module(root_module +
+                                      "." +
+                                      model_name +
+                                      "." +
+                                      setup_module)
+      query = importlib.import_module(query_name)
+      
+      spark = SparkSession \
+      .builder \
+      .master("local[1]") \
+      .config("spark.cores.max", num_cores) \
+      .config("spark.executor.memory", executor_memory) \
+      .config("spark.driver.memory", driver_memory) \
+      .getOrCreate()
+      log = spark._jvm.org.apache.log4j.LogManager.getLogger(__name__)  # pylint: disable=protected-access
+      
+      # Note this skips some checks.
+      try:
+        ok_data = setup.endpoint_to_object(data_endpoint, spark)
+        result = query.do_query(ok_data, query_config, log, spark)
+      except Exception as e:
+        error = e
+      
+      job = jobs[id]
+      with job._lock:
+        jobs[id].done = True
+        jobs[id].result = yaml.safe_dump(dict(result))
+        jobs[id].error = error
 
 
 def start_server():

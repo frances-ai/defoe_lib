@@ -2,19 +2,24 @@ syntax = "proto3";
 
 service Defoe {
   rpc SubmitJob (SubmitRequest) returns (SubmitResponse) {}
+  rpc GetStatus (StatusRequest) returns (StatusResponse) {}
 }
 
 message SubmitRequest {
   string id = 1;
   string model_name = 2;
   string query_name = 3;
-  string endpoint = 4;
+  string query_config = 4;
+  string data_endpoint = 5;
 }
 
 message SubmitResponse {
-  bool success = 1;
+  string id = 1;
   string error = 2;
-  string result = 3;
+}
+
+message StatusRequest {
+  string id = 1;
 }
 
 message StatusResponse {

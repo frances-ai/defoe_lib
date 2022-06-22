@@ -1,0 +1,7 @@
+data: /home/wilfridaskins/Desktop/Dissertation/defoe/queries/sc_philosophers.txt
+defoe_path: /home/wilfridaskins/Desktop/Dissertation/defoe
+start_year: '1771'
+end_year: '1801'
+hit_count: term
+os_type: os
+preprocess: lemmatize

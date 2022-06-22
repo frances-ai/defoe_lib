@@ -72,6 +72,6 @@ def endpoint_to_object(sparql_endpoint, context):
         sparql_data.append({"uri": r["uri"]["value"], "year": r["year"]["value"], "title":r["title"]["value"], "edition":r["enum"]["value"], "vuri":r["v"]["value"], "volume":r["vnum"]["value"], "numPages":r["numberOfPages"]["value"], "letters":r["letters"]["value"], "part":v_part, "archive_filename":r["metsXML"]["value"], "page":r["page"]["value"], "header":r["header"]["value"], "term":r["term"]["value"], "definition":r["definition"]["value"], "numWords":r["numberOfWords"]["value"]})
     
 
-    sqlContext = SQLContext(context)
+    sqlContext = SQLContext.getOrCreate(context)
     df = sqlContext.createDataFrame(sparql_data)
     return df
