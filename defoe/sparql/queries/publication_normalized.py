@@ -18,7 +18,7 @@ def do_query(df, config_file=None, logger=None, context=None):
     Iterate through archives and count total number of documents,
     pages and words per year.
 
-    Returns result of form:
+    For EB-ontology derived Knowledge Graphs, it returns result of form:
 
         {
           <YEAR>: [<NUM_VOLS>, <NUM_PAGES>, <NUM_TERMS>, <NUM_WORDS>],
@@ -36,6 +36,21 @@ def do_query(df, config_file=None, logger=None, context=None):
      	- 9187
      	- 1923682
 
+    For NLS-ontology derived Knowledge Graphs, it returns result of form:
+        {
+          <YEAR>: [<NUM_VOLS>, <NUM_PAGES>,<NUM_WORDS>],
+          ...
+        }
+    Example:
+      '1671':
+        - 1
+        - 24
+        - 4244
+      '1681':
+        - 1
+        - 16
+        - 4877
+
     :param archives: RDD of defoe.es.archive.Archive
     :type archives: pyspark.rdd.PipelinedRDD
     :param config_file: query configuration file (unused)
@@ -45,22 +60,37 @@ def do_query(df, config_file=None, logger=None, context=None):
     :return: total number of documents, pages and words per year
     :rtype: list
     """
-    fdf = df.withColumn("definition", blank_as_null("definition"))
-    newdf=fdf.filter(fdf.definition.isNotNull()).select(fdf.year, fdf.volume, fdf.numPages, fdf.numWords)
+
+    with open(config_file, "r") as f:
+        config = yaml.safe_load(f)
+    
+    if "kg_type" in config:
+        kg_type = config["kg_type"]
+    else:
+        kg_type = "total_eb"
+    if kg_type == "total_eb" :
+        fdf = df.withColumn("definition", blank_as_null("definition"))
+        newdf=fdf.filter(fdf.definition.isNotNull()).select(fdf.year, fdf.volume, fdf.numPages, fdf.numWords)
+    else:
+        fdf = df.withColumn("text", blank_as_null("text"))
+        newdf=fdf.filter(fdf.text.isNotNull()).select(fdf.year, fdf.vuri, fdf.volume, fdf.numPages, fdf.numWords)
 
     sqlTrans = SQLTransformer(
-        statement="SELECT year, volume, int(numPages), int(numWords) FROM __THIS__")
+         statement="SELECT year, volume, vuri,  int(numPages), int(numWords) FROM __THIS__")
     newdf=sqlTrans.transform(newdf)
     ##### Number of Words
 
     num_words= newdf.groupBy("year").sum("numWords").withColumnRenamed("sum(numWords)", "tNumWords")
     #print("-------Num Words %s ----" % num_words.show())
     ### Num of Volumes ###
-    df_groups= newdf.groupBy("year", "volume", "numPages").count()
-    #print("-------Groupings %s ----" % df_groups.show())
+    if kg_type == "total_eb" :
+        df_groups= newdf.groupBy("year", "volume", "numPages").count()
+    else:
+        df_groups= newdf.groupBy("year", "vuri", "volume", "numPages").count()
 
-    num_terms=df_groups.groupBy("year").sum("count").withColumnRenamed("sum(count)", "tNumTerms")
-    #print("-------NumTerms %s ----" % num_terms.show())
+    if kg_type == "total_eb" :
+        num_terms=df_groups.groupBy("year").sum("count").withColumnRenamed("sum(count)", "tNumTerms")
+        #print("-------NumTerms %s ----" % num_terms.show())
 
     num_pages= df_groups.groupBy("year").sum("numPages").withColumnRenamed("sum(numPages)", "tNumPages")
     #print("-------NumPages %s ----" % num_pages.show())
@@ -71,8 +101,11 @@ def do_query(df, config_file=None, logger=None, context=None):
     
     
     vol_pages=num_vol.join(num_pages, on=["year"],how="inner")
-    vol_pages_terms=vol_pages.join(num_terms, on=["year"],how="inner")
-    result=vol_pages_terms.join(num_words, on=["year"],how="inner")
+    if kg_type == "total_eb" :
+        vol_pages_terms=vol_pages.join(num_terms, on=["year"],how="inner")
+        result=vol_pages_terms.join(num_words, on=["year"],how="inner")
+    else:
+        result=vol_pages.join(num_words, on=["year"],how="inner")
     result=result.toPandas()
     r={}
     for index, row in result.iterrows():
@@ -80,7 +113,8 @@ def do_query(df, config_file=None, logger=None, context=None):
         r[year]=[]
         r[year].append(row["tNumVol"])
         r[year].append(row["tNumPages"])
-        r[year].append(row["tNumTerms"])
+        if kg_type == "total_eb":
+            r[year].append(row["tNumTerms"])
         r[year].append(row["tNumWords"])
       
     return r

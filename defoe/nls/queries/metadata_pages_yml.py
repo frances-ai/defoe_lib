@@ -29,6 +29,7 @@ def do_query(archives, config_file=None, logger=None, context=None):
     :rtype: string
     """
     
+    preprocess_none = query_utils.parse_preprocess_word_type("none")
     # [(tittle, edition, year, place, archive filename, page filename, 
     #   num pages)]
     documents = archives.flatMap(
@@ -37,15 +38,25 @@ def do_query(archives, config_file=None, logger=None, context=None):
                           document.genre, document.topic, document.geographic, document.temporal, \
                           document.publisher, document.place, document.country, document.city, \
                           document.year, document.date, document.num_pages, document.language, \
-                          document.shelfLocator, document.MMSID, document.physicalDesc, document.referencedBy\
-                          ) for document in list(archive)])
+                          document.shelfLocator, document.MMSID, document.physicalDesc, document.referencedBy, \
+                          document) for document in list(archive)])
+   
+    documents_pages = documents.flatMap(
+        lambda year_document: [(year_document[0], year_document[1], year_document[2],\
+                               year_document[3], year_document[4], year_document[5], year_document[6], \
+                               year_document[7], year_document[8], year_document[9], year_document[10], \
+                               year_document[11], year_document[12], year_document[13], year_document[14], \
+                               year_document[15], year_document[16], year_document[17], year_document[18], \
+                               year_document[19], year_document[20], year_document[21], year_document[22], \
+                               get_page_as_string(page, preprocess_none), len(page.words), page.code, page.page_id) for page in year_document[23]])
     
     
     
-    results = documents.map(
+    
+    results_pages = documents_pages.map(
         lambda document:
         (document[0],
-            {"collection": document[1],
+          {"collection": document[1],
           "title": document[2],
           "subtitle": document[3],
           "editor" :document[4],
@@ -65,8 +76,21 @@ def do_query(archives, config_file=None, logger=None, context=None):
           "language": document[18],
           "shelfLocator": document[19],
           "MMSID": document[20],
+          "volumeId": document[0].split("/")[-1], 
+          "metsXML": document[0].split("/")[-1] + "-mets.xml",
+          "permanentURL": "https://digital.nls.uk/"+ document[0].split("/")[-1],
           "physical_description": document[21],
-          "referenced_by": document[22]})).collect()
+          "referenced_by": document[22],
+          "text": document[23], 
+          "num_words":document[24],
+          "source_text_file": document[25],
+          "text_unit_id": document[26]}))
  
-    return results
+    result = results_pages \
+        .groupByKey() \
+        .map(lambda title_context:
+             (title_context[0], list(title_context[1]))) \
+        .collect()
+    return result
+    
     
