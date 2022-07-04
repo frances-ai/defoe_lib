@@ -22,7 +22,25 @@ class Job:
     self.id = id
     self.result = ""
     self.done = False
+    self.error = ""
+    self.current_stage = 0
+    self.stage_count = 1
+    self.stages = []
     self._lock = threading.Lock()
+  
+  def on_stage(self, name):
+    print(name)
+    with self._lock:
+      self.current_stage += 1
+      self.stages.append(name)
+  
+  def set_stage_count(self, count):
+    with self._lock:
+      self.stage_count = count
+  
+  def get_progress(self):
+    prop = float(self.current_stage) / float(self.stage_count)
+    return int(100 * prop)
 
 
 class DefoeService(defoe_service_pb2_grpc.DefoeServicer):
@@ -44,7 +62,7 @@ class DefoeService(defoe_service_pb2_grpc.DefoeServicer):
     
     job = jobs[req.id]
     with job._lock:
-      return defoe_service_pb2.StatusResponse(done=job.done, result=job.result, progress=40)
+      return defoe_service_pb2.StatusResponse(done=job.done, result=job.result, error=job.error, progress=job.get_progress())
 
   def run_job(self, id, model_name, query_name, query_config, data_endpoint):
       root_module = "defoe"
@@ -65,18 +83,24 @@ class DefoeService(defoe_service_pb2_grpc.DefoeServicer):
       .getOrCreate()
       log = spark._jvm.org.apache.log4j.LogManager.getLogger(__name__)  # pylint: disable=protected-access
       
-      # Note this skips some checks.
-      try:
-        ok_data = setup.endpoint_to_object(data_endpoint, spark)
-        result = query.do_query(ok_data, query_config, log, spark)
-      except Exception as e:
-        error = e
+      print("Query config")
+      print(query_config)
       
+      # Note this skips some checks.
       job = jobs[id]
+      result = None
+      error = None
+      # try:
+      ok_data = setup.endpoint_to_object(data_endpoint, spark)
+      result = query.do_query(ok_data, job, query_config, log, spark)
+      # except Exception as e:
+      #   error = e
+      
       with job._lock:
         jobs[id].done = True
-        jobs[id].result = yaml.safe_dump(dict(result))
-        jobs[id].error = error
+        jobs[id].error = repr(error)
+        if result != None:
+          jobs[id].result = yaml.safe_dump(dict(result))
 
 
 def start_server():

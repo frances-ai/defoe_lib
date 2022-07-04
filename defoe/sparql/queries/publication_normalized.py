@@ -12,8 +12,7 @@ from pyspark.ml.feature import SQLTransformer
 import yaml, os
 from functools import partial, reduce
 
-
-def do_query(df, config_file=None, logger=None, context=None):
+def do_query(df, job, config_raw=None, logger=None, context=None):
     """
     Iterate through archives and count total number of documents,
     pages and words per year.
@@ -60,9 +59,15 @@ def do_query(df, config_file=None, logger=None, context=None):
     :return: total number of documents, pages and words per year
     :rtype: list
     """
-
-    with open(config_file, "r") as f:
-        config = yaml.safe_load(f)
+    
+    job.set_stage_count(5)
+    job.on_stage("load_config")
+    
+    config = yaml.safe_load(config_raw)
+    # with open(config_file, "r") as f:
+    #   config = yaml.safe_load(f)
+    print("Config loaded")
+    print(config)
     
     if "kg_type" in config:
         kg_type = config["kg_type"]
@@ -74,15 +79,19 @@ def do_query(df, config_file=None, logger=None, context=None):
     else:
         fdf = df.withColumn("text", blank_as_null("text"))
         newdf=fdf.filter(fdf.text.isNotNull()).select(fdf.year, fdf.vuri, fdf.volume, fdf.numPages, fdf.numWords)
-
+    
     sqlTrans = SQLTransformer(
          statement="SELECT year, volume, vuri,  int(numPages), int(numWords) FROM __THIS__")
     newdf=sqlTrans.transform(newdf)
+    
     ##### Number of Words
-
+    job.on_stage("num_words")
+    
     num_words= newdf.groupBy("year").sum("numWords").withColumnRenamed("sum(numWords)", "tNumWords")
     #print("-------Num Words %s ----" % num_words.show())
+    
     ### Num of Volumes ###
+    job.on_stage("num_volumes")
     if kg_type == "total_eb" :
         df_groups= newdf.groupBy("year", "volume", "numPages").count()
     else:
@@ -92,9 +101,11 @@ def do_query(df, config_file=None, logger=None, context=None):
         num_terms=df_groups.groupBy("year").sum("count").withColumnRenamed("sum(count)", "tNumTerms")
         #print("-------NumTerms %s ----" % num_terms.show())
 
+    job.on_stage("num_pages")
     num_pages= df_groups.groupBy("year").sum("numPages").withColumnRenamed("sum(numPages)", "tNumPages")
     #print("-------NumPages %s ----" % num_pages.show())
 
+    job.on_stage("num_vol")
     num_vol= df_groups.groupBy("year").count().withColumnRenamed("count", "tNumVol")
     #print("-------NumVolumes %s ----" % num_vol.show())
 
