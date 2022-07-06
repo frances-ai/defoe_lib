@@ -15,7 +15,10 @@ num_cores = 34
 executor_memory = "6g"
 driver_memory = "6g"
 
+empty_yaml = "--- !!str"
+
 jobs = {}
+
 
 class Job:
   def __init__(self, id):
@@ -50,6 +53,9 @@ class DefoeService(defoe_service_pb2_grpc.DefoeServicer):
       return defoe_service_pb2.SubmitResponse(error="job id already exists")
     jobs[req.id] = Job(req.id)
     
+    if req.query_config is None or req.query_config == "":
+      req.query_config = empty_yaml
+    
     args = (req.id, req.model_name, req.query_name, req.query_config, req.data_endpoint)
     work = threading.Thread(target=self.run_job, args=args)
     work.start()
@@ -82,9 +88,6 @@ class DefoeService(defoe_service_pb2_grpc.DefoeServicer):
       .config("spark.driver.memory", driver_memory) \
       .getOrCreate()
       log = spark._jvm.org.apache.log4j.LogManager.getLogger(__name__)  # pylint: disable=protected-access
-      
-      print("Query config")
-      print(query_config)
       
       # Note this skips some checks.
       job = jobs[id]

@@ -6,7 +6,6 @@ import defoe_service_pb2
 import grpc
 
 id = "wpa123"
-empty = "--- !!str"
 
 def run():
     with grpc.insecure_channel('localhost:50051') as channel:
@@ -17,7 +16,6 @@ def run():
         id=id, 
         model_name="sparql", 
         query_name="defoe.sparql.queries.publication_normalized",
-        query_config=empty,
         data_endpoint="http://localhost:3030/total_eb/sparql"
         )
         resp = stub.SubmitJob(req)

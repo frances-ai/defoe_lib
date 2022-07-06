@@ -62,13 +62,8 @@ def do_query(df, job, config_raw=None, logger=None, context=None):
     
     job.set_stage_count(5)
     job.on_stage("load_config")
-    
     config = yaml.safe_load(config_raw)
-    # with open(config_file, "r") as f:
-    #   config = yaml.safe_load(f)
-    print("Config loaded")
-    print(config)
-    
+
     if "kg_type" in config:
         kg_type = config["kg_type"]
     else:
