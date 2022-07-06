@@ -5,7 +5,7 @@ import defoe_service_pb2_grpc
 import defoe_service_pb2
 import grpc
 
-id = "wpa123"
+id = "wpa1"
 
 def run():
     with grpc.insecure_channel('localhost:50051') as channel:

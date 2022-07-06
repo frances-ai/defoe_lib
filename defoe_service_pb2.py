@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x13\x64\x65\x66oe-service.proto\"p\n\rSubmitRequest\x12\n\n\x02id\x18\x01 \x01(\t\x12\x12\n\nmodel_name\x18\x02 \x01(\t\x12\x12\n\nquery_name\x18\x03 \x01(\t\x12\x14\n\x0cquery_config\x18\x04 \x01(\t\x12\x15\n\rdata_endpoint\x18\x05 \x01(\t\"+\n\x0eSubmitResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\r\n\x05\x65rror\x18\x02 \x01(\t\"\x1b\n\rStatusRequest\x12\n\n\x02id\x18\x01 \x01(\t\"`\n\x0eStatusResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\r\n\x05\x65rror\x18\x02 \x01(\t\x12\x0c\n\x04\x64one\x18\x03 \x01(\x08\x12\x10\n\x08progress\x18\x04 \x01(\x03\x12\x0e\n\x06result\x18\x05 \x01(\t2g\n\x05\x44\x65\x66oe\x12.\n\tSubmitJob\x12\x0e.SubmitRequest\x1a\x0f.SubmitResponse\"\x00\x12.\n\tGetStatus\x12\x0e.StatusRequest\x1a\x0f.StatusResponse\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x13\x64\x65\x66oe-service.proto\"p\n\rSubmitRequest\x12\n\n\x02id\x18\x01 \x01(\t\x12\x12\n\nmodel_name\x18\x02 \x01(\t\x12\x12\n\nquery_name\x18\x03 \x01(\t\x12\x14\n\x0cquery_config\x18\x04 \x01(\t\x12\x15\n\rdata_endpoint\x18\x05 \x01(\t\"+\n\x0eSubmitResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\r\n\x05\x65rror\x18\x02 \x01(\t\"\x1b\n\rStatusRequest\x12\n\n\x02id\x18\x01 \x01(\t\"N\n\x0eStatusResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\r\n\x05\x65rror\x18\x02 \x01(\t\x12\x0c\n\x04\x64one\x18\x03 \x01(\x08\x12\x0e\n\x06result\x18\x04 \x01(\t2g\n\x05\x44\x65\x66oe\x12.\n\tSubmitJob\x12\x0e.SubmitRequest\x1a\x0f.SubmitResponse\"\x00\x12.\n\tGetStatus\x12\x0e.StatusRequest\x1a\x0f.StatusResponse\"\x00\x62\x06proto3')
 
 
 
@@ -61,7 +61,7 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _STATUSREQUEST._serialized_start=182
   _STATUSREQUEST._serialized_end=209
   _STATUSRESPONSE._serialized_start=211
-  _STATUSRESPONSE._serialized_end=307
-  _DEFOE._serialized_start=309
-  _DEFOE._serialized_end=412
+  _STATUSRESPONSE._serialized_end=289
+  _DEFOE._serialized_start=291
+  _DEFOE._serialized_end=394
 # @@protoc_insertion_point(module_scope)

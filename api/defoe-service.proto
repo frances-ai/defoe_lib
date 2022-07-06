@@ -26,7 +26,6 @@ message StatusResponse {
   bool success = 1;
   string error = 2;
   bool done = 3;
-  int64 progress = 4;
-  string result = 5;
+  string result = 4;
 }
 
