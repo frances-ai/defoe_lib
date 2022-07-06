@@ -60,8 +60,6 @@ def do_query(df, job, config_raw=None, logger=None, context=None):
     :rtype: list
     """
     
-    job.set_stage_count(5)
-    job.on_stage("load_config")
     config = yaml.safe_load(config_raw)
 
     if "kg_type" in config:
@@ -70,7 +68,7 @@ def do_query(df, job, config_raw=None, logger=None, context=None):
         kg_type = "total_eb"
     if kg_type == "total_eb" :
         fdf = df.withColumn("definition", blank_as_null("definition"))
-        newdf=fdf.filter(fdf.definition.isNotNull()).select(fdf.year, fdf.volume, fdf.numPages, fdf.numWords)
+        newdf=fdf.filter(fdf.definition.isNotNull()).select(fdf.year, fdf.vuri, fdf.volume, fdf.numPages, fdf.numWords)
     else:
         fdf = df.withColumn("text", blank_as_null("text"))
         newdf=fdf.filter(fdf.text.isNotNull()).select(fdf.year, fdf.vuri, fdf.volume, fdf.numPages, fdf.numWords)
@@ -79,14 +77,12 @@ def do_query(df, job, config_raw=None, logger=None, context=None):
          statement="SELECT year, volume, vuri,  int(numPages), int(numWords) FROM __THIS__")
     newdf=sqlTrans.transform(newdf)
     
-    ##### Number of Words
-    job.on_stage("num_words")
     
+    ##### Number of Words
     num_words= newdf.groupBy("year").sum("numWords").withColumnRenamed("sum(numWords)", "tNumWords")
     #print("-------Num Words %s ----" % num_words.show())
     
     ### Num of Volumes ###
-    job.on_stage("num_volumes")
     if kg_type == "total_eb" :
         df_groups= newdf.groupBy("year", "volume", "numPages").count()
     else:
@@ -96,15 +92,11 @@ def do_query(df, job, config_raw=None, logger=None, context=None):
         num_terms=df_groups.groupBy("year").sum("count").withColumnRenamed("sum(count)", "tNumTerms")
         #print("-------NumTerms %s ----" % num_terms.show())
 
-    job.on_stage("num_pages")
     num_pages= df_groups.groupBy("year").sum("numPages").withColumnRenamed("sum(numPages)", "tNumPages")
     #print("-------NumPages %s ----" % num_pages.show())
 
-    job.on_stage("num_vol")
     num_vol= df_groups.groupBy("year").count().withColumnRenamed("count", "tNumVol")
     #print("-------NumVolumes %s ----" % num_vol.show())
-
-    
     
     vol_pages=num_vol.join(num_pages, on=["year"],how="inner")
     if kg_type == "total_eb" :
@@ -112,7 +104,9 @@ def do_query(df, job, config_raw=None, logger=None, context=None):
         result=vol_pages_terms.join(num_words, on=["year"],how="inner")
     else:
         result=vol_pages.join(num_words, on=["year"],how="inner")
+      
     result=result.toPandas()
+    
     r={}
     for index, row in result.iterrows():
         year=row['year']
