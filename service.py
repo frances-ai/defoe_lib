@@ -4,10 +4,6 @@ import tempfile
 import yaml
 import os
 
-import defoe_service_pb2_grpc
-import defoe_service_pb2
-import grpc
-
 import importlib
 from pyspark.sql import SparkSession
 
@@ -16,7 +12,7 @@ executor_memory = "6g"
 driver_memory = "6g"
 
 empty_yaml = "--- !!str"
-spark_url = "spark://57a3ea9e1248:7077"
+spark_url = "spark://localhost:7077"
 
 jobs = {}
 
@@ -33,8 +29,8 @@ class Job:
 class DefoeService:
 
   def SubmitJob(self, req, context):
-    if req.id in jobs:
-      return defoe_service_pb2.SubmitResponse(error="job id already exists")
+#    if req.id in jobs:
+#      return defoe_service_pb2.SubmitResponse(error="job id already exists")
     jobs[req.id] = Job(req.id)
     
     if req.query_config is None or req.query_config == "":
@@ -44,15 +40,15 @@ class DefoeService:
     work = threading.Thread(target=self.run_job, args=args)
     work.start()
     
-    return defoe_service_pb2.SubmitResponse(id=req.id)
+#    return defoe_service_pb2.SubmitResponse(id=req.id)
 
   def GetStatus(self, req, context):
-    if req.id not in jobs:
-      return defoe_service_pb2.StatusResponse(error="job id not found")
+#    if req.id not in jobs:
+#      return defoe_service_pb2.StatusResponse(error="job id not found")
     
     job = jobs[req.id]
-    with job._lock:
-      return defoe_service_pb2.StatusResponse(done=job.done, result=job.result, error=job.error)
+#    with job._lock:
+#      return defoe_service_pb2.StatusResponse(done=job.done, result=job.result, error=job.error)
 
   def run_job(self, id, model_name, query_name, query_config, data_endpoint):
       root_module = "defoe"
@@ -82,7 +78,7 @@ class DefoeService:
         jobs[id].error = repr(error)
         if result != None:
           jobs[id].result = yaml.safe_dump(dict(result))
-    
+
   def get_spark_context(self):
     return SparkSession \
           .builder \
@@ -92,14 +88,18 @@ class DefoeService:
           .config("spark.driver.memory", driver_memory) \
           .getOrCreate()
 
-def start_server():
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    defoe_service_pb2_grpc.add_DefoeServicer_to_server(DefoeService(), server)
-    server.add_insecure_port('[::]:50051')
-    server.start()
-    server.wait_for_termination()
-
 
 if __name__ == '__main__':
-    start_server()
-
+    j = Job("123")
+    jobs[j.id] = j
+    
+    s = DefoeService()
+    s.run_job(
+        id="123",
+        model_name="sparql", 
+        query_name="defoe.sparql.queries.publication_normalized",
+        query_config=empty_yaml,
+        data_endpoint="http://localhost:3030/total_eb/sparql"
+    )
+    print(j.result)
+    print(j.error)
