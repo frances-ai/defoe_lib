@@ -16,7 +16,7 @@ executor_memory = "6g"
 driver_memory = "6g"
 
 empty_yaml = "--- !!str"
-spark_url = "local[1]"
+spark_url = "spark://57a3ea9e1248:7077"
 
 jobs = {}
 
@@ -30,7 +30,7 @@ class Job:
     self._lock = threading.Lock()
 
 
-class DefoeService(defoe_service_pb2_grpc.DefoeServicer):
+class DefoeService:
 
   def SubmitJob(self, req, context):
     if req.id in jobs:
