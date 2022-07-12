@@ -14,8 +14,6 @@ max_message_size = 2047 # Max allowed message size
 max_result_size = 0 # Unlimited result size
 
 empty_yaml = "--- !!str"
-# spark_url = "spark://localhost:7077"
-spark_url = "local[1]"
 fuseki_url = "http://localhost:3030/total_eb/sparql"
 
 jobs = {}
@@ -31,28 +29,27 @@ class Job:
 
 
 class DefoeService:
+  def __init__(self, spark_url):
+    self.spark_url = spark_url
 
-  def SubmitJob(self, req, context):
-#    if req.id in jobs:
-#      return defoe_service_pb2.SubmitResponse(error="job id already exists")
-    jobs[req.id] = Job(req.id)
+  def submit_job(self, job_id, model_name, query_name, query_config, data_endpoint):
+    if job_id in jobs:
+      raise ValueError("job id already exists")
+    jobs[job_id] = Job(job_id)
     
-    if req.query_config is None or req.query_config == "":
-      req.query_config = empty_yaml
+    if query_config is None or query_config == "":
+      query_config = empty_yaml
     
-    args = (req.id, req.model_name, req.query_name, req.query_config, req.data_endpoint)
+    args = (job_id, model_name, query_name, query_config, data_endpoint)
     work = threading.Thread(target=self.run_job, args=args)
     work.start()
-    
-#    return defoe_service_pb2.SubmitResponse(id=req.id)
+  
+    return jobs[job_id]
 
-  def GetStatus(self, req, context):
-#    if req.id not in jobs:
-#      return defoe_service_pb2.StatusResponse(error="job id not found")
-    
-    job = jobs[req.id]
-#    with job._lock:
-#      return defoe_service_pb2.StatusResponse(done=job.done, result=job.result, error=job.error)
+  def get_status(self, job_id):
+    if job_id not in jobs:
+      raise ValueError("job id not found")
+    return jobs[job_id]
 
   def run_job(self, id, model_name, query_name, query_config, data_endpoint):
       root_module = "defoe"
@@ -86,7 +83,7 @@ class DefoeService:
   def get_spark_context(self):
     return SparkSession \
           .builder \
-          .master(spark_url) \
+          .master(self.spark_url) \
           .config("spark.cores.max", num_cores) \
           .config("spark.executor.memory", executor_memory) \
           .config("spark.driver.memory", driver_memory) \
@@ -96,16 +93,15 @@ class DefoeService:
 
 
 if __name__ == '__main__':
-    j = Job("123")
-    jobs[j.id] = j
-    
-    s = DefoeService()
-    s.run_job(
-        id="123",
+    s = DefoeService("local[1]")
+    j = s.submit_job(
+        job_id="wpa123",
         model_name="sparql", 
         query_name="defoe.sparql.queries.publication_normalized",
         query_config=empty_yaml,
         data_endpoint=fuseki_url
     )
-    print(j.result)
-    print(j.error)
+    
+    while True:
+      res = s.get_status(j.id)
+      print(res.result)
