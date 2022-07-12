@@ -10,9 +10,13 @@ from pyspark.sql import SparkSession
 num_cores = 34
 executor_memory = "6g"
 driver_memory = "6g"
+max_message_size = 2047 # Max allowed message size
+max_result_size = 0 # Unlimited result size
 
 empty_yaml = "--- !!str"
-spark_url = "spark://localhost:7077"
+# spark_url = "spark://localhost:7077"
+spark_url = "local[1]"
+fuseki_url = "http://localhost:3030/total_eb/sparql"
 
 jobs = {}
 
@@ -67,11 +71,11 @@ class DefoeService:
       job = jobs[id]
       result = None
       error = None
-      try:
-        ok_data = setup.endpoint_to_object(data_endpoint, spark)
-        result = query.do_query(ok_data, job, query_config, log, spark)
-      except Exception as e:
-        error = e
+      # try:
+      ok_data = setup.endpoint_to_object(data_endpoint, spark)
+      result = query.do_query(ok_data, job, query_config, log, spark)
+      # except Exception as e:
+        # error = e
       
       with job._lock:
         jobs[id].done = True
@@ -86,6 +90,8 @@ class DefoeService:
           .config("spark.cores.max", num_cores) \
           .config("spark.executor.memory", executor_memory) \
           .config("spark.driver.memory", driver_memory) \
+          .config("spark.rpc.message.maxSize", max_message_size) \
+          .config("spark.driver.maxResultSize", max_result_size) \
           .getOrCreate()
 
 
@@ -99,7 +105,7 @@ if __name__ == '__main__':
         model_name="sparql", 
         query_name="defoe.sparql.queries.publication_normalized",
         query_config=empty_yaml,
-        data_endpoint="http://localhost:3030/total_eb/sparql"
+        data_endpoint=fuseki_url
     )
     print(j.result)
     print(j.error)
