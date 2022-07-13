@@ -1,5 +1,11 @@
-from dataclasses import dataclass
+import json
 
-@dataclass
 class DefoeConfig:
-    spark_url: str
+  def __init__(self):
+    spark_url = ""
+  
+  @staticmethod
+  def from_dict(vals):
+    config = DefoeConfig()
+    config.spark_url = vals["sparkUrl"]
+    return config

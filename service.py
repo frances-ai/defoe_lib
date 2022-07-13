@@ -29,8 +29,8 @@ class Job:
 
 
 class DefoeService:
-  def __init__(self, spark_url):
-    self.spark_url = spark_url
+  def __init__(self, config):
+    self.config = config
 
   def submit_job(self, job_id, model_name, query_name, query_config, data_endpoint):
     if job_id in jobs:
@@ -83,7 +83,7 @@ class DefoeService:
   def get_spark_context(self):
     return SparkSession \
           .builder \
-          .master(self.spark_url) \
+          .master(self.config.spark_url) \
           .config("spark.cores.max", num_cores) \
           .config("spark.executor.memory", executor_memory) \
           .config("spark.driver.memory", driver_memory) \
@@ -93,7 +93,8 @@ class DefoeService:
 
 
 if __name__ == '__main__':
-    s = DefoeService("local[1]")
+    c = DefoeConfig("local[1]")
+    s = DefoeService(c)
     j = s.submit_job(
         job_id="wpa123",
         model_name="sparql", 
