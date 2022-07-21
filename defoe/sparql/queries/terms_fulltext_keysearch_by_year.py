@@ -12,7 +12,7 @@ from defoe.nls.query_utils import preprocess_clean_page
 import yaml, os
 from functools import partial, reduce
 
-def do_query(df, config_file=None, logger=None, context=None):
+def do_query(df, config_raw=None, logger=None, context=None):
     """
     Selects terms defeinitions and details using the keywords and groups by date.
 
@@ -82,8 +82,7 @@ def do_query(df, config_file=None, logger=None, context=None):
     :rtype: dict
     """
 
-    with open(config_file, "r") as f:
-        config = yaml.safe_load(f)
+    config = yaml.safe_load(config_raw)
     preprocess_type = query_utils.extract_preprocess_word_type(config)
 
     if "data" in config:
