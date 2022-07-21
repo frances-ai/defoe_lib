@@ -12,7 +12,7 @@ from pyspark.ml.feature import SQLTransformer
 import yaml, os
 from functools import partial, reduce
 
-def do_query(df, job, config_raw=None, logger=None, context=None):
+def do_query(df, job, config=None, logger=None, context=None):
     """
     Iterate through archives and count total number of documents,
     pages and words per year.
@@ -59,8 +59,6 @@ def do_query(df, job, config_raw=None, logger=None, context=None):
     :return: total number of documents, pages and words per year
     :rtype: list
     """
-    
-    config = yaml.safe_load(config_raw)
 
     if "kg_type" in config:
         kg_type = config["kg_type"]

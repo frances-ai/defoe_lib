@@ -15,7 +15,7 @@ from defoe.nls.query_utils import preprocess_clean_page
 import yaml, os
 from functools import partial, reduce
 
-def do_query(df, config_raw=None, logger=None, context=None):
+def do_query(df, config=None, logger=None, context=None):
     """
     Gets concordance using a window of words (here it is configured to 10), for keywords and groups by date.
     Store the snippet (10 words before and after each term). 
@@ -86,7 +86,6 @@ def do_query(df, config_raw=None, logger=None, context=None):
     :rtype: dict
     """
 
-    config = yaml.safe_load(config_raw)
     preprocess_type = query_utils.extract_preprocess_word_type(config)
 
     if "data" in config:

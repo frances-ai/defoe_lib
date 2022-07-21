@@ -12,7 +12,7 @@ from defoe.nls.query_utils import preprocess_clean_page
 import yaml, os
 from functools import partial, reduce
 
-def do_query(df, config_raw=None, logger=None, context=None):
+def do_query(df, config=None, logger=None, context=None):
     """
     IMPORTANT: SAME AS "keysearch_by_year_term_count.py" in NLS!!
 
@@ -44,8 +44,7 @@ def do_query(df, config_raw=None, logger=None, context=None):
     :return: information on documents in which keywords occur grouped
     by date
     :rtype: dict
-    """
-    config = yaml.safe_load(config_raw)
+
     preprocess_type = query_utils.extract_preprocess_word_type(config)
 
     if "data" in config:
