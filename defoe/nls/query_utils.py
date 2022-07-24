@@ -2,8 +2,7 @@
 Query-related utility functions.
 """
 
-from defoe import query_utils
-from defoe.query_utils import PreprocessWordType, longsfix_sentence, xml_geo_entities_snippet, georesolve_cmd,  coord_xml_snippet, geomap_cmd, geoparser_cmd, geoparser_coord_xml
+from defoe_lib.defoe.query_utils import PreprocessWordType, longsfix_sentence, xml_geo_entities_snippet, georesolve_cmd,  coord_xml_snippet, geomap_cmd, geoparser_cmd, geoparser_coord_xml
 from nltk.corpus import words
 import re
 import spacy

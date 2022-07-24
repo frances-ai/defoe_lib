@@ -5,13 +5,13 @@ all the words of the page in which the term was found.
 """
 
 from operator import add
-from defoe import query_utils
-from defoe.sparql.query_utils import get_articles_list_matches, blank_as_null
-from defoe.nls.query_utils import get_text_keysentence_idx, get_concordance_string
+from defoe_lib.defoe import query_utils
+from defoe_lib.defoe.sparql.query_utils import get_articles_list_matches, blank_as_null
+from defoe_lib.defoe.nls.query_utils import get_text_keysentence_idx, get_concordance_string
+from defoe_lib.defoe.nls.query_utils import preprocess_clean_page
 
 from pyspark.sql import SQLContext
 from pyspark.sql.functions import col, when
-from defoe.nls.query_utils import preprocess_clean_page
 import yaml, os
 from functools import partial, reduce
 

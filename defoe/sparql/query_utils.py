@@ -2,7 +2,6 @@
 Query-related utility functions.
 """
 import re
-from defoe import query_utils
 from pyspark.sql.functions import col, when
 
 def get_sentences_list_matches(text, keysentence):

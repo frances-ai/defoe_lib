@@ -7,11 +7,17 @@ import os
 import importlib
 from pyspark.sql import SparkSession
 
+import defoe_lib.defoe.sparql as sparql
+
 num_cores = 34
 executor_memory = "6g"
 driver_memory = "6g"
 max_message_size = 2047 # Max allowed message size
 max_result_size = 0 # Unlimited result size
+
+models = {
+  "sparql": sparql.Model(),
+}
 
 empty_yaml = "--- !!str"
 fuseki_url = "http://localhost:3030/total_eb/sparql"
@@ -52,14 +58,19 @@ class DefoeService:
     return jobs[job_id]
 
   def run_job(self, id, model_name, query_name, query_config, data_endpoint):
-      root_module = "defoe"
-      setup_module = "setup"
-      setup = importlib.import_module(root_module +
-                                      "." +
-                                      model_name +
-                                      "." +
-                                      setup_module)
-      query = importlib.import_module(query_name)
+      if model_name not in models:
+        with job._lock:
+          jobs[id].done = True
+          jobs[id].error = "model not found"
+          return
+      model = models[model_name]
+      
+      if query_name not in model.get_queries():
+        with job._lock:
+          jobs[id].done = True
+          jobs[id].error = "query not found"
+          return
+      query = model.get_queries()[query_name]
       
       spark = self.get_spark_context()
       log = spark._jvm.org.apache.log4j.LogManager.getLogger(__name__)  # pylint: disable=protected-access
@@ -68,11 +79,11 @@ class DefoeService:
       job = jobs[id]
       result = None
       error = None
-      # try:
-      ok_data = setup.endpoint_to_object(data_endpoint, spark)
-      result = query.do_query(ok_data, job, query_config, log, spark)
-      # except Exception as e:
-        # error = e
+      try:
+        ok_data = model.endpoint_to_object(data_endpoint, spark)
+        result = query(ok_data, job, query_config, log, spark)
+      except Exception as e:
+        error = e
       
       with job._lock:
         jobs[id].done = True
