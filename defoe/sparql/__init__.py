@@ -6,17 +6,16 @@ from pyspark.sql import SQLContext
 from SPARQLWrapper import SPARQLWrapper, JSON
 
 from .queries import frequency_keysearch_by_year, publication_normalized, terms_fulltext_keysearch_by_year, uris_keysearch, terms_snippet_keysearch_by_year
-# from .queries.frequency_keysearch_by_year import do_query as do_freq_query
-# from .queries import frequency_keysearch_by_year
+
 
 class Model:
   def get_queries(self):
       return {
         "frequency_keysearch_by_year": frequency_keysearch_by_year.do_query,
-        # "publication_normalized": publication_normalized.do_query,
-        # "terms_fulltext_keysearch_by_year": terms_fulltext_keysearch_by_year.do_query,
-        # "uris_keysearch": uris_keysearch.do_query,
-        # "terms_snippet_keysearch_by_year": terms_snippet_keysearch_by_year.do_query,
+        "publication_normalized": publication_normalized.do_query,
+        "terms_fulltext_keysearch_by_year": terms_fulltext_keysearch_by_year.do_query,
+        "uris_keysearch": uris_keysearch.do_query,
+        "terms_snippet_keysearch_by_year": terms_snippet_keysearch_by_year.do_query,
       }
 
   def filename_to_object(self, filename, context):

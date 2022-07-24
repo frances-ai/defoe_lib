@@ -1,5 +1,6 @@
 from concurrent import futures
 import threading
+import traceback
 import tempfile
 import yaml
 import os
@@ -83,6 +84,8 @@ class DefoeService:
         ok_data = model.endpoint_to_object(data_endpoint, spark)
         result = query(ok_data, job, query_config, log, spark)
       except Exception as e:
+        print("Job " + id + " threw an exception")
+        print(traceback.format_exc())
         error = e
       
       with job._lock:
