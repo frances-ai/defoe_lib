@@ -20,9 +20,6 @@ models = {
   "sparql": sparql.Model(),
 }
 
-empty_yaml = "--- !!str"
-fuseki_url = "http://localhost:3030/total_eb/sparql"
-
 jobs = {}
 
 
@@ -59,6 +56,8 @@ class DefoeService:
     return jobs[job_id]
 
   def run_job(self, id, model_name, query_name, query_config, data_endpoint):
+      job = self.get_status(id)
+      
       if model_name not in models:
         with job._lock:
           jobs[id].done = True
@@ -77,7 +76,6 @@ class DefoeService:
       log = spark._jvm.org.apache.log4j.LogManager.getLogger(__name__)  # pylint: disable=protected-access
       
       # Note this skips some checks.
-      job = jobs[id]
       result = None
       error = None
       try:
@@ -105,18 +103,3 @@ class DefoeService:
           .config("spark.driver.maxResultSize", max_result_size) \
           .getOrCreate()
 
-
-if __name__ == '__main__':
-    c = DefoeConfig("local[1]")
-    s = DefoeService(c)
-    j = s.submit_job(
-        job_id="wpa123",
-        model_name="sparql", 
-        query_name="defoe.sparql.queries.publication_normalized",
-        query_config=empty_yaml,
-        data_endpoint=fuseki_url
-    )
-    
-    while True:
-      res = s.get_status(j.id)
-      print(res.result)
