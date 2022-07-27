@@ -36,7 +36,7 @@ class DefoeService:
   def __init__(self, config):
     self.config = config
 
-  def submit_job(self, job_id, model_name, query_name, query_config, data_endpoint):
+  def submit_job(self, job_id, model_name, query_name, query_config):
     if job_id in jobs:
       raise ValueError("job id already exists")
     jobs[job_id] = Job(job_id)
@@ -44,7 +44,7 @@ class DefoeService:
     if query_config is None or query_config == "":
       query_config = empty_yaml
     
-    args = (job_id, model_name, query_name, query_config, data_endpoint)
+    args = (job_id, model_name, query_name, query_config)
     work = threading.Thread(target=self.run_job, args=args)
     work.start()
   
@@ -55,7 +55,7 @@ class DefoeService:
       raise ValueError("job id not found")
     return jobs[job_id]
 
-  def run_job(self, id, model_name, query_name, query_config, data_endpoint):
+  def run_job(self, id, model_name, query_name, query_config):
       job = self.get_status(id)
       
       if model_name not in models:
@@ -79,7 +79,7 @@ class DefoeService:
       result = None
       error = None
       try:
-        ok_data = model.endpoint_to_object(data_endpoint, spark)
+        ok_data = model.endpoint_to_object(self.config.fuseki_url, spark)
         result = query(ok_data, job, query_config, log, spark)
       except Exception as e:
         print("Job " + id + " threw an exception")
