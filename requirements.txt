@@ -10,6 +10,6 @@ regex>=2018
 requests>=2.14.2
 spacy
 pyspark
-sparkqlwrapper
+SPARQLWrapper
 panda
 
