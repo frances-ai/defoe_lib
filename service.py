@@ -80,7 +80,7 @@ class DefoeService:
       error = None
       try:
         ok_data = model.endpoint_to_object(self.config.fuseki_url, spark)
-        result = query(ok_data, job, query_config, log, spark)
+        result = query(ok_data, query_config, log, spark)
       except Exception as e:
         print("Job " + id + " threw an exception")
         print(traceback.format_exc())
