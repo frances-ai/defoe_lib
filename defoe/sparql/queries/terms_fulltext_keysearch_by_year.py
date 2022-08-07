@@ -83,12 +83,7 @@ def do_query(df, config=None, logger=None, context=None):
     """
 
     preprocess_type = query_utils.extract_preprocess_word_type(config)
-
-    if "data" in config:
-        data_file = query_utils.extract_data_file(config,
-                                              os.path.dirname(config_file))
-    else:
-        data_file = None
+    data_file = config.get("data", None)
 
     if "start_year" in config:
         start_year = int(config["start_year"])
