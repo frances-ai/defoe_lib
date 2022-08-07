@@ -102,5 +102,5 @@ class DefoeService:
           .config("spark.rpc.message.maxSize", max_message_size) \
           .config("spark.driver.maxResultSize", max_result_size) \
           .getOrCreate()
-    sc.addPyFile(self.config.module_path)
+    sc.addPyFile(self.config.module_zip)
 
