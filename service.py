@@ -93,7 +93,7 @@ class DefoeService:
           jobs[id].result = yaml.safe_dump(dict(result))
 
   def get_spark_context(self):
-    return SparkSession \
+    sc = SparkSession \
           .builder \
           .master(self.config.spark_url) \
           .config("spark.cores.max", num_cores) \
@@ -102,4 +102,5 @@ class DefoeService:
           .config("spark.rpc.message.maxSize", max_message_size) \
           .config("spark.driver.maxResultSize", max_result_size) \
           .getOrCreate()
+    sc.addPyFile(self.config.module_path)
 
