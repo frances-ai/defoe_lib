@@ -93,15 +93,29 @@ class DefoeService:
           jobs[id].result = yaml.safe_dump(dict(result))
 
   def get_spark_context(self):
-    ss = SparkSession \
+    build = SparkSession \
           .builder \
           .master(self.config.spark_url) \
           .config("spark.cores.max", num_cores) \
           .config("spark.executor.memory", executor_memory) \
           .config("spark.driver.memory", driver_memory) \
           .config("spark.rpc.message.maxSize", max_message_size) \
-          .config("spark.driver.maxResultSize", max_result_size) \
-          .getOrCreate()
-    ss.sparkContext.addPyFile(self.config.module_zip)
+          .config("spark.driver.maxResultSize", max_result_size)
+    
+    use_env = self.config.cluster != None && self.config.cluster.environment != None
+    use_module = self.config.cluster != None && self.config.cluster.module != None
+    
+    if use_env:
+      build = build \
+        .config("spark.pyspark.python", "./ENV/bin/python")
+        .config("spark.pyspark.driver.python", "./ENV/bin/python")
+    
+    ss = build.getOrCreate()
+    if use_env:
+      ss.sparkContext.addArchive(self.config.cluster.environment + "#ENV")
+    if use_module:
+      ss.sparkContext.addPyFile(self.config.cluster.module)
+    
     return ss
+
 
