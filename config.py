@@ -17,14 +17,16 @@ class DefoeConfig:
     return config
 
 class ClusterConfig:
-  def __init__(self, module="", environment=""):
+  def __init__(self, module="", environment="", host=""):
     self.module = module
     self.environment = environment
+    self.host = host
   
   @staticmethod
   def from_dict(vals):
     config = ClusterConfig()
-    config.module = vals.get("module", None)
-    config.environment = vals.get("environment", None)
+    config.module = vals["module"]
+    config.environment = vals["environment"]
+    config.host = vals["host"]
     return config
 
