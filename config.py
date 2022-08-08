@@ -17,7 +17,7 @@ class DefoeConfig:
     return config
 
 class ClusterConfig:
-  def __init__(self, module="", environment="")
+  def __init__(self, module="", environment=""):
     self.module = module
     self.environment = environment
   

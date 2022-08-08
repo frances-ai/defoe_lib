@@ -102,17 +102,18 @@ class DefoeService:
           .config("spark.rpc.message.maxSize", max_message_size) \
           .config("spark.driver.maxResultSize", max_result_size)
     
-    use_env = self.config.cluster != None && self.config.cluster.environment != None
-    use_module = self.config.cluster != None && self.config.cluster.module != None
+    use_env = self.config.cluster != None and self.config.cluster.environment != None
+    use_module = self.config.cluster != None and self.config.cluster.module != None
     
     if use_env:
       build = build \
-        .config("spark.pyspark.python", "./ENV/bin/python")
-        .config("spark.pyspark.driver.python", "./ENV/bin/python")
+        .config("spark.pyspark.python", "./ENV/bin/python") \
+        .config("spark.pyspark.driver.python", "./ENV/bin/python") \
+        .config("spark.archives", self.config.cluster.environment + "#environment")
     
     ss = build.getOrCreate()
-    if use_env:
-      ss.sparkContext.addArchive(self.config.cluster.environment + "#ENV")
+    #if use_env:
+    #  ss.sparkContext.addArchive(self.config.cluster.environment + "#ENV")
     if use_module:
       ss.sparkContext.addPyFile(self.config.cluster.module)
     
