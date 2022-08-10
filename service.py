@@ -109,11 +109,12 @@ class DefoeService:
         .config("spark.pyspark.python", "./ENV/bin/python") \
         .config("spark.pyspark.driver.python", "./ENV/bin/python") \
         .config("spark.archives", self.config.remote.environment + "#environment") \
-        .config("spark.driver.host", self.config.remote.driverHost) \
+        .config("spark.driver.host", self.config.remote.driver_host) \
+        .config("spark.driver.bindAddress", self.config.remote.driver_host) \
         .config("spark.blockManager.port", "10025") \
         .config("spark.driver.blockManager.port", "10026") \
         .config("spark.driver.port", "10027")
-    
+
     ss = build.getOrCreate()
     if remote_mode:
       ss.sparkContext.addPyFile(self.config.remote.module)
