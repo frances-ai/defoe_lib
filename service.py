@@ -93,13 +93,31 @@ class DefoeService:
           jobs[id].result = yaml.safe_dump(dict(result))
 
   def get_spark_context(self):
-    return SparkSession \
+    build = SparkSession \
           .builder \
           .master(self.config.spark_url) \
           .config("spark.cores.max", num_cores) \
           .config("spark.executor.memory", executor_memory) \
           .config("spark.driver.memory", driver_memory) \
           .config("spark.rpc.message.maxSize", max_message_size) \
-          .config("spark.driver.maxResultSize", max_result_size) \
-          .getOrCreate()
+          .config("spark.driver.maxResultSize", max_result_size)
+    
+    remote_mode = self.config.remote != None
+    
+    if remote_mode:
+      build = build \
+        .config("spark.pyspark.python", "./ENV/bin/python") \
+        .config("spark.pyspark.driver.python", "./ENV/bin/python") \
+        .config("spark.archives", self.config.remote.environment + "#environment") \
+        .config("spark.driver.host", self.config.remote.driver_host) \
+        .config("spark.driver.bindAddress", self.config.remote.driver_host) \
+        .config("spark.blockManager.port", "10025") \
+        .config("spark.driver.blockManager.port", "10026") \
+        .config("spark.driver.port", "10027")
+
+    ss = build.getOrCreate()
+    if remote_mode:
+      ss.sparkContext.addPyFile(self.config.remote.module)
+    return ss
+
 
