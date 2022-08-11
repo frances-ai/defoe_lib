@@ -12,7 +12,7 @@ from pyspark.ml.feature import SQLTransformer
 import yaml, os
 from functools import partial, reduce
 
-def do_query(df, job, config=None, logger=None, context=None):
+def do_query(df, config=None, logger=None, context=None):
     """
     Iterate through archives and count total number of documents,
     pages and words per year.
