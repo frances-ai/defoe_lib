@@ -42,7 +42,7 @@ class DefoeService:
     jobs[job_id] = Job(job_id)
     
     if query_config is None or query_config == "":
-      query_config = empty_yaml
+      query_config = {}
     
     args = (job_id, model_name, query_name, query_config)
     work = threading.Thread(target=self.run_job, args=args)
