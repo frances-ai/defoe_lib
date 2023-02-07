@@ -2,7 +2,7 @@
 Query-related utility functions.
 """
 
-from defoe_lib.defoe.query_utils import PreprocessWordType, longsfix_sentence, xml_geo_entities_snippet, georesolve_cmd,  coord_xml_snippet, geomap_cmd, geoparser_cmd, geoparser_coord_xml
+from defoe_lib.defoe.query_utils import PreprocessWordType, longsfix_sentence, xml_geo_entities_snippet, georesolve_cmd,  coord_xml_snippet, geomap_cmd, geoparser_cmd, geoparser_coord_xml, preprocess_word
 from nltk.corpus import words
 import re
 import spacy
@@ -27,14 +27,14 @@ def get_pages_matches_no_prep(title, edition, archive, filename, text, keysenten
     per keyword.
 
     :return: list of tuples
-    """  
+    """
     matches = []
     for keysentence in keysentences:
         #sentence_match = get_sentences_list_matches(text, keysentence)
         sentence_match_idx = get_text_keyword_idx(text, keysentence)
-        if sentence_match: 
+        if sentence_match:
             match = (title, edition, archive, filename, text, keysentence)
-            matches.append(match) 
+            matches.append(match)
     return matches
 
 
@@ -69,7 +69,7 @@ def get_page_matches(document,
         for page in document:
             match = None
             for word in page.words:
-                preprocessed_word = query_utils.preprocess_word(
+                preprocessed_word = preprocess_word(
                     word, preprocess_type)
                 if preprocessed_word == keyword:
                     match = (document.year, document, page, keyword)
@@ -99,7 +99,7 @@ def get_document_keywords(document,
     matches = set()
     for page in document:
         for word in page.words:
-            preprocessed_word = query_utils.preprocess_word(word,
+            preprocessed_word = preprocess_word(word,
                                                             preprocess_type)
             if preprocessed_word in keywords:
                 matches.add(preprocessed_word)
@@ -124,18 +124,18 @@ def document_contains_word(document,
     """
     for page in document:
         for word in page.words:
-            preprocessed_word = query_utils.preprocess_word(word,
+            preprocessed_word = preprocess_word(word,
                                                             preprocess_type)
             if keyword == preprocessed_word:
                 return True
     return False
 
 
-def calculate_words_within_dictionary(page, 
+def calculate_words_within_dictionary(page,
                    preprocess_type=PreprocessWordType.NORMALIZE):
     """
     Calculates the % of page words within a dictionary and also returns the page quality (pc)
-    Page words are normalized. 
+    Page words are normalized.
     :param page: Page
     :type page: defoe.nls.page.Page
     :param preprocess_type: how words should be preprocessed
@@ -147,7 +147,7 @@ def calculate_words_within_dictionary(page,
     counter= 0
     total_words= 0
     for word in page.words:
-         preprocessed_word = query_utils.preprocess_word(word, preprocess_type)
+         preprocessed_word = preprocess_word(word, preprocess_type)
          if preprocessed_word!="":
             total_words += 1
             if  preprocessed_word in dictionary:
@@ -155,13 +155,13 @@ def calculate_words_within_dictionary(page,
     try:
        calculate_pc = str(counter*100/total_words)
     except:
-       calculate_pc = "0" 
+       calculate_pc = "0"
     return calculate_pc
 
 def calculate_words_confidence_average(page):
     """
     Calculates the average of "words confidence (wc)"  within a page.
-    Page words are normalized. 
+    Page words are normalized.
     :param page: Page
     :type page: defoe.nls.page.Page
     :param preprocess_type: how words should be preprocessed
@@ -177,7 +177,7 @@ def calculate_words_confidence_average(page):
     try:
        calculate_wc = str(total_wc/len(page.wc))
     except:
-       calculate_wc = "0" 
+       calculate_wc = "0"
     return calculate_wc
 
 def get_page_as_string(page,
@@ -195,7 +195,7 @@ def get_page_as_string(page,
     """
     page_string = ''
     for word in page.words:
-        preprocessed_word = query_utils.preprocess_word(word,
+        preprocessed_word = preprocess_word(word,
                                                          preprocess_type)
         if page_string == '':
             page_string = preprocessed_word
@@ -205,7 +205,7 @@ def get_page_as_string(page,
 
 
 def clean_page_as_string(page, defoe_path, os_type):
-        
+
     """
     Clean a page as a single string,
     Handling hyphenated words: combine and split and also fixing the long-s
@@ -218,16 +218,16 @@ def clean_page_as_string(page, defoe_path, os_type):
     page_string = ''
     for word in page.words:
         if page_string == '':
-            page_string = word 
+            page_string = word
         else:
             page_string += (' ' + word)
 
     page_separeted = page_string.split('- ')
     page_combined = ''.join(page_separeted)
-    
-    if (len(page_combined) > 1) and ('f' in page_combined): 
-       
-       page_clean = longsfix_sentence(page_combined, defoe_path, os_type) 
+
+    if (len(page_combined) > 1) and ('f' in page_combined):
+
+       page_clean = longsfix_sentence(page_combined, defoe_path, os_type)
     else:
         page_clean= page_combined
 
@@ -249,10 +249,10 @@ def preprocess_clean_page(clean_page,
                           preprocess_type=PreprocessWordType.LEMMATIZE):
 
 
-    clean_list = clean_page.split(' ') 
+    clean_list = clean_page.split(' ')
     page_string = ''
     for word in clean_list:
-        preprocessed_word = query_utils.preprocess_word(word,
+        preprocessed_word = preprocess_word(word,
                                                          preprocess_type)
         if page_string == '':
             page_string = preprocessed_word
@@ -271,7 +271,7 @@ def get_sentences_list_matches(text, keysentence):
     :return: Set of sentences
     :rtype: set(str or unicode)
     """
-    
+
     match = []
     text_list= text.split()
     for sentence in keysentence:
@@ -323,7 +323,7 @@ def preprocess_clean_page_spacy(clean_page,
     clean_list = clean_page.split(' ')
     page_string = ''
     for word in clean_list:
-        preprocessed_word = query_utils.preprocess_word(word,
+        preprocessed_word = preprocess_word(word,
                                                          preprocess_type)
         if page_string == '':
             page_string = preprocessed_word
@@ -449,7 +449,7 @@ def get_concordance(text,
     the concordance of words (before and after) using a window.
 
     :param text: text
-    :type text: string 
+    :type text: string
     :param keyword: keyword
     :type keyword: str or unicode
     :param idx: keyword index (position) in list of article's words
@@ -486,7 +486,7 @@ def get_concordance_string(text,
     the concordance of words (before and after) using a window.
 
     :param text: text
-    :type text: string 
+    :type text: string
     :param keyword: keyword
     :type keyword: str or unicode
     :param idx: keyword index (position) in list of article's words
@@ -510,7 +510,7 @@ def get_concordance_string(text,
         end_idx = idx + window + 1
 
     concordance_words = ''
-    flag_first = 1 
+    flag_first = 1
     for word in text_list[start_idx:end_idx]:
         if flag_first == 1:
             concordance_words += word
