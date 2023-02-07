@@ -111,6 +111,7 @@ class DefoeService:
             os.makedirs(os.path.dirname(query_config["result_file_path"]), exist_ok=True)
             with open(query_config["result_file_path"], "w") as f:
                 f.write(yaml.safe_dump(dict(result)))
+                jobs[id].result = query_config["result_file_path"]
 
   def get_spark_context(self):
     build = SparkSession \
