@@ -18,6 +18,7 @@ class Model:
         "terms_snippet_keysearch_by_year": terms_snippet_keysearch_by_year.do_query,
       }
 
+
   def filename_to_object(self, filename, context):
       sparql_endpoint=open(filename).readline().rstrip()
       return endpoint_to_object(sparql_endpoint)
@@ -71,7 +72,7 @@ class Model:
           
               }
           } 
-          """ 
+          """
           sparql.setQuery(query)
           sparql.setReturnFormat(JSON)
           results = sparql.query().convert()
@@ -83,7 +84,7 @@ class Model:
               else:
                   v_part="None"
               sparql_data.append({"uri": r["uri"]["value"], "year": r["year"]["value"], "title":r["title"]["value"], "edition":r["enum"]["value"], "vuri":r["v"]["value"], "volume":r["vnum"]["value"], "numPages":r["numberOfPages"]["value"], "letters":r["letters"]["value"], "part":v_part, "archive_filename":r["metsXML"]["value"], "page":r["page"]["value"], "header":r["header"]["value"], "term":r["term"]["value"], "definition":r["definition"]["value"], "numWords":r["numberOfWords"]["value"]})
-      
+
       else:
           query="""
           PREFIX nls: <https://w3id.org/nls#> 
@@ -106,7 +107,7 @@ class Model:
               ?s nls:title ?title.
               OPTIONAL {?v nls:part ?part; }
               }   
-          """ 
+          """
           sparql.setQuery(query)
           sparql.setReturnFormat(JSON)
           results = sparql.query().convert()
