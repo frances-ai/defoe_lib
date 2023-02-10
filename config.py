@@ -2,9 +2,10 @@ import json
 
 
 class DefoeConfig:
-  def __init__(self, spark_url="", fuseki_url=""):
+  def __init__(self, spark_url="", fuseki_url="", chapbooks_scotland_url = ""):
     self.spark_url = spark_url
     self.fuseki_url = fuseki_url
+    self.chapbooks_scotland_url = chapbooks_scotland_url
     self.remote = None
 
   @staticmethod
@@ -12,6 +13,7 @@ class DefoeConfig:
     config = DefoeConfig()
     config.spark_url = vals["sparkUrl"]
     config.fuseki_url = vals["fusekiUrl"]
+    config.chapbooks_scotland_url = vals["chapbooksScotlandUrl"]
     if "remote" in vals:
       config.remote = RemoteConfig.from_dict(vals["remote"])
     return config
@@ -21,7 +23,7 @@ class RemoteConfig:
     self.module = module
     self.environment = environment
     self.driver_host = driver_host
-  
+
   @staticmethod
   def from_dict(vals):
     config = RemoteConfig()

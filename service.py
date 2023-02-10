@@ -38,12 +38,15 @@ class DefoeService:
 
   def get_pre_computed_queries(self):
     current_dir = os.path.realpath(os.path.dirname(__file__))
-    return {"publication_normalized": current_dir + "/precomputedResult/publication_normalized.yml"}
+    return {
+        "total_eb_publication_normalized": current_dir + "/precomputedResult/total_eb_publication_normalized.yml",
+        "chapbooks_scotland_publication_normalized": current_dir + "/precomputedResult"
+                                                                   "/chapbooks_scotland_publication_normalized.yml"
+    }
 
   def submit_job(self, job_id, model_name, query_name, query_config):
     if job_id in jobs:
       raise ValueError("job id already exists")
-    print(type(job_id))
     jobs[job_id] = Job(job_id)
 
     if query_config is None or query_config == "":
@@ -54,6 +57,15 @@ class DefoeService:
     work.start()
 
     return jobs[job_id]
+
+
+  def get_sparql_endpoint(self, kg_type):
+      sparql_endpoints = {
+          'total_eb': self.config.fuseki_url,
+          'chapbooks_scotland': self.config.chapbooks_scotland_url
+      }
+      return sparql_endpoints[kg_type]
+
 
   def get_status(self, job_id):
     print(jobs)
@@ -82,10 +94,10 @@ class DefoeService:
           jobs[id].error = "query not found"
           return
 
-      if query_name in self.get_pre_computed_queries():
+      if (query_config['kg_type'] + '_' + query_name) in self.get_pre_computed_queries():
           with job._lock:
               jobs[id].done = True
-              jobs[id].result = self.get_pre_computed_queries()[query_name]
+              jobs[id].result = self.get_pre_computed_queries()[(query_config['kg_type'] + '_' + query_name)]
               return
 
       query = model.get_queries()[query_name]
@@ -96,8 +108,11 @@ class DefoeService:
       # Note this skips some checks.
       result = None
       error = None
+
       try:
-        ok_data = model.endpoint_to_object(self.config.fuseki_url, spark)
+        endpoint = self.get_sparql_endpoint(query_config['kg_type'])
+        print("sparql endpoint: %s", endpoint)
+        ok_data = model.endpoint_to_object(endpoint, spark)
         result = query(ok_data, query_config, log, spark)
       except Exception as e:
         print("Job " + id + " threw an exception")
