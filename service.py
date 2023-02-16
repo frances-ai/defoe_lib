@@ -68,15 +68,15 @@ class DefoeService:
 
 
   def get_status(self, job_id):
-    print(jobs)
-    print(job_id)
-    test_jobs = {
-        job_id: -1
-    }
-    print(test_jobs)
     if job_id not in jobs:
       raise ValueError("job id not found")
-    return jobs[job_id]
+
+    # Remove this job from memory when it is done.
+    job = jobs[job_id]
+    if job.done:
+        del jobs[job_id]
+    return job
+
 
   def run_job(self, id, model_name, query_name, query_config):
       job = self.get_status(id)
