@@ -85,7 +85,7 @@ def do_query(df, config=None, logger=None, context=None):
         fdf = df.withColumn("definition", blank_as_null("definition"))
 
         if start_year and end_year:
-            newdf=fdf.filter(fdf.definition.isNotNull()).filter(fdf.year >= start_year).filter(fdf.year <= end_year).select(fdf.year, fdf.term, fdf.definition, fdf.term, fdf.uri)
+            newdf=fdf.filter(fdf.definition.isNotNull()).filter(fdf.year >= start_year).filter(fdf.year <= end_year).select(fdf.year, fdf.term, fdf.definition, fdf.uri)
         elif start_year:
             newdf=fdf.filter(fdf.definition.isNotNull()).filter(fdf.year >= start_year).select(fdf.year, fdf.term, fdf.definition, fdf.uri)
         elif end_year:
@@ -175,7 +175,6 @@ def do_query(df, config=None, logger=None, context=None):
         lambda year_sentence: [(year_sentence[2] , sentence) for sentence in year_sentence[1]])
 
     # [(uri, (keysentence)), ...]
-
 
     result = matching_sentences.groupByKey() \
         .map(lambda year_match:
