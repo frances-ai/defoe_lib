@@ -1,6 +1,6 @@
 """
 Select the EB articles using a keysentences or keywords list and groups by date.
-Use this query ONLY for searching in the EB articles stored in the knowledge graph previously. 
+Use this query ONLY for searching in the EB articles stored in the knowledge graph previously.
 """
 
 from operator import add
@@ -17,20 +17,20 @@ def do_query(df, config=None, logger=None, context=None):
     Selects terms defeinitions and details using the keywords and groups by date.
 
     Data in sparql have the following colums:
-    
+
     "archive_filename", definition, edition, header|page|term| title| uri|volume|year"
 
-    config_file must be the path to a lexicon file with a list of the keywords 
+    config_file must be the path to a lexicon file with a list of the keywords
     to search for, one per line.
-    
+
     Also the config_file can indicate the preprocess treatment, along with the defoe
-    path, and the type of operating system. 
+    path, and the type of operating system.
 
       For EB-ontology (e.g. total_eb.ttl) derived Knowledge Graphs, it returns result of form:
         {
           <YEAR>:
           [
-            [- title: 
+            [- title:
              - edition:
              - archive_filename:
              - volume:
@@ -41,10 +41,10 @@ def do_query(df, config=None, logger=None, context=None):
              - keysearch-term:
              - term:
              - uri:
-             - term-definition: ], 
-             [], 
+             - term-definition: ],
+             [],
             ...
-         
+
           <YEAR>:
           ...
         }
@@ -71,7 +71,7 @@ def do_query(df, config=None, logger=None, context=None):
           ...
          }
 
-  
+
     :type issues: pyspark.rdd.PipelinedRDD
     :param config_file: query configuration file
     :type config_file: str or unicode
@@ -90,11 +90,11 @@ def do_query(df, config=None, logger=None, context=None):
     else:
         start_year = None
 
-    if "start_year" in config:
+    if "end_year" in config:
         end_year = int(config["end_year"])
     else:
         end_year = None
-    
+
     if "target_sentences" in config:
         target_sentences=config["target_sentences"]
     else:
@@ -112,7 +112,7 @@ def do_query(df, config=None, logger=None, context=None):
     ###### Supporting New NLS KG #######
     if kg_type == "total_eb" :
         fdf = df.withColumn("definition", blank_as_null("definition"))
-    
+
         #(year-0, uri-1, title-2, edition-3, archive_filename-4, volume-5, letters-6, part-7, page_number-8, header-9, term-10, definition-11)
         if start_year and end_year:
             newdf=fdf.filter(fdf.definition.isNotNull()).filter(fdf.year >= start_year).filter(fdf.year <= end_year).select(fdf.year, fdf.uri, fdf.title, fdf.edition, fdf.archive_filename, fdf.volume, fdf.letters, fdf.part, fdf.page, fdf.header, fdf.term, fdf.definition)
@@ -129,7 +129,7 @@ def do_query(df, config=None, logger=None, context=None):
 
     else:
         fdf = df.withColumn("text", blank_as_null("text"))
-    
+
        #(year-0, uri-1, title-2, serie-3, archive_filename-4, volume-5, volumeTitle-6, part-7, page_number-8, volumeId-9, numWords-10, text-11)
         if start_year and end_year:
             newdf=fdf.filter(fdf.text.isNotNull()).filter(fdf.year >= start_year).filter(fdf.year <= end_year).select(fdf.year, fdf.uri, fdf.title, fdf.serie, fdf.archive_filename, fdf.volume, fdf.vtitle, fdf.part, fdf.page, fdf.volumeId, fdf.numWords, fdf.text)
@@ -145,20 +145,20 @@ def do_query(df, config=None, logger=None, context=None):
         else:
             newdf=fdf.filter(fdf.text.isNotNull()).select(fdf.year, fdf.uri, fdf.title, fdf.serie, fdf.archive_filename, fdf.volume, fdf.vtitle, fdf.part, fdf.page, fdf.volumeId, fdf.numWords, fdf.text)
 
- 
+
     articles=newdf.rdd.map(tuple)
     if kg_type == "total_eb" :
         #(year-0, uri-1, title-2, edition-3, archive_filename-4, volume-5, letters-6, part-7, page_number-8, header-9, term-10, preprocess_article-11)
-    
+
         preprocess_articles = articles.flatMap(
             lambda t_articles: [(t_articles[0], t_articles[1], t_articles[2], t_articles[3], t_articles[4], t_articles[5],
-                                        t_articles[6], t_articles[7], t_articles[8], t_articles[9], t_articles[10], preprocess_clean_pag(t_articles[10]+" "+t_articles[11], preprocess_type), t_articles[11])]) 
+                                        t_articles[6], t_articles[7], t_articles[8], t_articles[9], t_articles[10], preprocess_clean_pag(t_articles[10]+" "+t_articles[11], preprocess_type), t_articles[11])])
     else:
        #(year-0, uri-1, title-2, serie-3, archive_filename-4, volume-5, volumeTitle-6, part-7, page_number-8, volumeId-9, numWords-10, preprocess_article-11)
         preprocess_articles = articles.flatMap(
             lambda t_articles: [(t_articles[0], t_articles[1], t_articles[2], t_articles[3], t_articles[4], t_articles[5],
-                                        t_articles[6], t_articles[7], t_articles[8], t_articles[9], t_articles[10], preprocess_clean_page(t_articles[11], preprocess_type), t_articles[11])]) 
-    
+                                        t_articles[6], t_articles[7], t_articles[8], t_articles[9], t_articles[10], preprocess_clean_page(t_articles[11], preprocess_type), t_articles[11])])
+
     if data_file:
         keysentences = []
         with open(data_file, 'r') as f:
@@ -174,7 +174,7 @@ def do_query(df, config=None, logger=None, context=None):
                         sentence_norm += " " + word
                 keysentences.append(sentence_norm)
 
-  
+
 
     if target_sentences:
         clean_target_sentences = []
@@ -197,7 +197,7 @@ def do_query(df, config=None, logger=None, context=None):
             target_articles = reduce(lambda r, target_s: r.filter(lambda year_page: target_s in year_page[11]), clean_target_sentences, target_articles)
     else:
         target_articles = preprocess_articles
-    
+
     if data_file:
         filter_articles = target_articles.filter(
             lambda year_page: any( keysentence in year_page[11] for keysentence in keysentences))
@@ -210,15 +210,15 @@ def do_query(df, config=None, logger=None, context=None):
     #or
     #(year-0, uri-1, title-2, serie-3, archive_filename-4, volume-5, volumeTitle-6, part-7, page_number-8, volumeId-9, numWords-10, text_prep-11, text-12)
     matching_articles = filter_articles.map(
-        lambda year_article: (year_article[0], year_article[1], year_article[2], year_article[3], 
+        lambda year_article: (year_article[0], year_article[1], year_article[2], year_article[3],
                                 year_article[4], year_article[5],
-                                year_article[6], year_article[7], year_article[8], 
-                                year_article[9], year_article[10], 
-                                year_article[12], 
+                                year_article[6], year_article[7], year_article[8],
+                                year_article[9], year_article[10],
+                                year_article[12],
                                 get_articles_list_matches(year_article[11], keysentences)))
-    
+
     #(year-0, uri-1, title-2, edition-3, archive_filename-4, volume-5, letters-6, part-7,  page_number-8, header-9, term-10, article_text-11, sentence-12)
-    #or 
+    #or
     #(year-0, uri-1, title-2, serie-3, archive_filename-4, volume-5, volumeTitle-6, part-7, page_number-8, volumeId-9, numWords-10, text-11, list_sentences-12)
     matching_sentences = matching_articles.flatMap(
         lambda year_sentence: [(year_sentence[0], year_sentence[1], year_sentence[2], year_sentence[3],
@@ -234,7 +234,7 @@ def do_query(df, config=None, logger=None, context=None):
              "archive_filename": sentence_data[4],
              "volume": sentence_data[5],
              "letters": sentence_data[6],
-             "part": sentence_data[7], 
+             "part": sentence_data[7],
              "page number": sentence_data[8],
              "header": sentence_data[9],
              "keysearch-term": sentence_data[12],
@@ -260,7 +260,7 @@ def do_query(df, config=None, logger=None, context=None):
 
     # [(date, {"title": title, ...}), ...]
     # =>
-    
+
     result_1 = matching_data \
         .groupByKey() \
         .map(lambda date_context:
@@ -278,7 +278,7 @@ def do_query(df, config=None, logger=None, context=None):
         .map(lambda year_match:
              (year_match[0], list(year_match[1]))) \
         .collect()
- 
+
     result={}
     result["terms_details"]=result_1
     result["terms_uris"]=result_2

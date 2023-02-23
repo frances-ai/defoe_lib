@@ -17,25 +17,25 @@ def do_query(df, config=None, logger=None, context=None):
     IMPORTANT: SAME AS "keysearch_by_year_term_count.py" in NLS!!
 
     Data in sparql have the following colums:
-    
-    config_file must be the path to a lexicon file with a list of the keywords 
+
+    config_file must be the path to a lexicon file with a list of the keywords
     to search for, one per line.
-    
+
     Also the config_file can indicate the preprocess treatment, along with the defoe
-    path, and the type of operating system. 
+    path, and the type of operating system.
 
       Returns result of form:
         {
           <YEAR>:
           [
-            [ -<SENTENCE|WORD>, NUM_SENTENCES|NUM_WORDS 
-             - <SENTENCE|WORD>, NUM_SENTENCES|NUM_WORDS 
-             - <SENTENCE|WORD>, NUM_SENTENCES|NUM_WORDS 
-            ], 
+            [ -<SENTENCE|WORD>, NUM_SENTENCES|NUM_WORDS
+             - <SENTENCE|WORD>, NUM_SENTENCES|NUM_WORDS
+             - <SENTENCE|WORD>, NUM_SENTENCES|NUM_WORDS
+            ],
           <YEAR>:
           ...
         }
-  
+
     :type issues: pyspark.rdd.PipelinedRDD
     :param config_file: query configuration file
     :type config_file: str or unicode
@@ -54,11 +54,11 @@ def do_query(df, config=None, logger=None, context=None):
     else:
         start_year = None
 
-    if "start_year" in config:
+    if "end_year" in config:
         end_year = int(config["end_year"])
     else:
         end_year = None
-    
+
     if "target_sentences" in config:
         target_sentences=config["target_sentences"]
     else:
@@ -82,7 +82,7 @@ def do_query(df, config=None, logger=None, context=None):
 
     ###### Supporting New NLS KG #######
     if kg_type == "total_eb" :
-    
+
         fdf = df.withColumn("definition", blank_as_null("definition"))
 
         if start_year and end_year:
@@ -107,15 +107,15 @@ def do_query(df, config=None, logger=None, context=None):
             newdf=fdf.filter(fdf.text.isNotNull()).select(fdf.year, fdf.text)
 
     articles=newdf.rdd.map(tuple)
-    
+
 
     #(year-0, preprocess_article-1)
     if kg_type == "total_eb" :
         preprocess_articles = articles.flatMap(
-            lambda t_articles: [(t_articles[0], preprocess_clean_page(t_articles[1]+ " " + t_articles[2], preprocess_type))]) 
+            lambda t_articles: [(t_articles[0], preprocess_clean_page(t_articles[1]+ " " + t_articles[2], preprocess_type))])
     else:
         preprocess_articles = articles.flatMap(
-            lambda t_articles: [(t_articles[0], preprocess_clean_page(t_articles[1], preprocess_type))]) 
+            lambda t_articles: [(t_articles[0], preprocess_clean_page(t_articles[1], preprocess_type))])
 
     if data_file:
         keysentences = []
@@ -153,7 +153,7 @@ def do_query(df, config=None, logger=None, context=None):
         else:
             target_articles = preprocess_articles
             target_articles = reduce(lambda r, target_s: r.filter(lambda year_page: target_s in year_page[1]), clean_target_sentences, target_articles)
-        
+
     else:
         target_articles = preprocess_articles
 
@@ -169,13 +169,13 @@ def do_query(df, config=None, logger=None, context=None):
 
     if hit_count == "term" or hit_count == "page":
         matching_articles = filter_articles.map(
-            lambda year_article: (year_article[0], 
+            lambda year_article: (year_article[0],
                                      get_articles_list_matches(year_article[1], keysentences)))
     else:
         matching_articles = filter_articles.map(
-            lambda year_article: (year_article[0], 
+            lambda year_article: (year_article[0],
                                      get_articles_text_matches(year_article[1], keysentences)))
-    
+
     #(year-0, sentence-1)
     matching_sentences = matching_articles.flatMap(
         lambda year_sentence: [((year_sentence[0], sentence),1) for sentence in year_sentence[1]])

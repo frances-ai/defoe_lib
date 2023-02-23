@@ -16,12 +16,12 @@ from functools import partial, reduce
 def do_query(df, config=None, logger=None, context=None):
     """
     Data in sparql have the following colums:
-    
-    config_file must be the path to a lexicon file with a list of the keywords 
+
+    config_file must be the path to a lexicon file with a list of the keywords
     to search for, one per line.
-    
+
     Also the config_file can indicate the preprocess treatment, along with the defoe
-    path, and the type of operating system. 
+    path, and the type of operating system.
 
       Returns result of form:
         {
@@ -29,8 +29,8 @@ def do_query(df, config=None, logger=None, context=None):
           [
              -<SENTENCES|WORD>
              -<SENTENCES|WORD>
-	     
-            ], 
+
+            ],
           <URI>:
           ...
         }
@@ -41,7 +41,7 @@ def do_query(df, config=None, logger=None, context=None):
        https://w3id.org/nls/i/Page/9930812033804340_104185289_14:
 	  - queen
 
-  
+
     :type issues: pyspark.rdd.PipelinedRDD
     :param config_file: query configuration file
     :type config_file: str or unicode
@@ -59,11 +59,11 @@ def do_query(df, config=None, logger=None, context=None):
     else:
         start_year = None
 
-    if "start_year" in config:
+    if "end_year" in config:
         end_year = int(config["end_year"])
     else:
         end_year = None
-    
+
     if "target_sentences" in config:
         target_sentences=config["target_sentences"]
     else:
@@ -81,7 +81,7 @@ def do_query(df, config=None, logger=None, context=None):
 
     ###### Supporting New NLS KG #######
 
-    if kg_type == "total_eb": 
+    if kg_type == "total_eb":
         fdf = df.withColumn("definition", blank_as_null("definition"))
 
         if start_year and end_year:
@@ -105,16 +105,16 @@ def do_query(df, config=None, logger=None, context=None):
            newdf=fdf.filter(fdf.definition.isNotNull()).select(fdf.year, fdf.text, fdf.uri)
 
     articles=newdf.rdd.map(tuple)
-    
+
 
     if kg_type == "total_eb" :
     #(year-0, preprocess_article-1, uri)
         preprocess_articles = articles.flatMap(
-           lambda t_articles: [(t_articles[0], preprocess_clean_page(t_articles[1]+ " " + t_articles[2], preprocess_type), t_articles[3])]) 
+           lambda t_articles: [(t_articles[0], preprocess_clean_page(t_articles[1]+ " " + t_articles[2], preprocess_type), t_articles[3])])
 
     else:
         preprocess_articles = articles.flatMap(
-           lambda t_articles: [(t_articles[0], preprocess_clean_page(t_articles[1], preprocess_type), t_articles[2])]) 
+           lambda t_articles: [(t_articles[0], preprocess_clean_page(t_articles[1], preprocess_type), t_articles[2])])
 
     if data_file:
         keysentences = []
@@ -152,7 +152,7 @@ def do_query(df, config=None, logger=None, context=None):
         else:
             target_articles = preprocess_articles
             target_articles = reduce(lambda r, target_s: r.filter(lambda year_page: target_s in year_page[1]), clean_target_sentences, target_articles)
-        
+
     else:
         target_articles = preprocess_articles
 
@@ -166,9 +166,9 @@ def do_query(df, config=None, logger=None, context=None):
 
     #(year-0, list_sentences-1, uri)
     matching_articles = filter_articles.map(
-        lambda year_article: (year_article[0], 
+        lambda year_article: (year_article[0],
                                  get_articles_list_matches(year_article[1], keysentences), year_article[2]))
-    
+
 
     #(year-0, sentence-1)
     matching_sentences = matching_articles.flatMap(
