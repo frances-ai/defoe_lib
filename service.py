@@ -123,6 +123,7 @@ class DefoeService:
             if result != None:
                 duration = time.time() - jobs[id].start_time
                 print("job finished!. it starts from", jobs[id].start_time, ", it takes ", duration)
+                jobs[id].duration = duration
                 os.makedirs(os.path.dirname(query_config["result_file_path"]), exist_ok=True)
                 with open(query_config["result_file_path"], "w") as f:
                     f.write(yaml.safe_dump(dict(result)))
