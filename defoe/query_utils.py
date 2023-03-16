@@ -487,10 +487,14 @@ def geoparser_cmd(text, defoe_path, os_type, gazetteer, bounding_box):
     atempt=0
     flag = 1
     geoparser_xml = ''
+    if "-" in text:
+        text = text.replace("-", "")
+    if "\\" in text:
+        text = text.replace("\\", "")
     if "'" in text:
-        text=text.replace("'", "\'\\\'\'")
+        text = text.replace("'", "\'\\\'\'")
    
-    cmd = 'echo \'%s\' \''+ text + '\' | '+ defoe_path + 'geoparser-v1.1/scripts/run -t plain -g ' + gazetteer + ' ' + bounding_box + ' -top | ' + defoe_path+ 'georesolve/bin/'+ os_type + '/lxreplace -q s | '+ defoe_path + 'geoparser-v1.1/bin/'+ os_type +'/lxt -s '+ defoe_path+'geoparser-v1.1/lib/georesolve/addfivewsnippet.xsl'
+    cmd = 'echo \'%s\' \''+ text + '\' | '+ defoe_path + 'geoparser-1.3/scripts/run -t plain -g ' + gazetteer + ' ' + bounding_box + ' -top | ' + defoe_path+ 'georesolve/bin/'+ os_type + '/lxreplace -q s | '+ defoe_path + 'geoparser-1.3/bin/'+ os_type +'/lxt -s '+ defoe_path+'others/addfivewsnippet.xsl'
 
     
     while (len(geoparser_xml) < 5) and (atempt < 1000) and (flag == 1):
@@ -501,7 +505,12 @@ def geoparser_cmd(text, defoe_path, os_type, gazetteer, bounding_box):
         stdout, stderr = proc.communicate()
         if "Error" in str(stderr):
             flag = 0
+            print("----BEGIN %s----" % atempt)
             print("err: '{}'".format(stderr))
+            print("stdout: '{}'".format(stdout))
+            print("Text error: %s" % text)
+            print("Text error in UTF-8: %s" % text.encode(encoding='UTF-8'))
+            print("----END %s----" % atempt)
         else:
             geoparser_xml = stdout
         atempt+= 1

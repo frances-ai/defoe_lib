@@ -18,11 +18,10 @@ def get_config():
         "preprocess": "none",
         "start_year": "1771",
         "end_year": "1781",
-        "os_type": "os",
         "hit_count": "term",
-        "data": "/Users/damonyu/Documents/CS5098/defoe_lib/queries/animal.txt",
+        "data": "/Users/ly40/Documents/frances-ai/defoe_lib/queries/animal.txt",
         "kg_type": "total_eb",
-        "result_file_path": "/Users/damonyu/Documents/CS5098/defoe_lib/result_animal.yml"
+        "result_file_path": "/Users/ly40/Documents/frances-ai/defoe_lib/result_animal.yml"
     }
     return config
 
