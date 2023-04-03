@@ -122,7 +122,7 @@ def do_query(df, config=None, logger=None, context=None):
     else:
         bounding_box = ""
 
-    defoe_path = get_root_path()
+    defoe_path = get_root_path() + "/"
     os_type = get_geo_supported_os_type()
 
 

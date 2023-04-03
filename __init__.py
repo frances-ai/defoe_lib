@@ -1,11 +1,11 @@
-import os
+from os.path import dirname, abspath
 import platform
 
 import regex
 
 
 def get_root_path():
-    return os.path.abspath(__file__)
+    return dirname(abspath(__file__))
 
 
 def get_geo_supported_os_type():
@@ -25,3 +25,7 @@ def get_geo_supported_os_type():
         return "sys-x86-64-el7"
 
     raise Exception("Geoparser does not support platform " + platform_name)
+
+
+if __name__ == '__main__':
+    print(get_root_path())
