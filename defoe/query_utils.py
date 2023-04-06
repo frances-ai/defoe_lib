@@ -18,6 +18,7 @@ from spacy.vocab import Vocab
 NON_AZ_REGEXP = re.compile('[^a-z]')
 NON_AZ_19_REGEXP = re.compile('[^a-z0-9]')
 
+
 class PreprocessWordType(enum.Enum):
     """
     Word preprocessing types.
@@ -32,6 +33,7 @@ class PreprocessWordType(enum.Enum):
     """ Apply no preprocessing """
     NORMALIZE_NUM = 5
     """ Normalize word including numbers"""
+
 
 def parse_preprocess_word_type(type_str):
     """
@@ -49,7 +51,7 @@ def parse_preprocess_word_type(type_str):
     except KeyError:
         raise KeyError("preprocess must be one of {} but is '{}'"
                        .format([k.lower() for k in list(
-                           PreprocessWordType.__members__.keys())],
+            PreprocessWordType.__members__.keys())],
                                type_str))
     return preprocess_type
 
@@ -117,6 +119,7 @@ def extract_window_size(config, default=10):
         raise ValueError('window must be at least 1')
     return window
 
+
 def extract_years_filter(config):
     """
     Extract min and max years to filter data from "years_filter" dictionary value the query
@@ -129,13 +132,13 @@ def extract_years_filter(config):
     :return: min_year, max_year
     :rtype: int, int
     """
-    
+
     if "years_filter" not in config:
         raise ValueError('years_filter value not found in the config file')
     else:
-        years= config["years_filter"]
-        year_min=years.split("-")[0]
-        year_max=years.split("-")[1]
+        years = config["years_filter"]
+        year_min = years.split("-")[0]
+        year_max = years.split("-")[1]
     return year_min, year_max
 
 
@@ -153,12 +156,11 @@ def extract_output_path(config):
     """
 
     if "output_path" not in config:
-        output_path="."
+        output_path = "."
     else:
-        output_path= config["output_path"]
+        output_path = config["output_path"]
 
     return output_path
-
 
 
 def normalize(word):
@@ -173,6 +175,7 @@ def normalize(word):
     """
     return re.sub(NON_AZ_REGEXP, '', word.lower())
 
+
 def normalize_including_numbers(word):
     """
     Normalize a word by converting it to lower-case and removing all
@@ -183,7 +186,7 @@ def normalize_including_numbers(word):
     :return: normalized word
     :rtype word: str or unicode
     """
-    
+
     return re.sub(NON_AZ_19_REGEXP, '', word.lower())
 
 
@@ -255,46 +258,50 @@ def preprocess_word(word, preprocess_type=PreprocessWordType.NONE):
     elif preprocess_type == PreprocessWordType.NORMALIZE_NUM:
         normalized_word = normalize_including_numbers(word)
         preprocessed_word = normalized_word
-    
+
     else:  # PreprocessWordType.NONE or unknown
         preprocessed_word = word
     return preprocessed_word
 
+
 def longsfix_sentence(sentence, defoe_path, os_type):
     if "'" in sentence:
-        sentence=sentence.replace("'", "\'\\\'\'")
-    
-    cmd = 'printf \'%s\' \''+ sentence + '\' | '+ defoe_path + 'defoe/long_s_fix/' + os_type + '/lxtransduce -l spelling='+ defoe_path+ 'defoe/long_s_fix/f-to-s.lex '+ defoe_path+ 'defoe/long_s_fix/fix-spelling.gr'
+        sentence = sentence.replace("'", "\'\\\'\'")
+
+    cmd = 'printf \'%s\' \'' + sentence + '\' | ' + defoe_path + 'defoe/long_s_fix/' + os_type + '/lxtransduce -l spelling=' + defoe_path + 'defoe/long_s_fix/f-to-s.lex ' + defoe_path + 'defoe/long_s_fix/fix-spelling.gr'
 
     try:
-        proc=subprocess.Popen(cmd.encode('utf-8'), shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = subprocess.Popen(cmd.encode('utf-8'), shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE)
         stdout, stderr = proc.communicate()
-    
+
         if "Error" in str(stderr):
             print("---Err: '{}'".format(stderr))
             stdout_value = sentence
         else:
-             stdout_value = stdout
-    
-        fix_s= stdout_value.decode('utf-8').split('\n')[0]
+            stdout_value = stdout
+
+        fix_s = stdout_value.decode('utf-8').split('\n')[0]
     except:
-        fix_s=sentence
+        fix_s = sentence
     if re.search('[aeiou]fs', fix_s):
-        fix_final=re.sub('fs', 'ss', fix_s)
+        fix_final = re.sub('fs', 'ss', fix_s)
     else:
         fix_final = fix_s
     return fix_final
 
+
 def spacy_nlp(text, lang_model):
-   nlp = spacy.load(lang_model)
-   doc = nlp(text)
-   return doc
+    nlp = spacy.load(lang_model)
+    doc = nlp(text)
+    return doc
+
 
 def serialize_doc(doc):
-   nlp = spacy.load('en')
-   vocab_bytes = nlp.vocab.to_bytes()
-   doc_bytes = doc.to_bytes()
-   return doc_bytes, vocab_bytes
+    nlp = spacy.load('en')
+    vocab_bytes = nlp.vocab.to_bytes()
+    doc_bytes = doc.to_bytes()
+    return doc_bytes, vocab_bytes
 
 
 def serialize_spacy(text):
@@ -306,93 +313,95 @@ def serialize_spacy(text):
 def deserialize_doc(serialized_bytes):
     vocab = Vocab()
     doc_bytes = serialized_bytes[0]
-    vocab_bytes= serialized_bytes[1]
+    vocab_bytes = serialized_bytes[1]
     vocab.from_bytes(vocab_bytes)
     doc = Doc(vocab).from_bytes(doc_bytes)
     return doc
 
+
 def display_spacy(doc):
-    disp_ent=''
+    disp_ent = ''
     if doc.ents:
-        disp_ent=displacy.render(doc, style="ent")
+        disp_ent = displacy.render(doc, style="ent")
     return disp_ent
-   
+
+
 def spacy_entities(doc):
-    output_total=[]
-    entities=[(i, i.label_, i.label) for i in doc.ents]
+    output_total = []
+    entities = [(i, i.label_, i.label) for i in doc.ents]
     return entities
 
+
 def xml_geo_entities(doc):
-    id=0
-    xml_doc='<placenames> '
-    flag=0
+    id = 0
+    xml_doc = '<placenames> '
+    flag = 0
     for ent in doc.ents:
-       if ent.label_ == "LOC" or ent.label_ == "GPE":
-            id=id+1
+        if ent.label_ == "LOC" or ent.label_ == "GPE":
+            id = id + 1
             toponym = ent.text
-            child ='<placename id="' + str(id) + '" name="' + toponym + '"/> '
-            xml_doc= xml_doc+child
-            flag=1
-    xml_doc=xml_doc+ '</placenames>'
+            child = '<placename id="' + str(id) + '" name="' + toponym + '"/> '
+            xml_doc = xml_doc + child
+            flag = 1
+    xml_doc = xml_doc + '</placenames>'
     return flag, xml_doc
 
 
 def xml_geo_entities_snippet(doc):
-    snippet= {}
-    id=0
-    xml_doc='<placenames> '
-    flag=0
-    index=0
+    snippet = {}
+    id = 0
+    xml_doc = '<placenames> '
+    flag = 0
+    index = 0
     for token in doc:
         if token.ent_type_ == "LOC" or token.ent_type_ == "GPE":
-            id=id+1
+            id = id + 1
             toponym = token.text
-            child ='<placename id="' + str(id) + '" name="' + toponym + '"/> '
-            xml_doc= xml_doc+child
-            flag=1
+            child = '<placename id="' + str(id) + '" name="' + toponym + '"/> '
+            xml_doc = xml_doc + child
+            flag = 1
             left_index = index - 5
-            if left_index <=0:
+            if left_index <= 0:
                 left_index = 0
-         
+
             right_index = index + 6
             if right_index >= len(doc):
                 right_index = len(doc)
-            
-            left=doc[left_index:index]
-            right=doc[index+1:right_index]
-            snippet_er=""
-            for i in left:
-                snippet_er+= i.text + " "
-            snippet_er+= token.text + " "
-            for i in right:         
-                snippet_er+= i.text + " "
 
-            snippet_id=toponym+"-"+str(id)
-            snippet[snippet_id]=snippet_er
-        index+=1
-    xml_doc=xml_doc+ '</placenames>'
+            left = doc[left_index:index]
+            right = doc[index + 1:right_index]
+            snippet_er = ""
+            for i in left:
+                snippet_er += i.text + " "
+            snippet_er += token.text + " "
+            for i in right:
+                snippet_er += i.text + " "
+
+            snippet_id = toponym + "-" + str(id)
+            snippet[snippet_id] = snippet_er
+        index += 1
+    xml_doc = xml_doc + '</placenames>'
     return flag, xml_doc, snippet
 
-        
 
 def georesolve_cmd(in_xml, defoe_path, gazetteer, bounding_box):
-    georesolve_xml =''
-    atempt=0
+    georesolve_xml = ''
+    atempt = 0
     flag = 1
     if "'" in in_xml:
-        in_xml=in_xml.replace("'", "\'\\\'\'")
+        in_xml = in_xml.replace("'", "\'\\\'\'")
 
-    cmd = 'printf \'%s\' \''+ in_xml + '\' | '+ defoe_path + 'georesolve/scripts/geoground -g ' + gazetteer + ' ' + bounding_box + ' -top'
+    cmd = 'printf \'%s\' \'' + in_xml + '\' | ' + defoe_path + 'georesolve/scripts/geoground -g ' + gazetteer + ' ' + bounding_box + ' -top'
     while (len(georesolve_xml) < 5) and (atempt < 1000) and (flag == 1):
-        proc=subprocess.Popen(cmd.encode('utf-8'), shell=True,
-                               stdin=subprocess.PIPE,
-                               stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE)
+        proc = subprocess.Popen(cmd.encode('utf-8'), shell=True,
+                                stdin=subprocess.PIPE,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE)
         stdout, stderr = proc.communicate()
         if "Error" in str(stderr):
             flag = 0
             print("err: '{}'".format(stderr))
-            georesolve_xml =  ''
+            georesolve_xml = ''
         else:
             if stdout == in_xml:
                 georesolve_xml = ''
@@ -401,9 +410,10 @@ def georesolve_cmd(in_xml, defoe_path, gazetteer, bounding_box):
         atempt += 1
     return georesolve_xml
 
+
 def coord_xml(geo_xml):
     dResolvedLocs = {}
-    if len(geo_xml)>5:
+    if len(geo_xml) > 5:
         root = etree.fromstring(geo_xml)
         for child in root:
             toponymName = child.attrib["name"]
@@ -413,7 +423,7 @@ def coord_xml(geo_xml):
             pop = ''
             in_cc = ''
             type = ''
-            if len(child) >= 1 :
+            if len(child) >= 1:
                 for subchild in child:
                     if "lat" in subchild.attrib:
                         latitude = subchild.attrib["lat"]
@@ -425,15 +435,16 @@ def coord_xml(geo_xml):
                         in_cc = subchild.attrib["in-cc"]
                     if "type" in subchild.attrib:
                         type = subchild.attrib["type"]
-                    dResolvedLocs[toponymName+"-"+toponymId] = (latitude, longitude, pop, in_cc, type)
-        dResolvedLocs[toponymName+"-"+toponymId] = (latitude, longitude, pop, in_cc, type)
+                    dResolvedLocs[toponymName + "-" + toponymId] = (latitude, longitude, pop, in_cc, type)
+        dResolvedLocs[toponymName + "-" + toponymId] = (latitude, longitude, pop, in_cc, type)
     else:
-        dResolvedLocs["cmd"]="Problems!"
+        dResolvedLocs["cmd"] = "Problems!"
     return dResolvedLocs
+
 
 def coord_xml_snippet(geo_xml, snippet):
     dResolvedLocs = {}
-    if len(geo_xml)>5:
+    if len(geo_xml) > 5:
         root = etree.fromstring(geo_xml)
         for child in root:
             toponymName = child.attrib["name"]
@@ -443,10 +454,10 @@ def coord_xml_snippet(geo_xml, snippet):
             pop = ''
             in_cc = ''
             type = ''
-            snippet_id=toponymName+"-"+toponymId
-            snippet_er=snippet[snippet_id]
-            
-            if len(child) >= 1 :
+            snippet_id = toponymName + "-" + toponymId
+            snippet_er = snippet[snippet_id]
+
+            if len(child) >= 1:
                 for subchild in child:
                     if "lat" in subchild.attrib:
                         latitude = subchild.attrib["lat"]
@@ -458,61 +469,73 @@ def coord_xml_snippet(geo_xml, snippet):
                         in_cc = subchild.attrib["in-cc"]
                     if "type" in subchild.attrib:
                         type = subchild.attrib["type"]
-                    snippet_id=toponymName+"-"+toponymId
-                    snippet_er=snippet[snippet_id]
-                    dResolvedLocs[snippet_id] = {"lat": latitude, "long": longitude, "pop": pop, "in-cc":in_cc, "type": type, "snippet": snippet_er}
-        dResolvedLocs[snippet_id] = {"lat": latitude, "long": longitude, "pop": pop, "in-cc":in_cc, "type": type, "snippet": snippet_er}
+                    snippet_id = toponymName + "-" + toponymId
+                    snippet_er = snippet[snippet_id]
+                    dResolvedLocs[snippet_id] = {"lat": latitude, "long": longitude, "pop": pop, "in-cc": in_cc,
+                                                 "type": type, "snippet": snippet_er}
+        dResolvedLocs[snippet_id] = {"lat": latitude, "long": longitude, "pop": pop, "in-cc": in_cc, "type": type,
+                                     "snippet": snippet_er}
     else:
-        dResolvedLocs["cmd"]="Georesolver_Empty"
+        dResolvedLocs["cmd"] = "Georesolver_Empty"
     return dResolvedLocs
+
 
 def geomap_cmd(in_xml, defoe_path, os_type, gazetteer, bounding_box):
     geomap_html = ''
-    atempt=0
+    atempt = 0
     if "'" in in_xml:
-        in_xml=in_xml.replace("'", "\'\\\'\'")
-    cmd = 'printf \'%s\' \''+ in_xml + ' \' | ' + defoe_path+ 'georesolve/scripts/geoground -g ' + gazetteer + ' ' +bounding_box + ' -top | ' + defoe_path + 'georesolve/bin/' + os_type + '/lxt -s ' + defoe_path + 'georesolve/lib/georesolve/gazmap-leaflet.xsl'
+        in_xml = in_xml.replace("'", "\'\\\'\'")
+    cmd = 'printf \'%s\' \'' + in_xml + ' \' | ' + defoe_path + 'georesolve/scripts/geoground -g ' + gazetteer + ' ' + bounding_box + ' -top | ' + defoe_path + 'georesolve/bin/' + os_type + '/lxt -s ' + defoe_path + 'georesolve/lib/georesolve/gazmap-leaflet.xsl'
 
-    while (len(geomap_html) < 5) and (atempt < 1000): 
-        proc=subprocess.Popen(cmd.encode('utf-8'), shell=True,
-                               stdin=subprocess.PIPE,
-                               stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE)
+    while (len(geomap_html) < 5) and (atempt < 1000):
+        proc = subprocess.Popen(cmd.encode('utf-8'), shell=True,
+                                stdin=subprocess.PIPE,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE)
         geomap_html = proc.communicate(timeout=100)[0]
-        atempt+= 1
+        atempt += 1
     return geomap_html.decode("utf-8")
 
 
 def geoparser_cmd(text, defoe_path, os_type, gazetteer, bounding_box):
-    atempt=0
+    atempt = 0
     flag = 1
     geoparser_xml = ''
+    if "-" in text:
+        text = text.replace("-", "")
+    if "\\" in text:
+        text = text.replace("\\", "")
     if "'" in text:
-        text=text.replace("'", "\'\\\'\'")
-   
-    cmd = 'echo \'%s\' \''+ text + '\' | '+ defoe_path + 'geoparser-v1.1/scripts/run -t plain -g ' + gazetteer + ' ' + bounding_box + ' -top | ' + defoe_path+ 'georesolve/bin/'+ os_type + '/lxreplace -q s | '+ defoe_path + 'geoparser-v1.1/bin/'+ os_type +'/lxt -s '+ defoe_path+'geoparser-v1.1/lib/georesolve/addfivewsnippet.xsl'
+        text = text.replace("'", "\'\\\'\'")
 
-    
+    cmd = 'echo \'%s\' \'' + text + '\' | ' + defoe_path + 'geoparser-1.3/scripts/run -t plain -g ' + gazetteer + ' ' + bounding_box + ' -top | ' + defoe_path + 'georesolve/bin/' + os_type + '/lxreplace -q s | ' + defoe_path + 'geoparser-1.3/bin/' + os_type + '/lxt -s ' + defoe_path + 'others/addfivewsnippet.xsl'
+
     while (len(geoparser_xml) < 5) and (atempt < 1000) and (flag == 1):
-        proc=subprocess.Popen(cmd.encode('utf-8'), shell=True,
-                               stdin=subprocess.PIPE,
-                               stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE)
+        proc = subprocess.Popen(cmd.encode('utf-8'), shell=True,
+                                stdin=subprocess.PIPE,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE)
         stdout, stderr = proc.communicate()
         if "Error" in str(stderr):
             flag = 0
+            print("----BEGIN %s----" % atempt)
             print("err: '{}'".format(stderr))
+            print("stdout: '{}'".format(stdout))
+            print("Text error: %s" % text)
+            print("Text error in UTF-8: %s" % text.encode(encoding='UTF-8'))
+            print("----END %s----" % atempt)
         else:
             geoparser_xml = stdout
-        atempt+= 1
+        atempt += 1
     return geoparser_xml
+
 
 def geoparser_coord_xml(geo_xml):
     dResolvedLocs = dict()
     try:
         root = etree.fromstring(geo_xml)
         for element in root.iter():
-              
+
             if element.tag == "ent":
                 if element.attrib["type"] == "location":
                     latitude = element.attrib["lat"]
@@ -523,13 +546,13 @@ def geoparser_coord_xml(geo_xml):
                     else:
                         in_cc = ''
                     if "pop-size" in element.attrib:
-                        pop =  element.attrib["pop-size"]
+                        pop = element.attrib["pop-size"]
                     else:
                         pop = ''
                     if "feat-type" in element.attrib:
                         type = element.attrib["feat-type"]
                     else:
-                        type=''
+                        type = ''
                     if "snippet" in element.attrib:
                         snippet_er = element.attrib["snippet"]
                     else:
@@ -538,14 +561,17 @@ def geoparser_coord_xml(geo_xml):
                         if subchild.tag == "parts":
                             for subsubchild in subchild:
                                 toponymName = subsubchild.text
-                                #print(toponymName, latitude, longitude)
-                                dResolvedLocs[toponymName+"-"+toponymId] = {"lat": latitude, "long": longitude, "pop": pop, "in-cc":in_cc, "type": type, "snippet": snippet_er}
+                                # print(toponymName, latitude, longitude)
+                                dResolvedLocs[toponymName + "-" + toponymId] = {"lat": latitude, "long": longitude,
+                                                                                "pop": pop, "in-cc": in_cc,
+                                                                                "type": type, "snippet": snippet_er}
     except:
         pass
     return dResolvedLocs
 
+
 def geoparser_text_xml(geo_xml):
-    text_ER=[]
+    text_ER = []
     try:
         root = etree.fromstring(geo_xml)
         for element in root.iter():
@@ -555,175 +581,175 @@ def geoparser_text_xml(geo_xml):
                         for subsubchild in subchild:
                             for subsubsubchild in subsubchild:
                                 if subsubsubchild.tag == "w":
-                                    inf={}
-                                    inf['p']= subsubsubchild.attrib["p"]
+                                    inf = {}
+                                    inf['p'] = subsubsubchild.attrib["p"]
                                     inf['group'] = subsubsubchild.attrib["group"]
                                     inf['id'] = subsubsubchild.attrib["id"]
                                     inf['pws'] = subsubsubchild.attrib["pws"]
                                     if "locname" in subsubsubchild.attrib.keys():
                                         inf['locname'] = subsubsubchild.attrib["locname"]
-                                    text_ER.append((subsubsubchild.text,inf))
-                   
+                                    text_ER.append((subsubsubchild.text, inf))
+
 
     except:
         pass
     return text_ER
 
+
 def create_es_index(es_index, force_creation):
-        """
+    """
         Create specified index if it doesn't already exist
         :param es_index: the name of the ES index
         :param force_creation: delete the original index and create a brand new index
         :return: bool created
         """
-        created = False
-        es_index_settings = {
-            "settings": {
-                "number_of_shards": 1,
-                "number_of_replicas": 0
-            },
-            "mappings": {
-                "properties": {
-                    settings.TITLE: {
-                        "type": "text",
-                        "fields": {
-                            "keyword": {
-                                "type": "keyword"
-                            }
-                        }},
-                    settings.AUTHOR: {
-                        "type": "text",
-                        "fields": {
-                            "keyword": {
-                                "type": "keyword"
-                            }
-                        }},
-                    settings.EDITION: {
-                        "type": "text",
-                        "fields": {
-                            "keyword": {
-                                "type": "keyword"
-                            }
-                        }},
-                    settings.YEAR: {
-                        "type": "text",
-                        "fields": {
-                            "date": {
-                                "type": "date",
-                                "format": "yyyy"
-                            }
+    created = False
+    es_index_settings = {
+        "settings": {
+            "number_of_shards": 1,
+            "number_of_replicas": 0
+        },
+        "mappings": {
+            "properties": {
+                settings.TITLE: {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword"
                         }
-                    },
-                    settings.PLACE: {
-                        "type": "text",
-                        "fields": {
-                            "keyword": {
-                                "type": "keyword"
-                            }
+                    }},
+                settings.AUTHOR: {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword"
                         }
-                    },
-                    settings.ARCHIVE_FILENAME: {
-                        "type": "text",
-                        "fields": {
-                            "keyword": {
-                                "type": "keyword"
-                            }
+                    }},
+                settings.EDITION: {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword"
                         }
-                    },
-                    settings.SOURCE_TEXT_FILENAME: {
-                        "type": "text",
-                        "fields": {
-                            "keyword": {
-                                "type": "keyword"
-                            }
+                    }},
+                settings.YEAR: {
+                    "type": "text",
+                    "fields": {
+                        "date": {
+                            "type": "date",
+                            "format": "yyyy"
                         }
-                    },
-                    settings.TEXT_UNIT: {
-                        "type": "text",
-                        "fields": {
-                            "keyword": {
-                                "type": "keyword"
-                            }
+                    }
+                },
+                settings.PLACE: {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword"
                         }
-                    },
-                    settings.TEXT_UNIT_ID: {
-                        "type": "text",
-                        "fields": {
-                            "keyword": {
-                                "type": "keyword"
-                            }
+                    }
+                },
+                settings.ARCHIVE_FILENAME: {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword"
                         }
-                    },
-                    settings.NUM_TEXT_UNIT: {
-                        "type": "long",
-                    },
-                    settings.TYPE_ARCHIVE: {
-                        "type": "text",
-                        "fields": {
-                            "keyword": {
-                                "type": "keyword"
-                            }
+                    }
+                },
+                settings.SOURCE_TEXT_FILENAME: {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword"
                         }
-                    },
-                    settings.MODEL: {
-                        "type": "text",
-                        "fields": {
-                            "keyword": {
-                                "type": "keyword"
-                            }
+                    }
+                },
+                settings.TEXT_UNIT: {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword"
                         }
-                    },
-                    settings.SOURCE_TEXT_CLEAN: {
-                        "type": "text",
-                        "fields": {
-                            "keyword": {
-                                "type": "keyword"
-                            }
+                    }
+                },
+                settings.TEXT_UNIT_ID: {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword"
                         }
-                    },
-                    settings.NUM_WORDS: {
-                        "type": "text",
-                        "fields": {
-                            "integer": {
-                                "type": "integer"
-                            }
+                    }
+                },
+                settings.NUM_TEXT_UNIT: {
+                    "type": "long",
+                },
+                settings.TYPE_ARCHIVE: {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword"
                         }
-                    },
-                    settings.BOOK_ID: {
-                        "type": "text",
-                        "fields": {
-                            "integer": {
-                                "type": "integer"
-                            }
+                    }
+                },
+                settings.MODEL: {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword"
                         }
-                    },
-                    "misc": {
-                        "type": "text",
-                        "fields": {
-                            "keyword": {
-                                "type": "keyword"
-                            }
+                    }
+                },
+                settings.SOURCE_TEXT_CLEAN: {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword"
                         }
-                    },
-                }
+                    }
+                },
+                settings.NUM_WORDS: {
+                    "type": "text",
+                    "fields": {
+                        "integer": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                settings.BOOK_ID: {
+                    "type": "text",
+                    "fields": {
+                        "integer": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "misc": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword"
+                        }
+                    }
+                },
             }
         }
-        try:
-            # Overwrite without checking if force param supplied
-            if force_creation:
-                # Explicitly delete in this case
-                if Elasticsearch.get_instance().indices.exists(es_index):
-                    Elasticsearch.get_instance().indices.delete(index=es_index)
-                # Ignore 400 means to ignore "Index Already Exist" error.
-                Elasticsearch.get_instance().indices.create(index=es_index, ignore=400, body=es_index_settings)
-                # self.es.indices.create(index=es_index, ignore=400)
-                created = True
-            else:
-                # Doesn't already exist so we can create it
-                Elasticsearch.get_instance().indices.create(index=es_index, ignore=400, body=es_index_settings)
-                created = True
-        except Exception as ex:
-            print('Error creating %s: %s' %(es_index, ex))
-        finally:
-            return created
-
+    }
+    try:
+        # Overwrite without checking if force param supplied
+        if force_creation:
+            # Explicitly delete in this case
+            if Elasticsearch.get_instance().indices.exists(es_index):
+                Elasticsearch.get_instance().indices.delete(index=es_index)
+            # Ignore 400 means to ignore "Index Already Exist" error.
+            Elasticsearch.get_instance().indices.create(index=es_index, ignore=400, body=es_index_settings)
+            # self.es.indices.create(index=es_index, ignore=400)
+            created = True
+        else:
+            # Doesn't already exist so we can create it
+            Elasticsearch.get_instance().indices.create(index=es_index, ignore=400, body=es_index_settings)
+            created = True
+    except Exception as ex:
+        print('Error creating %s: %s' % (es_index, ex))
+    finally:
+        return created

@@ -1,3 +1,4 @@
+import time
 from concurrent import futures
 import threading
 import traceback
@@ -97,7 +98,8 @@ class DefoeService:
                 return
 
         query = model.get_queries()[query_name]
-
+        jobs[id].start_time = time.time()
+        print("job started, start time: ", jobs[id].start_time)
         spark = self.get_spark_context()
         log = spark._jvm.org.apache.log4j.LogManager.getLogger(__name__)  # pylint: disable=protected-access
 
@@ -119,6 +121,9 @@ class DefoeService:
             jobs[id].done = True
             jobs[id].error = repr(error)
             if result != None:
+                duration = time.time() - jobs[id].start_time
+                print("job finished!. it starts from", jobs[id].start_time, ", it takes ", duration)
+                jobs[id].duration = duration
                 os.makedirs(os.path.dirname(query_config["result_file_path"]), exist_ok=True)
                 with open(query_config["result_file_path"], "w") as f:
                     f.write(yaml.safe_dump(dict(result)))
