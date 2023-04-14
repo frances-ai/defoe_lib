@@ -4,11 +4,11 @@ Use this query ONLY for searching in the EB articles stored in the Knowledge Gra
 """
 
 from operator import add
-from defoe_lib.defoe import query_utils
-from defoe_lib.defoe.sparql.query_utils import get_articles_list_matches, blank_as_null, get_articles_text_matches
+from defoe import query_utils
+from defoe.sparql.query_utils import get_articles_list_matches, blank_as_null, get_articles_text_matches
 from pyspark.sql import SQLContext
 from pyspark.sql.functions import col, when
-from defoe_lib.defoe.nls.query_utils import preprocess_clean_page
+from defoe.nls.query_utils import preprocess_clean_page
 import yaml, os
 from functools import partial, reduce
 
@@ -119,7 +119,7 @@ def do_query(df, config=None, logger=None, context=None):
 
     if data_file:
         keysentences = []
-        with open(data_file, 'r') as f:
+        with data_file.open('r') as f:
             for keysentence in list(f):
                 k_split = keysentence.split()
                 sentence_word = [query_utils.preprocess_word(

@@ -1,5 +1,5 @@
 lxml>=3.7.3
-nltk>=3.4
+nltk>=3.8.1
 pep8>=1.7.0
 pillow>=4.0.0
 pylint>=1.6.4

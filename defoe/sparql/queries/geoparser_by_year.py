@@ -4,11 +4,11 @@ We recommend to use this query when we want to select a window of words (snippet
 all the words of the page in which the term was found.
 """
 
-from defoe_lib.defoe import query_utils
-from defoe_lib.defoe.sparql.query_utils import get_articles_list_matches, blank_as_null
+from defoe import query_utils, get_root_path, get_geo_supported_os_type
+from defoe.sparql.query_utils import get_articles_list_matches, blank_as_null
 
-from defoe_lib.defoe.nls.query_utils import preprocess_clean_page
-from defoe_lib import get_root_path, get_geo_supported_os_type
+from defoe.nls.query_utils import preprocess_clean_page
+
 import yaml, os
 from functools import reduce
 
@@ -123,7 +123,12 @@ def do_query(df, config=None, logger=None, context=None):
         bounding_box = ""
 
     defoe_path = get_root_path() + "/"
+    print(defoe_path)
     os_type = get_geo_supported_os_type()
+
+    test_sentence = "I like to live in Edinburgh, which is one of the Scottish cities."
+
+    print(query_utils.geoparser_cmd(test_sentence, defoe_path, os_type, gazetteer, bounding_box))
 
 
     ###### Supporting New NLS KG #######
@@ -217,7 +222,7 @@ def do_query(df, config=None, logger=None, context=None):
 
     if data_file:
         keysentences = []
-        with open(data_file, 'r') as f:
+        with data_file.open('r') as f:
             for keysentence in list(f):
                 k_split = keysentence.split()
                 sentence_word = [query_utils.preprocess_word(
@@ -310,6 +315,7 @@ def do_query(df, config=None, logger=None, context=None):
               "numWords": sentence_data[10],
               "uri": sentence_data[1],
               "georesolution": query_utils.geoparser_coord_xml(sentence_data[12])}))
+
 
     result = geo_data \
         .groupByKey() \

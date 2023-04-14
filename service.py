@@ -9,7 +9,7 @@ import os
 import importlib
 from pyspark.sql import SparkSession
 
-import defoe_lib.defoe.sparql as sparql
+import defoe.sparql as sparql
 
 num_cores = 34
 executor_memory = "6g"
