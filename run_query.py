@@ -64,8 +64,8 @@ from defoe.spark_utils import files_to_rdd
 def create_arg_parser():  # pragma: no cover
     parser = argparse.ArgumentParser(
         description='Submit a defoe query')
-    parser.add_argument('--query_name', help='name of defoe query')
-    parser.add_argument('--model_name', help='name of data model')
+    parser.add_argument('--query_name', help='name of defoe query', required=True)
+    parser.add_argument('--model_name', help='name of data model', required=True)
     parser.add_argument('--endpoint', help='endpoint of dataset')
     parser.add_argument('--kg_type', help='type of knowledge graph', default=None)
     parser.add_argument('--preprocess', help='preprocess name', default=None)
@@ -75,10 +75,12 @@ def create_arg_parser():  # pragma: no cover
     parser.add_argument('--end_year', help='target_sentences', default=None)
     parser.add_argument('--hit_count', help='target_sentences', default=None)
     parser.add_argument('--window', help='target_sentences', default=None)
+    parser.add_argument('--gazetteer', help='gazetteer', default=None)
+    parser.add_argument('--bounding_box', help='bounding_box', default=None)
     parser.add_argument('--data', metavar='input file', default=None,
                         help='file containing input dataset in TXT')
     parser.add_argument('--result_file_path', metavar='result_file',
-                        help='result_file stored in google cloud storage')
+                        help='result_file stored in google cloud storage', required=True)
     return parser
 
 
@@ -119,6 +121,12 @@ def load_inputs(args, bucket):
 
     if args.window is not None:
         query_config['window'] = args.window
+
+    if args.gazetteer is not None:
+        query_config['gazetteer'] = args.gazetteer
+
+    if args.bounding_box is not None:
+        query_config['bounding_box'] = args.bounding_box
 
     return query_config, query_name, model_name, endpoint, result_file_path
 
