@@ -211,7 +211,7 @@ def do_query(df, config=None, logger=None, context=None):
             lambda t_articles: [
                 (t_articles[0], t_articles[1], t_articles[2], t_articles[3], t_articles[4], t_articles[5],
                  t_articles[6], t_articles[7], t_articles[8], t_articles[9], t_articles[10],
-                 preprocess_clean_page(t_articles[10] + " " + t_articles[11], preprocess_type)), t_articles[11]])
+                 preprocess_clean_page(t_articles[10] + " " + t_articles[11], preprocess_type), t_articles[11])])
     else:
         # (year-0, uri-1, title-2, serie-3, archive_filename-4, volume-5, volumeTitle-6, part-7, page_number-8, volumeId-9, numWords-10, preprocess_article-11, unprocess_articles-12)
         preprocess_articles = articles.flatMap(
@@ -280,7 +280,7 @@ def do_query(df, config=None, logger=None, context=None):
              year_page[9],
              year_page[10],
              year_page[11],
-             query_utils.geoparser_cmd(year_page[12], defoe_path, os_type, gazetteer, bounding_box))])
+             query_utils.get_geoparser_xml(year_page[12], defoe_path, os_type, gazetteer, bounding_box))])
 
     if kg_type == "total_eb":
         # [(year-0, uri-1, title-2, edition-3, archive_filename-4, volume-5, letters-6, part-7, page_number-8, header-9, term-10, preprocess_article-11 )]

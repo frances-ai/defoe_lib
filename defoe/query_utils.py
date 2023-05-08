@@ -3,6 +3,7 @@ Query-related utility functions and types.
 """
 
 import os
+import textwrap
 import time
 import subprocess
 import re
@@ -509,25 +510,83 @@ def geoparser_cmd(text, defoe_path, os_type, gazetteer, bounding_box):
         text = text.replace("'", "\'\\\'\'")
 
     cmd = 'echo \'%s\' \'' + text + '\' | ' + defoe_path + 'geoparser-1.3/scripts/run -t plain -g ' + gazetteer + ' ' + bounding_box + ' -top | ' + defoe_path + 'georesolve/bin/' + os_type + '/lxreplace -q s | ' + defoe_path + 'geoparser-1.3/bin/' + os_type + '/lxt -s ' + defoe_path + 'geoparser-1.3/lib/georesolve/addfivewsnippet.xsl'
-    print(cmd)
     while (len(geoparser_xml) < 5) and (atempt < 1000) and (flag == 1):
-        proc = subprocess.Popen(cmd.encode('utf-8'), shell=True,
-                                stdin=subprocess.PIPE,
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE)
-        stdout, stderr = proc.communicate()
-        if "Error" in str(stderr):
-            flag = 0
-            print("----BEGIN %s----" % atempt)
-            print("err: '{}'".format(stderr))
-            print("stdout: '{}'".format(stdout))
-            print("Text error: %s" % text)
-            print("Text error in UTF-8: %s" % text.encode(encoding='UTF-8'))
-            print("----END %s----" % atempt)
-        else:
-            geoparser_xml = stdout
-        atempt += 1
-    print(geoparser_xml)
+        try:
+            proc = subprocess.Popen(cmd.encode('utf-8'), shell=True,
+                                    stdin=subprocess.PIPE,
+                                    stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE)
+            stdout, stderr = proc.communicate()
+            if "Error" in str(stderr):
+                flag = 0
+                print("----BEGIN %s----" % atempt)
+                print("err: '{}'".format(stderr))
+                print("stdout: '{}'".format(stdout))
+                print("Text error: %s" % text)
+                print("Text error in UTF-8: %s" % text.encode(encoding='UTF-8'))
+                print("----END %s----" % atempt)
+            else:
+                geoparser_xml = stdout
+            atempt += 1
+        except Exception as e:
+            raise Exception("text: {}, error: {}".format(text, e))
+
+    return geoparser_xml
+
+
+def combine_geoparser_xmls(main_xml, cont_xml, chunk_id):
+    if main_xml == "":
+        return cont_xml
+
+    if cont_xml == "":
+        return main_xml
+
+    main_root = etree.fromstring(main_xml)
+    cont_root = etree.fromstring(cont_xml)
+
+    # add all children elements of <p> tag in cont_root to main_root
+    main_p_element = main_root.find(".//p")
+    cont_p_element = cont_root.find(".//p")
+    for cont_p_child in cont_p_element:
+        cont_p_child.attrib["chunk"] = chunk_id
+        main_p_element.append(cont_p_child)
+
+    # two type of <ents>: <ents source="ner-rb">, <ents source="events">
+    # add all children elements of <ents source="ner-rb"> tag in cont_root to main_root
+    main_ents_elements = main_root.findall(".//ents")
+    cont_ents_elements = cont_root.findall(".//ents")
+    main_ents_rb_element = main_ents_elements[0]
+    cont_ents_rb_element = cont_ents_elements[0]
+    for cont_ents_rb_child in cont_ents_rb_element:
+        cont_ents_rb_child.attrib["chunk"] = chunk_id
+        main_ents_rb_element.append(cont_ents_rb_child)
+
+    # add all children elements of <ents source="events"> tag in cont_root to main_root
+    main_ents_events_element = main_ents_elements[1]
+    cont_ents_events_element = cont_ents_elements[1]
+    for cont_ents_events_child in cont_ents_events_element:
+        cont_ents_events_child.attrib["chunk"] = chunk_id
+        main_ents_events_element.append(cont_ents_events_child)
+
+    # add all children elements of <relations> tag in cont_root to main_root
+    main_relations_element = main_root.find(".//relations")
+    cont_relations_element = cont_root.find(".//relations")
+    for cont_relations_child in cont_relations_element:
+        cont_relations_child.attrib["chunk"] = chunk_id
+        main_relations_element.append(cont_relations_child)
+    return etree.tostring(main_root, encoding="utf-8")
+
+
+def get_geoparser_xml(text, defoe_path, os_type, gazetteer, bounding_box):
+    MAX_LENGTH = 100000
+    text_chunks = textwrap.wrap(text, MAX_LENGTH, break_long_words=False)
+    geoparser_xml = ""
+    chunk_count = 0
+    for text_chunk in text_chunks:
+        geoparser_xml = combine_geoparser_xmls(geoparser_xml,
+                                               geoparser_cmd(text_chunk, defoe_path, os_type, gazetteer, bounding_box),
+                                               str(chunk_count))
+        chunk_count += 1
     return geoparser_xml
 
 
