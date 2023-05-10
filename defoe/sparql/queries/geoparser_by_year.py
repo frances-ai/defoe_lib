@@ -126,11 +126,6 @@ def do_query(df, config=None, logger=None, context=None):
     print(defoe_path)
     os_type = get_geo_supported_os_type()
 
-    test_sentence = "I like to live in Edinburgh, which is one of the Scottish cities."
-
-    print(query_utils.geoparser_cmd(test_sentence, defoe_path, os_type, gazetteer, bounding_box))
-
-
     ###### Supporting New NLS KG #######
     if kg_type == "total_eb":
         fdf = df.withColumn("definition", blank_as_null("definition"))
