@@ -172,7 +172,13 @@ def do_query(df, config=None, logger=None, context=None):
 
     if data_file:
         keysentences = []
-        with data_file.open('r') as f:
+        if isinstance(data_file, str):
+            # local file
+            data_stream = open(data_file, 'r')
+        else:
+            # cloud file
+            data_stream = data_file.open('r')
+        with data_stream as f:
             for keysentence in list(f):
                 k_split = keysentence.split()
                 sentence_word = [query_utils.preprocess_word(
