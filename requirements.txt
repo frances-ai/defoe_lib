@@ -12,4 +12,6 @@ spacy
 pyspark
 SPARQLWrapper
 panda
+grpcio
+grpcio-tools
 
