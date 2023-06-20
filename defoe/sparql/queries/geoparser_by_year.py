@@ -217,7 +217,14 @@ def do_query(df, config=None, logger=None, context=None):
 
     if data_file:
         keysentences = []
-        with data_file.open('r') as f:
+        if isinstance(data_file, str):
+            # local file
+            data_stream = open(data_file, 'r')
+        else:
+            # cloud file
+            data_stream = data_file.open('r')
+
+        with data_stream as f:
             for keysentence in list(f):
                 k_split = keysentence.split()
                 sentence_word = [query_utils.preprocess_word(
@@ -311,6 +318,8 @@ def do_query(df, config=None, logger=None, context=None):
               "uri": sentence_data[1],
               "georesolution": query_utils.geoparser_coord_xml(sentence_data[12])}))
 
+    # remove data with no places identified
+    geo_data = geo_data.filter(lambda sentence_data: bool(sentence_data[1]["georesolution"]) and isinstance(sentence_data[1]["georesolution"], dict))
 
     result = geo_data \
         .groupByKey() \
