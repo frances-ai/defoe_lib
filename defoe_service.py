@@ -32,14 +32,6 @@ class Job:
         self._lock = threading.Lock()
 
 
-def get_pre_computed_queries():
-    return {
-        "total_eb_publication_normalized": "precomputedResult/total_eb_publication_normalized.yml",
-        "chapbooks_scotland_publication_normalized": "precomputedResult"
-                                                     "/chapbooks_scotland_publication_normalized.yml"
-    }
-
-
 def get_spark_context():
     build = SparkSession \
         .builder \
@@ -77,12 +69,6 @@ def run_job(id, model_name, query_name, endpoint, query_config, result_file_path
         with job._lock:
             jobs[id].state = "ERROR"
             jobs[id].error = "query not found"
-            return
-
-    if (query_config['kg_type'] + '_' + query_name) in get_pre_computed_queries():
-        with job._lock:
-            jobs[id].state = "DONE"
-            jobs[id].result = get_pre_computed_queries()[(query_config['kg_type'] + '_' + query_name)]
             return
 
     query = model.get_queries()[query_name]

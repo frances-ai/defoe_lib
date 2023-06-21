@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import defoe_pb2 as defoe__pb2
+from . import defoe_pb2 as defoe__pb2
 
 
 class DefoeStub(object):
@@ -12,7 +12,7 @@ class DefoeStub(object):
         """Constructor.
 
         Args:
-            channel: A grpc.Channel.
+            channel: A defoe_grpc.Channel.
         """
         self.submit_job = channel.unary_unary(
                 '/defoe.Defoe/submit_job',

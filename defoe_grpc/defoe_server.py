@@ -1,6 +1,6 @@
 import grpc
-import defoe_pb2_grpc
-import defoe_pb2
+from . import defoe_pb2_grpc
+from . import defoe_pb2
 
 from concurrent import futures
 import logging
