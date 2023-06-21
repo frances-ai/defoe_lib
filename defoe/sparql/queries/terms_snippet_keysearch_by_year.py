@@ -5,10 +5,10 @@ all the words of the page in which the term was found.
 """
 
 from operator import add
-from defoe_lib.defoe import query_utils
-from defoe_lib.defoe.sparql.query_utils import get_articles_list_matches, blank_as_null
-from defoe_lib.defoe.nls.query_utils import get_text_keysentence_idx, get_concordance_string
-from defoe_lib.defoe.nls.query_utils import preprocess_clean_page
+from defoe import query_utils
+from defoe.sparql.query_utils import get_articles_list_matches, blank_as_null
+from defoe.nls.query_utils import get_text_keysentence_idx, get_concordance_string
+from defoe.nls.query_utils import preprocess_clean_page
 
 from pyspark.sql import SQLContext
 from pyspark.sql.functions import col, when
@@ -172,7 +172,13 @@ def do_query(df, config=None, logger=None, context=None):
 
     if data_file:
         keysentences = []
-        with open(data_file, 'r') as f:
+        if isinstance(data_file, str):
+            # local file
+            data_stream = open(data_file, 'r')
+        else:
+            # cloud file
+            data_stream = data_file.open('r')
+        with data_stream as f:
             for keysentence in list(f):
                 k_split = keysentence.split()
                 sentence_word = [query_utils.preprocess_word(

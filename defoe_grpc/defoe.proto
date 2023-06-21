@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package defoe;
+
+service Defoe {
+  rpc submit_job (JobSubmitRequest) returns (JobSubmitResponse) {}
+  rpc get_job (JobRequest) returns (JobResponse) {}
+}
+
+message JobSubmitRequest {
+  string job_id = 1;
+  string model_name = 2;
+  string query_name = 3;
+  string endpoint = 4;
+  map <string, string> query_config = 5;
+  string result_file_path = 6;
+}
+
+message JobSubmitResponse {
+  string job_id = 1;
+}
+
+message JobRequest {
+  string job_id = 1;
+}
+
+message JobResponse {
+  string job_id = 1;
+  string state = 2;
+  string result_file_path = 3;
+  string error = 4;
+}

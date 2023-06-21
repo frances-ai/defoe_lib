@@ -4,11 +4,11 @@ We recommend to use this query when we want to select a window of words (snippet
 all the words of the page in which the term was found.
 """
 
-from defoe_lib.defoe import query_utils
-from defoe_lib.defoe.sparql.query_utils import get_articles_list_matches, blank_as_null
+from defoe import query_utils, get_root_path, get_geo_supported_os_type
+from defoe.sparql.query_utils import get_articles_list_matches, blank_as_null
 
-from defoe_lib.defoe.nls.query_utils import preprocess_clean_page
-from defoe_lib import get_root_path, get_geo_supported_os_type
+from defoe.nls.query_utils import preprocess_clean_page
+
 import yaml, os
 from functools import reduce
 
@@ -123,8 +123,8 @@ def do_query(df, config=None, logger=None, context=None):
         bounding_box = ""
 
     defoe_path = get_root_path() + "/"
+    print(defoe_path)
     os_type = get_geo_supported_os_type()
-
 
     ###### Supporting New NLS KG #######
     if kg_type == "total_eb":
@@ -206,7 +206,7 @@ def do_query(df, config=None, logger=None, context=None):
             lambda t_articles: [
                 (t_articles[0], t_articles[1], t_articles[2], t_articles[3], t_articles[4], t_articles[5],
                  t_articles[6], t_articles[7], t_articles[8], t_articles[9], t_articles[10],
-                 preprocess_clean_page(t_articles[10] + " " + t_articles[11], preprocess_type)), t_articles[11]])
+                 preprocess_clean_page(t_articles[10] + " " + t_articles[11], preprocess_type), t_articles[11])])
     else:
         # (year-0, uri-1, title-2, serie-3, archive_filename-4, volume-5, volumeTitle-6, part-7, page_number-8, volumeId-9, numWords-10, preprocess_article-11, unprocess_articles-12)
         preprocess_articles = articles.flatMap(
@@ -217,7 +217,14 @@ def do_query(df, config=None, logger=None, context=None):
 
     if data_file:
         keysentences = []
-        with open(data_file, 'r') as f:
+        if isinstance(data_file, str):
+            # local file
+            data_stream = open(data_file, 'r')
+        else:
+            # cloud file
+            data_stream = data_file.open('r')
+
+        with data_stream as f:
             for keysentence in list(f):
                 k_split = keysentence.split()
                 sentence_word = [query_utils.preprocess_word(
@@ -275,7 +282,7 @@ def do_query(df, config=None, logger=None, context=None):
              year_page[9],
              year_page[10],
              year_page[11],
-             query_utils.geoparser_cmd(year_page[12], defoe_path, os_type, gazetteer, bounding_box))])
+             query_utils.get_geoparser_xml(year_page[12], defoe_path, os_type, gazetteer, bounding_box))])
 
     if kg_type == "total_eb":
         # [(year-0, uri-1, title-2, edition-3, archive_filename-4, volume-5, letters-6, part-7, page_number-8, header-9, term-10, preprocess_article-11 )]
@@ -310,6 +317,9 @@ def do_query(df, config=None, logger=None, context=None):
               "numWords": sentence_data[10],
               "uri": sentence_data[1],
               "georesolution": query_utils.geoparser_coord_xml(sentence_data[12])}))
+
+    # remove data with no places identified
+    geo_data = geo_data.filter(lambda sentence_data: bool(sentence_data[1]["georesolution"]) and isinstance(sentence_data[1]["georesolution"], dict))
 
     result = geo_data \
         .groupByKey() \

@@ -4,8 +4,8 @@ Use this query ONLY for normalizing the EB articles stored in the Knowledge Grap
 """
 
 from operator import add
-from defoe_lib.defoe import query_utils
-from defoe_lib.defoe.sparql.query_utils import blank_as_null
+from defoe import query_utils
+from defoe.sparql.query_utils import blank_as_null
 from pyspark.sql import SQLContext
 from pyspark.sql.functions import col, when, count, sum
 from pyspark.ml.feature import SQLTransformer
