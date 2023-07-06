@@ -5,8 +5,8 @@ SPARQL
 from pyspark.sql import SQLContext
 from SPARQLWrapper import SPARQLWrapper, JSON
 
-from .queries import frequency_keysearch_by_year, publication_normalized, terms_fulltext_keysearch_by_year, \
-    uris_keysearch, terms_snippet_keysearch_by_year, geoparser_by_year
+from .queries import frequency_keysearch_by_year, publication_normalized, fulltext_keysearch_by_year, \
+    uris_keysearch, snippet_keysearch_by_year, geoparser_by_year
 
 
 class Model:
@@ -14,16 +14,12 @@ class Model:
       return {
         "frequency_keysearch_by_year": frequency_keysearch_by_year.do_query,
         "publication_normalized": publication_normalized.do_query,
-        "terms_fulltext_keysearch_by_year": terms_fulltext_keysearch_by_year.do_query,
+        "fulltext_keysearch_by_year": terms_fulltext_keysearch_by_year.do_query,
         "uris_keysearch": uris_keysearch.do_query,
-        "terms_snippet_keysearch_by_year": terms_snippet_keysearch_by_year.do_query,
+        "snippet_keysearch_by_year": terms_snippet_keysearch_by_year.do_query,
         "geoparser_by_year": geoparser_by_year.do_query
       }
 
-
-  def filename_to_object(self, filename, context):
-      sparql_endpoint=open(filename).readline().rstrip()
-      return endpoint_to_object(sparql_endpoint)
 
   def endpoint_to_object(self, sparql_endpoint, context):
       sparql = SPARQLWrapper(sparql_endpoint)
