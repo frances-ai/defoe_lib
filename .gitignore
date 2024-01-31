@@ -81,9 +81,5 @@ data.*
 defoe.zip
 error.yml
 
-#Geoparser
-geoparser-v1.1/
-georesolve/
-
 # macOS
 .DS_STORE

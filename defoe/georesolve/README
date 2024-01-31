@@ -1,0 +1,45 @@
+The main program is geoground which takes input from stdin and
+outputs to stdout. The input is in an XML format as in
+scripts/in.xml. The output contains results in <place> elements
+inside the original <placename> elements.  For example:
+
+  cd scripts
+  cat in.xml | ./geoground -g unlock
+
+The obligatory -g parameter specifies the gazetteer to be
+used. Possible values are:
+
+* unlock: uses the standard Unlock service which combines all of
+  the other options.
+* geonames: the standard GeoNames service.
+* unlock-geonames: the Unlock version of GeoNames.
+* naturalearth: a gazteeer with global coverage but less detail than GeoNames.
+* os: Ordnance Survey - useful for GB related documents.
+* deep: historical England gazetteer.
+* plplus: gazetteer of the ancient world.
+
+By default geoground returns a ranking of the 20 best matches
+with ranking encoded in @rank on <place> elements.
+If you want just the top ranked use the -top flag:
+
+  cat in.xml | ./geoground -g unlock -top
+
+If you want to push geoground to prefer results in a particular
+area, you can use the -l or -lb options. Use -l to specify a
+bounding circle and -lb to specify a bounding box:
+
+  -l lat long radius score
+  -lb w n e s score
+
+where score indicates how strongly to skew the results to the circle or box.
+This is an example with a bounding box for the UK:
+
+cat in.xml | ./geoground -g geonames -lb -10.5 60.9 1.9 49.7 5
+
+To get a Leaflet map visualisation use the
+lib/georesolve/gazmap-leaflet.xsl stylesheet like this:
+
+cat in.xml |
+./geoground -g unlock |
+lxt -s ../lib/georesolve/gazmap-leaflet.xsl > map.html
+

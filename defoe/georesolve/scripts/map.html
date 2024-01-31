@@ -1,0 +1,3213 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+  <meta content="application/xhtml+xml; charset=utf-8" http-equiv="content-type"></meta>
+  <title>Geoparser results</title>
+  <link crossorigin="" integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" rel="stylesheet"></link>
+  <script crossorigin="" integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw==" src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"></script>
+  <script type="text/javascript">
+
+    var map;
+    var markers = new Array();
+    var markers_by_name = {};
+    
+    var green_icon = new L.Icon({
+	iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+	shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+	iconSize: [25, 41],
+	iconAnchor: [12, 41],
+	popupAnchor: [1, -34],
+	shadowSize: [41, 41]
+    });
+
+    var red_icon = new L.Icon({
+	iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+	shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+	iconSize: [25, 41],
+	iconAnchor: [12, 41],
+	popupAnchor: [1, -34],
+	shadowSize: [41, 41]
+    });
+
+    function load() {
+
+        map = L.map('map');
+    
+    
+	map.setView([51.48819488345327,-0.0873480518664991], 8);
+      
+
+	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+	    attribution: 'Map data © <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+	    maxZoom: 18,
+	    id: 'mapbox.streets',
+	    accessToken: 'pk.eyJ1IjoiZWJjZGljIiwiYSI6ImNqaGhwa2N6djAzMGgzN21lYzB3bG0xdnUifQ.-aGW-8TCP-Yw_8DXmTa_tw'
+	}).addTo(map);
+	
+	
+    var marker = L.marker([51.48819488345327,-0.0873480518664991],
+			  {
+			      title: "Greater London Authority",
+			      icon: 1 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 1 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(1 == 1)
+    markers_by_name["London"] = marker;
+  
+    var marker = L.marker([51.47267243102877,-0.1193526429679252],
+			  {
+			      title: "London",
+			      icon: 2 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 2 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(2 == 1)
+    markers_by_name["London"] = marker;
+  
+    var marker = L.marker([51.51712394143753,-0.1061956545415032],
+			  {
+			      title: "London",
+			      icon: 3 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 3 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(3 == 1)
+    markers_by_name["London"] = marker;
+  
+    var marker = L.marker([51.51117955581748,-0.1098731287363816],
+			  {
+			      title: "London",
+			      icon: 4 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 4 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(4 == 1)
+    markers_by_name["London"] = marker;
+  
+    var marker = L.marker([51.48819488345327,-0.0873480518664991],
+			  {
+			      title: "London Euro Region",
+			      icon: 5 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 5 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(5 == 1)
+    markers_by_name["London"] = marker;
+  
+    var marker = L.marker([51.54281,-0.15942],
+			  {
+			      title: "Camden",
+			      icon: 6 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 6 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(6 == 1)
+    markers_by_name["London"] = marker;
+  
+    var marker = L.marker([51.50051,-0.12883],
+			  {
+			      title: "London",
+			      icon: 7 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 7 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(7 == 1)
+    markers_by_name["London"] = marker;
+  
+    var marker = L.marker([51.53333,-0.08333],
+			  {
+			      title: "Hackney",
+			      icon: 8 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 8 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(8 == 1)
+    markers_by_name["London"] = marker;
+  
+    var marker = L.marker([51.6,-0.25],
+			  {
+			      title: "Barnet",
+			      icon: 9 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 9 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(9 == 1)
+    markers_by_name["London"] = marker;
+  
+    var marker = L.marker([51.5,-0.16667],
+			  {
+			      title: "Greater London",
+			      icon: 10 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 10 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(10 == 1)
+    markers_by_name["London"] = marker;
+  
+    var marker = L.marker([51.51334,-0.08901000000000001],
+			  {
+			      title: "City of London",
+			      icon: 11 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 11 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(11 == 1)
+    markers_by_name["London"] = marker;
+  
+    var marker = L.marker([51.53333,-0.26667],
+			  {
+			      title: "Brent",
+			      icon: 12 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 12 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(12 == 1)
+    markers_by_name["London"] = marker;
+  
+    var marker = L.marker([51.64875,-0.0974],
+			  {
+			      title: "Enfield",
+			      icon: 13 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 13 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(13 == 1)
+    markers_by_name["London"] = marker;
+  
+    var marker = L.marker([51.5,-0.33333],
+			  {
+			      title: "Ealing",
+			      icon: 14 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 14 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(14 == 1)
+    markers_by_name["London"] = marker;
+  
+    var marker = L.marker([51.55,0.11667],
+			  {
+			      title: "Barking and Dagenham",
+			      icon: 15 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 15 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(15 == 1)
+    markers_by_name["London"] = marker;
+  
+    var marker = L.marker([51.45,0.05],
+			  {
+			      title: "Greenwich",
+			      icon: 16 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 16 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(16 == 1)
+    markers_by_name["London"] = marker;
+  
+    var marker = L.marker([51.33333,-0.08333],
+			  {
+			      title: "Croydon",
+			      icon: 17 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 17 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(17 == 1)
+    markers_by_name["London"] = marker;
+  
+    var marker = L.marker([51.41667,0.13333],
+			  {
+			      title: "Bexley",
+			      icon: 18 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 18 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(18 == 1)
+    markers_by_name["London"] = marker;
+  
+    var marker = L.marker([51.33333,0.08333],
+			  {
+			      title: "Bromley",
+			      icon: 19 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 19 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(19 == 1)
+    markers_by_name["London"] = marker;
+  
+    var marker = L.marker([41.4834315,-72.06618810000001],
+			  {
+			      title: "New London County",
+			      icon: 20 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 20 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(20 == 1)
+    markers_by_name["London"] = marker;
+  
+    var marker = L.marker([42.75984507908728,-75.81017330585331],
+			  {
+			      title: "New York",
+			      icon: 1 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 1 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(1 == 1)
+    markers_by_name["New York"] = marker;
+  
+    var marker = L.marker([40.7834345,-73.9662495],
+			  {
+			      title: "New York County",
+			      icon: 2 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 2 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(2 == 1)
+    markers_by_name["New York"] = marker;
+  
+    var marker = L.marker([40.733991,-73.9723609],
+			  {
+			      title: "New York Skyports Incorporated Seaplane Base",
+			      icon: 3 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 3 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(3 == 1)
+    markers_by_name["New York"] = marker;
+  
+    var marker = L.marker([40.7209356,-73.9959726],
+			  {
+			      title: "Little Italy",
+			      icon: 4 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 4 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(4 == 1)
+    markers_by_name["New York"] = marker;
+  
+    var marker = L.marker([40.66383,-73.93848],
+			  {
+			      title: "City of New York",
+			      icon: 5 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 5 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(5 == 1)
+    markers_by_name["New York"] = marker;
+  
+    var marker = L.marker([53.07897,-0.14008],
+			  {
+			      title: "New York",
+			      icon: 6 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 6 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(6 == 1)
+    markers_by_name["New York"] = marker;
+  
+    var marker = L.marker([42.6667453,-73.8323448],
+			  {
+			      title: "New York Army National Guard Heliport",
+			      icon: 7 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 7 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(7 == 1)
+    markers_by_name["New York"] = marker;
+  
+    var marker = L.marker([42.6167463,-73.7823439],
+			  {
+			      title: "New York State Police-Troop T Heliport",
+			      icon: 8 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 8 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(8 == 1)
+    markers_by_name["New York"] = marker;
+  
+    var marker = L.marker([43.00035,-75.4999],
+			  {
+			      title: "New York",
+			      icon: 9 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 9 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(9 == 1)
+    markers_by_name["New York"] = marker;
+  
+    var marker = L.marker([34.3878681,-86.1858127],
+			  {
+			      title: "Little New York",
+			      icon: 10 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 10 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(10 == 1)
+    markers_by_name["New York"] = marker;
+  
+    var marker = L.marker([39.5085964,-106.6180891],
+			  {
+			      title: "New York Mountain",
+			      icon: 11 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 11 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(11 == 1)
+    markers_by_name["New York"] = marker;
+  
+    var marker = L.marker([39.0858234,-106.6933679],
+			  {
+			      title: "New York Peak",
+			      icon: 12 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 12 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(12 == 1)
+    markers_by_name["New York"] = marker;
+  
+    var marker = L.marker([38.3574172,-119.1254269],
+			  {
+			      title: "New York Hill",
+			      icon: 13 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 13 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(13 == 1)
+    markers_by_name["New York"] = marker;
+  
+    var marker = L.marker([48.6559468,-122.0440409],
+			  {
+			      title: "New York Mountain",
+			      icon: 14 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 14 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(14 == 1)
+    markers_by_name["New York"] = marker;
+  
+    var marker = L.marker([41.5860089,-118.7621177],
+			  {
+			      title: "New York Peak",
+			      icon: 15 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 15 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(15 == 1)
+    markers_by_name["New York"] = marker;
+  
+    var marker = L.marker([43.0376598,-116.7267912],
+			  {
+			      title: "New York Summit",
+			      icon: 16 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 16 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(16 == 1)
+    markers_by_name["New York"] = marker;
+  
+    var marker = L.marker([36.647989,-117.9328613],
+			  {
+			      title: "New York Butte",
+			      icon: 17 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 17 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(17 == 1)
+    markers_by_name["New York"] = marker;
+  
+    var marker = L.marker([32.5031866,-98.4097725],
+			  {
+			      title: "New York Hill",
+			      icon: 18 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 18 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(18 == 1)
+    markers_by_name["New York"] = marker;
+  
+    var marker = L.marker([46.5019051,-95.33781190000001],
+			  {
+			      title: "New York Mills Municipal Airport",
+			      icon: 19 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 19 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(19 == 1)
+    markers_by_name["New York"] = marker;
+  
+    var marker = L.marker([29.5510696,-97.3066566],
+			  {
+			      title: "Little New York",
+			      icon: 20 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 20 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(20 == 1)
+    markers_by_name["New York"] = marker;
+  
+    var marker = L.marker([48.88293357407115,2.449746400731129],
+			  {
+			      title: "Paris",
+			      icon: 1 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 1 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(1 == 1)
+    markers_by_name["Paris"] = marker;
+  
+    var marker = L.marker([49.012779,2.55],
+			  {
+			      title: "Paris - Charles-de-Gaulle",
+			      icon: 2 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 2 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(2 == 1)
+    markers_by_name["Paris"] = marker;
+  
+    var marker = L.marker([48.8534,2.3486],
+			  {
+			      title: "Paris",
+			      icon: 3 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 3 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(3 == 1)
+    markers_by_name["Paris"] = marker;
+  
+    var marker = L.marker([48.85339,2.34864],
+			  {
+			      title: "Paris",
+			      icon: 4 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 4 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(4 == 1)
+    markers_by_name["Paris"] = marker;
+  
+    var marker = L.marker([48.85341,2.3488],
+			  {
+			      title: "Paris",
+			      icon: 5 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 5 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(5 == 1)
+    markers_by_name["Paris"] = marker;
+  
+    var marker = L.marker([44.2647916,-70.4975597],
+			  {
+			      title: "Paris Hill",
+			      icon: 6 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 6 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(6 == 1)
+    markers_by_name["Paris"] = marker;
+  
+    var marker = L.marker([34.9412279,-82.4106761],
+			  {
+			      title: "Paris Mountain",
+			      icon: 7 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 7 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(7 == 1)
+    markers_by_name["Paris"] = marker;
+  
+    var marker = L.marker([33.9256579,-85.0988365],
+			  {
+			      title: "Paris Mountain",
+			      icon: 8 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 8 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(8 == 1)
+    markers_by_name["Paris"] = marker;
+  
+    var marker = L.marker([34.9289716,-84.2288057],
+			  {
+			      title: "Paris Mountain",
+			      icon: 9 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 9 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(9 == 1)
+    markers_by_name["Paris"] = marker;
+  
+    var marker = L.marker([37.2348526,-80.33588020000001],
+			  {
+			      title: "Paris Mountain",
+			      icon: 10 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 10 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(10 == 1)
+    markers_by_name["Paris"] = marker;
+  
+    var marker = L.marker([42.8508634,-85.5669678],
+			  {
+			      title: "East-West Paris Airport",
+			      icon: 11 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 11 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(11 == 1)
+    markers_by_name["Paris"] = marker;
+  
+    var marker = L.marker([39.6078128,-87.6764147],
+			  {
+			      title: "Paris Community Hospital Heliport",
+			      icon: 12 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 12 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(12 == 1)
+    markers_by_name["Paris"] = marker;
+  
+    var marker = L.marker([39.6033681,-87.712249],
+			  {
+			      title: "State Highway Paris Heliport",
+			      icon: 13 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 13 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(13 == 1)
+    markers_by_name["Paris"] = marker;
+  
+    var marker = L.marker([39.6542016,-87.71752650000001],
+			  {
+			      title: "Paris Airport (historical)",
+			      icon: 14 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 14 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(14 == 1)
+    markers_by_name["Paris"] = marker;
+  
+    var marker = L.marker([38.1119455,-105.368055],
+			  {
+			      title: "Paris Hill",
+			      icon: 15 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 15 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(15 == 1)
+    markers_by_name["Paris"] = marker;
+  
+    var marker = L.marker([42.2029814,-111.5493802],
+			  {
+			      title: "Paris Peak",
+			      icon: 16 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 16 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(16 == 1)
+    markers_by_name["Paris"] = marker;
+  
+    var marker = L.marker([35.30009,-93.70992],
+			  {
+			      title: "Paris Municipal Airport",
+			      icon: 17 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 17 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(17 == 1)
+    markers_by_name["Paris"] = marker;
+  
+    var marker = L.marker([-68.9833333,-70.83333330000001],
+			  {
+			      title: "Paris, Mount",
+			      icon: 18 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 18 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(18 == 1)
+    markers_by_name["Paris"] = marker;
+  
+    var marker = L.marker([-52.5666667,169.0166667],
+			  {
+			      title: "Mount Paris",
+			      icon: 19 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 19 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(19 == 1)
+    markers_by_name["Paris"] = marker;
+  
+    var marker = L.marker([17.6166667,-63.25],
+			  {
+			      title: "Paris Hill",
+			      icon: 20 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 20 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(20 == 1)
+    markers_by_name["Paris"] = marker;
+  
+    var marker = L.marker([50.83804708515493,-0.1064995993269804],
+			  {
+			      title: "Brighton and Hove",
+			      icon: 1 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 1 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(1 == 1)
+    markers_by_name["Brighton"] = marker;
+  
+    var marker = L.marker([50.84349903726028,-0.1848072956556698],
+			  {
+			      title: "Brighton",
+			      icon: 2 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 2 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(2 == 1)
+    markers_by_name["Brighton"] = marker;
+  
+    var marker = L.marker([50.84309038667809,-0.1336183502854839],
+			  {
+			      title: "Brighton",
+			      icon: 3 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 3 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(3 == 1)
+    markers_by_name["Brighton"] = marker;
+  
+    var marker = L.marker([50.8333333,-0.1333333],
+			  {
+			      title: "Borough of Brighton and Hove",
+			      icon: 4 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 4 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(4 == 1)
+    markers_by_name["Brighton"] = marker;
+  
+    var marker = L.marker([44.100123891,-77.766193898],
+			  {
+			      title: "Brighton",
+			      icon: 5 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 5 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(5 == 1)
+    markers_by_name["Brighton"] = marker;
+  
+    var marker = L.marker([39.9827615,-104.7049677],
+			  {
+			      title: "Brighton Van-Aire Estates Airport",
+			      icon: 6 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 6 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(6 == 1)
+    markers_by_name["Brighton"] = marker;
+  
+    var marker = L.marker([44.2100705,-70.3414456],
+			  {
+			      title: "Brighton Hill",
+			      icon: 7 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 7 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(7 == 1)
+    markers_by_name["Brighton"] = marker;
+  
+    var marker = L.marker([39.1217262,-84.5191098],
+			  {
+			      title: "Brighton Hill",
+			      icon: 8 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 8 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(8 == 1)
+    markers_by_name["Brighton"] = marker;
+  
+    var marker = L.marker([42.5703099,-83.7777225],
+			  {
+			      title: "Brighton Airport",
+			      icon: 9 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 9 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(9 == 1)
+    markers_by_name["Brighton"] = marker;
+  
+    var marker = L.marker([40.73534,-80.30812],
+			  {
+			      title: "Borough of New Brighton",
+			      icon: 10 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 10 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(10 == 1)
+    markers_by_name["Brighton"] = marker;
+  
+    var marker = L.marker([40.60134,-111.583254],
+			  {
+			      title: "Brighton Ski Area Heliport",
+			      icon: 11 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 11 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(11 == 1)
+    markers_by_name["Brighton"] = marker;
+  
+    var marker = L.marker([27.1892146,-81.0867334],
+			  {
+			      title: "Lykes Brighton Airport",
+			      icon: 12 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 12 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(12 == 1)
+    markers_by_name["Brighton"] = marker;
+  
+    var marker = L.marker([49.549940871,-55.614881975],
+			  {
+			      title: "Brighton Tickle Islands",
+			      icon: 13 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 13 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(13 == 1)
+    markers_by_name["Brighton"] = marker;
+  
+    var marker = L.marker([-42.7,147.26667],
+			  {
+			      title: "Brighton",
+			      icon: 14 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 14 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(14 == 1)
+    markers_by_name["Brighton"] = marker;
+  
+    var marker = L.marker([-37.91667,145],
+			  {
+			      title: "Brighton",
+			      icon: 15 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 15 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(15 == 1)
+    markers_by_name["Brighton"] = marker;
+  
+    var marker = L.marker([13.1166667,-59.5166667],
+			  {
+			      title: "Brighton",
+			      icon: 16 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 16 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(16 == 1)
+    markers_by_name["Brighton"] = marker;
+  
+    var marker = L.marker([-27.295824903315,153.057210445404],
+			  {
+			      title: "Brighton",
+			      icon: 17 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 17 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(17 == 1)
+    markers_by_name["Brighton"] = marker;
+  
+    var marker = L.marker([-35.0166667,138.5166667],
+			  {
+			      title: "Brighton",
+			      icon: 18 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 18 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(18 == 1)
+    markers_by_name["Brighton"] = marker;
+  
+    var marker = L.marker([-10.9666667,-65.66666669999999],
+			  {
+			      title: "Brighton",
+			      icon: 19 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 19 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(19 == 1)
+    markers_by_name["Brighton"] = marker;
+  
+    var marker = L.marker([-25.85,30.95],
+			  {
+			      title: "Brighton Kop",
+			      icon: 20 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 20 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(20 == 1)
+    markers_by_name["Brighton"] = marker;
+  
+    var marker = L.marker([52.67528712949647,-1.20996868819816],
+			  {
+			      title: "Leicester",
+			      icon: 1 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 1 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(1 == 1)
+    markers_by_name["Leicester"] = marker;
+  
+    var marker = L.marker([52.62976849969724,-1.136471434575293],
+			  {
+			      title: "Leicester",
+			      icon: 2 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 2 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(2 == 1)
+    markers_by_name["Leicester"] = marker;
+  
+    var marker = L.marker([52.63510562912718,-1.137023278217755],
+			  {
+			      title: "Leicester",
+			      icon: 3 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 3 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(3 == 1)
+    markers_by_name["Leicester"] = marker;
+  
+    var marker = L.marker([52.6333333,-1.1333333],
+			  {
+			      title: "City of Leicester",
+			      icon: 4 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 4 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(4 == 1)
+    markers_by_name["Leicester"] = marker;
+  
+    var marker = L.marker([52.6333333,-1.1333333],
+			  {
+			      title: "Leicester",
+			      icon: 5 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 5 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(5 == 1)
+    markers_by_name["Leicester"] = marker;
+  
+    var marker = L.marker([52.632,-1.124],
+			  {
+			      title: "Leicester Railway Station",
+			      icon: 6 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 6 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(6 == 1)
+    markers_by_name["Leicester"] = marker;
+  
+    var marker = L.marker([52.6685687959646,-1.13297581672668],
+			  {
+			      title: "Leicester North Railway Station",
+			      icon: 7 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 7 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(7 == 1)
+    markers_by_name["Leicester"] = marker;
+  
+    var marker = L.marker([43.8558955,-73.1503919],
+			  {
+			      title: "Leicester Junction",
+			      icon: 8 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 8 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(8 == 1)
+    markers_by_name["Leicester"] = marker;
+  
+    var marker = L.marker([43.8720077,-73.04400149999999],
+			  {
+			      title: "Leicester Hollow Trail",
+			      icon: 9 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 9 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(9 == 1)
+    markers_by_name["Leicester"] = marker;
+  
+    var marker = L.marker([43.8667293,-73.1078914],
+			  {
+			      title: "Leicester",
+			      icon: 10 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 10 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(10 == 1)
+    markers_by_name["Leicester"] = marker;
+  
+    var marker = L.marker([43.8697848,-73.09872470000001],
+			  {
+			      title: "Town of Leicester",
+			      icon: 11 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 11 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(11 == 1)
+    markers_by_name["Leicester"] = marker;
+  
+    var marker = L.marker([42.2334263,-71.89951739999999],
+			  {
+			      title: "Town of Leicester",
+			      icon: 12 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 12 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(12 == 1)
+    markers_by_name["Leicester"] = marker;
+  
+    var marker = L.marker([42.245926,-71.9086843],
+			  {
+			      title: "Leicester",
+			      icon: 13 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 13 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(13 == 1)
+    markers_by_name["Leicester"] = marker;
+  
+    var marker = L.marker([42.2473149,-71.9050731],
+			  {
+			      title: "Leicester Hill",
+			      icon: 14 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 14 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(14 == 1)
+    markers_by_name["Leicester"] = marker;
+  
+    var marker = L.marker([35.6551074,-82.6962438],
+			  {
+			      title: "Leicester",
+			      icon: 15 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 15 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(15 == 1)
+    markers_by_name["Leicester"] = marker;
+  
+    var marker = L.marker([42.7720066,-77.8966709],
+			  {
+			      title: "Leicester",
+			      icon: 16 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 16 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(16 == 1)
+    markers_by_name["Leicester"] = marker;
+  
+    var marker = L.marker([42.7661732,-77.9080599],
+			  {
+			      title: "Town of Leicester",
+			      icon: 17 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 17 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(17 == 1)
+    markers_by_name["Leicester"] = marker;
+  
+    var marker = L.marker([-22.25,150.45],
+			  {
+			      title: "Leicester Island",
+			      icon: 18 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 18 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(18 == 1)
+    markers_by_name["Leicester"] = marker;
+  
+    var marker = L.marker([7.9758333,-12.8380556],
+			  {
+			      title: "Leicester",
+			      icon: 19 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 19 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(19 == 1)
+    markers_by_name["Leicester"] = marker;
+  
+    var marker = L.marker([8.4611111,-13.2191667],
+			  {
+			      title: "Leicester",
+			      icon: 20 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 20 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(20 == 1)
+    markers_by_name["Leicester"] = marker;
+  
+    var marker = L.marker([52.58280795990549,-1.403709547670898],
+			  {
+			      title: "Dadlington",
+			      icon: 1 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 1 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(1 == 1)
+    markers_by_name["Dadlington"] = marker;
+  
+    var marker = L.marker([52.57784283979495,-1.405879437484635],
+			  {
+			      title: "Dadlington",
+			      icon: 2 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 2 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(2 == 1)
+    markers_by_name["Dadlington"] = marker;
+  
+    var marker = L.marker([52.56667,-1.4],
+			  {
+			      title: "Dadlington",
+			      icon: 3 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 3 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(3 == 1)
+    markers_by_name["Dadlington"] = marker;
+  
+    var marker = L.marker([52.60085996030619,-1.418229347850633],
+			  {
+			      title: "Bosworth Field",
+			      icon: 1 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 1 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(1 == 1)
+    markers_by_name["Bosworth Field"] = marker;
+  
+    var marker = L.marker([52.59683,-1.40599],
+			  {
+			      title: "Battle of Bosworth Field",
+			      icon: 2 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 2 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(2 == 1)
+    markers_by_name["Bosworth Field"] = marker;
+  
+    var marker = L.marker([52.45401070553685,-1.054404372946378],
+			  {
+			      title: "Husbands Bosworth",
+			      icon: 1 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 1 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(1 == 1)
+    markers_by_name["Bosworth"] = marker;
+  
+    var marker = L.marker([52.45465453450346,-1.0522575133079],
+			  {
+			      title: "Husbands Bosworth",
+			      icon: 2 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 2 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(2 == 1)
+    markers_by_name["Bosworth"] = marker;
+  
+    var marker = L.marker([52.60778,-1.38402],
+			  {
+			      title: "Hinckley and Bosworth District",
+			      icon: 3 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 3 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(3 == 1)
+    markers_by_name["Bosworth"] = marker;
+  
+    var marker = L.marker([52.62461,-1.42098],
+			  {
+			      title: "Market Bosworth Railway Station",
+			      icon: 4 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 4 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(4 == 1)
+    markers_by_name["Bosworth"] = marker;
+  
+    var marker = L.marker([52.62428,-1.40174],
+			  {
+			      title: "Market Bosworth",
+			      icon: 5 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 5 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(5 == 1)
+    markers_by_name["Bosworth"] = marker;
+  
+    var marker = L.marker([52.45,-1.05],
+			  {
+			      title: "Husbands Bosworth",
+			      icon: 6 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 6 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(6 == 1)
+    markers_by_name["Bosworth"] = marker;
+  
+    var marker = L.marker([36.58413,-83.78366],
+			  {
+			      title: "Bosworth Railroad Station (historical)",
+			      icon: 7 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 7 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(7 == 1)
+    markers_by_name["Bosworth"] = marker;
+  
+    var marker = L.marker([41.42782,-81.99653000000001],
+			  {
+			      title: "Bosworth Incorporated Airport",
+			      icon: 8 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 8 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(8 == 1)
+    markers_by_name["Bosworth"] = marker;
+  
+    var marker = L.marker([33.0229003,-85.5613426],
+			  {
+			      title: "Bosworth",
+			      icon: 9 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 9 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(9 == 1)
+    markers_by_name["Bosworth"] = marker;
+  
+    var marker = L.marker([41.2806113,-81.48344760000001],
+			  {
+			      title: "Bosworth (historical)",
+			      icon: 10 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 10 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(10 == 1)
+    markers_by_name["Bosworth"] = marker;
+  
+    var marker = L.marker([46.083382356,-80.082963455],
+			  {
+			      title: "Bosworth Island",
+			      icon: 11 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 11 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(11 == 1)
+    markers_by_name["Bosworth"] = marker;
+  
+    var marker = L.marker([48.04537,-121.96723],
+			  {
+			      title: "Lake Bosworth",
+			      icon: 12 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 12 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(12 == 1)
+    markers_by_name["Bosworth"] = marker;
+  
+    var marker = L.marker([48.0450999,-121.9684627],
+			  {
+			      title: "Lake Bosworth",
+			      icon: 13 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 13 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(13 == 1)
+    markers_by_name["Bosworth"] = marker;
+  
+    var marker = L.marker([48.0425999,-121.9681848],
+			  {
+			      title: "Bosworth Lake",
+			      icon: 14 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 14 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(14 == 1)
+    markers_by_name["Bosworth"] = marker;
+  
+    var marker = L.marker([39.46974,-93.33465],
+			  {
+			      title: "Bosworth",
+			      icon: 15 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 15 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(15 == 1)
+    markers_by_name["Bosworth"] = marker;
+  
+    var marker = L.marker([39.46992,-93.33555],
+			  {
+			      title: "City of Bosworth",
+			      icon: 16 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 16 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(16 == 1)
+    markers_by_name["Bosworth"] = marker;
+  
+    var marker = L.marker([38.97881,-94.97150000000001],
+			  {
+			      title: "Bosworth Mobile Home Park",
+			      icon: 17 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 17 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(17 == 1)
+    markers_by_name["Bosworth"] = marker;
+  
+    var marker = L.marker([51.46668382,-116.335502252],
+			  {
+			      title: "Mount Bosworth",
+			      icon: 18 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 18 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(18 == 1)
+    markers_by_name["Bosworth"] = marker;
+  
+    var marker = L.marker([51.4639,-116.3306],
+			  {
+			      title: "Mount Bosworth",
+			      icon: 19 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 19 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(19 == 1)
+    markers_by_name["Bosworth"] = marker;
+  
+    var marker = L.marker([52.633423792,-88.133256535],
+			  {
+			      title: "Bosworth Lake",
+			      icon: 20 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 20 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(20 == 1)
+    markers_by_name["Bosworth"] = marker;
+  
+    var marker = L.marker([53.95617847610836,-1.094744804436933],
+			  {
+			      title: "York",
+			      icon: 1 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 1 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(1 == 1)
+    markers_by_name["York"] = marker;
+  
+    var marker = L.marker([53.96097713984243,-1.083389906922121],
+			  {
+			      title: "York",
+			      icon: 2 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 2 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(2 == 1)
+    markers_by_name["York"] = marker;
+  
+    var marker = L.marker([42.75984507908728,-75.81017330585331],
+			  {
+			      title: "New York",
+			      icon: 3 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 3 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(3 == 1)
+    markers_by_name["York"] = marker;
+  
+    var marker = L.marker([53.9639632888809,-1.09142303466797],
+			  {
+			      title: "City of York",
+			      icon: 4 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 4 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(4 == 1)
+    markers_by_name["York"] = marker;
+  
+    var marker = L.marker([40.1253701,-76.999977],
+			  {
+			      title: "York County",
+			      icon: 5 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 5 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(5 == 1)
+    markers_by_name["York"] = marker;
+  
+    var marker = L.marker([40.7834345,-73.9662495],
+			  {
+			      title: "New York County",
+			      icon: 6 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 6 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(6 == 1)
+    markers_by_name["York"] = marker;
+  
+    var marker = L.marker([42.6667453,-73.8323448],
+			  {
+			      title: "New York Army National Guard Heliport",
+			      icon: 7 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 7 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(7 == 1)
+    markers_by_name["York"] = marker;
+  
+    var marker = L.marker([43.4667493,-70.6828338],
+			  {
+			      title: "York County",
+			      icon: 8 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 8 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(8 == 1)
+    markers_by_name["York"] = marker;
+  
+    var marker = L.marker([43.00035,-75.4999],
+			  {
+			      title: "New York",
+			      icon: 9 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 9 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(9 == 1)
+    markers_by_name["York"] = marker;
+  
+    var marker = L.marker([34.9834716,-81.1831303],
+			  {
+			      title: "York County",
+			      icon: 10 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 10 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(10 == 1)
+    markers_by_name["York"] = marker;
+  
+    var marker = L.marker([37.2334783,-76.54967430000001],
+			  {
+			      title: "York County",
+			      icon: 11 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 11 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(11 == 1)
+    markers_by_name["York"] = marker;
+  
+    var marker = L.marker([38.3574172,-119.1254269],
+			  {
+			      title: "New York Hill",
+			      icon: 12 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 12 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(12 == 1)
+    markers_by_name["York"] = marker;
+  
+    var marker = L.marker([49.899826914,-118.319003572],
+			  {
+			      title: "Mount York",
+			      icon: 13 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 13 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(13 == 1)
+    markers_by_name["York"] = marker;
+  
+    var marker = L.marker([40.8666784,-97.6003288],
+			  {
+			      title: "York County",
+			      icon: 14 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 14 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(14 == 1)
+    markers_by_name["York"] = marker;
+  
+    var marker = L.marker([36.647989,-117.9328613],
+			  {
+			      title: "New York Butte",
+			      icon: 15 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 15 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(15 == 1)
+    markers_by_name["York"] = marker;
+  
+    var marker = L.marker([-33.25,149.4333333],
+			  {
+			      title: "Mount York",
+			      icon: 16 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 16 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(16 == 1)
+    markers_by_name["York"] = marker;
+  
+    var marker = L.marker([-40.7,176.1666667],
+			  {
+			      title: "Mount York",
+			      icon: 17 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 17 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(17 == 1)
+    markers_by_name["York"] = marker;
+  
+    var marker = L.marker([-45.5666667,167.7333333],
+			  {
+			      title: "Mount York",
+			      icon: 18 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 18 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(18 == 1)
+    markers_by_name["York"] = marker;
+  
+    var marker = L.marker([-33.65,148.65],
+			  {
+			      title: "Mount York",
+			      icon: 19 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 19 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(19 == 1)
+    markers_by_name["York"] = marker;
+  
+    var marker = L.marker([-4.16667,152.45],
+			  {
+			      title: "Duke of York Group",
+			      icon: 20 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 20 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(20 == 1)
+    markers_by_name["York"] = marker;
+  
+    var marker = L.marker([41.5089832,-73.44928880000001],
+			  {
+			      title: "Vaughns Neck",
+			      icon: 1 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 1 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(1 == 1)
+    markers_by_name["Vaughns"] = marker;
+  
+    var marker = L.marker([43.3720157,-73.5640033],
+			  {
+			      title: "Vaughns Corners",
+			      icon: 2 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 2 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(2 == 1)
+    markers_by_name["Vaughns"] = marker;
+  
+    var marker = L.marker([38.0553547,-84.5496627],
+			  {
+			      title: "Vaughns Branch",
+			      icon: 3 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 3 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(3 == 1)
+    markers_by_name["Vaughns"] = marker;
+  
+    var marker = L.marker([37.8131372,-83.916588],
+			  {
+			      title: "Vaughns Mill",
+			      icon: 4 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 4 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(4 == 1)
+    markers_by_name["Vaughns"] = marker;
+  
+    var marker = L.marker([38.8525717,-83.45880219999999],
+			  {
+			      title: "Vaughns Chapel Cemetery",
+			      icon: 5 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 5 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(5 == 1)
+    markers_by_name["Vaughns"] = marker;
+  
+    var marker = L.marker([33.8889888,-86.6952709],
+			  {
+			      title: "Vaughns Bridge",
+			      icon: 6 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 6 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(6 == 1)
+    markers_by_name["Vaughns"] = marker;
+  
+    var marker = L.marker([33.1145864,-83.2332105],
+			  {
+			      title: "Vaughns Church",
+			      icon: 7 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 7 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(7 == 1)
+    markers_by_name["Vaughns"] = marker;
+  
+    var marker = L.marker([36.1033922,-86.8686117],
+			  {
+			      title: "Vaughns Gap Branch",
+			      icon: 8 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 8 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(8 == 1)
+    markers_by_name["Vaughns"] = marker;
+  
+    var marker = L.marker([36.0686711,-86.8986124],
+			  {
+			      title: "Vaughns Gap",
+			      icon: 9 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 9 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(9 == 1)
+    markers_by_name["Vaughns"] = marker;
+  
+    var marker = L.marker([37.0704108,-80.25421009999999],
+			  {
+			      title: "Vaughns Chapel",
+			      icon: 10 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 10 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(10 == 1)
+    markers_by_name["Vaughns"] = marker;
+  
+    var marker = L.marker([37.3201517,-78.12277690000001],
+			  {
+			      title: "Vaughns Creek",
+			      icon: 11 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 11 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(11 == 1)
+    markers_by_name["Vaughns"] = marker;
+  
+    var marker = L.marker([37.2059861,-78.184164],
+			  {
+			      title: "Vaughns Cemetery",
+			      icon: 12 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 12 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(12 == 1)
+    markers_by_name["Vaughns"] = marker;
+  
+    var marker = L.marker([36.0020114,-88.8556189],
+			  {
+			      title: "Vaughns Grove Church of Christ",
+			      icon: 13 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 13 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(13 == 1)
+    markers_by_name["Vaughns"] = marker;
+  
+    var marker = L.marker([36.0017337,-88.85589659999999],
+			  {
+			      title: "Vaughns Grove Cemetery",
+			      icon: 14 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 14 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(14 == 1)
+    markers_by_name["Vaughns"] = marker;
+  
+    var marker = L.marker([36.0020114,-88.8561744],
+			  {
+			      title: "Vaughns Grove",
+			      icon: 15 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 15 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(15 == 1)
+    markers_by_name["Vaughns"] = marker;
+  
+    var marker = L.marker([34.3348307,-89.8992562],
+			  {
+			      title: "Vaughns Chapel",
+			      icon: 16 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 16 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(16 == 1)
+    markers_by_name["Vaughns"] = marker;
+  
+    var marker = L.marker([31.7898845,-90.0700835],
+			  {
+			      title: "South Branch Vaughns Creek",
+			      icon: 17 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 17 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(17 == 1)
+    markers_by_name["Vaughns"] = marker;
+  
+    var marker = L.marker([31.7807183,-90.1084178],
+			  {
+			      title: "Vaughns Creek",
+			      icon: 18 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 18 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(18 == 1)
+    markers_by_name["Vaughns"] = marker;
+  
+    var marker = L.marker([33.0098588,-93.3640592],
+			  {
+			      title: "Vaughns Chapel (historical)",
+			      icon: 19 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 19 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(19 == 1)
+    markers_by_name["Vaughns"] = marker;
+  
+    var marker = L.marker([43.2470562,-123.9331528],
+			  {
+			      title: "Vaughns Creek",
+			      icon: 20 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 20 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(20 == 1)
+    markers_by_name["Vaughns"] = marker;
+  
+    var marker = L.marker([40.4437166,-74.4704303],
+			  {
+			      title: "Red Lion",
+			      icon: 1 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 1 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(1 == 1)
+    markers_by_name["Red Lion"] = marker;
+  
+    var marker = L.marker([39.4914482,-84.24966019999999],
+			  {
+			      title: "Red Lion",
+			      icon: 2 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 2 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(2 == 1)
+    markers_by_name["Red Lion"] = marker;
+  
+    var marker = L.marker([39.9042807,-74.7490492],
+			  {
+			      title: "Red Lion Airport",
+			      icon: 3 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 3 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(3 == 1)
+    markers_by_name["Red Lion"] = marker;
+  
+    var marker = L.marker([39.8895588,-74.74460449999999],
+			  {
+			      title: "Red Lion",
+			      icon: 4 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 4 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(4 == 1)
+    markers_by_name["Red Lion"] = marker;
+  
+    var marker = L.marker([40.480652,-75.61602120000001],
+			  {
+			      title: "Red Lion",
+			      icon: 5 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 5 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(5 == 1)
+    markers_by_name["Red Lion"] = marker;
+  
+    var marker = L.marker([39.3376041,-77.0135903],
+			  {
+			      title: "Red Lion Inn Estates",
+			      icon: 6 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 6 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(6 == 1)
+    markers_by_name["Red Lion"] = marker;
+  
+    var marker = L.marker([39.9006557,-76.60718900000001],
+			  {
+			      title: "Borough of Red Lion",
+			      icon: 7 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 7 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(7 == 1)
+    markers_by_name["Red Lion"] = marker;
+  
+    var marker = L.marker([39.9009334,-76.6058001],
+			  {
+			      title: "Red Lion",
+			      icon: 8 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 8 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(8 == 1)
+    markers_by_name["Red Lion"] = marker;
+  
+    var marker = L.marker([39.9423214,-76.5805215],
+			  {
+			      title: "Red Lion Reservoir",
+			      icon: 9 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 9 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(9 == 1)
+    markers_by_name["Red Lion"] = marker;
+  
+    var marker = L.marker([54.97075,-2.45814],
+			  {
+			      title: "Haltwhistle Red Lion Tower",
+			      icon: 10 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 10 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(10 == 1)
+    markers_by_name["Red Lion"] = marker;
+  
+    var marker = L.marker([44.053415,-68.8266982],
+			  {
+			      title: "Red Lion Island",
+			      icon: 11 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 11 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(11 == 1)
+    markers_by_name["Red Lion"] = marker;
+  
+    var marker = L.marker([39.8781653,-75.6816022],
+			  {
+			      title: "Red Lion",
+			      icon: 12 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 12 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(12 == 1)
+    markers_by_name["Red Lion"] = marker;
+  
+    var marker = L.marker([39.6048345,-75.61381609999999],
+			  {
+			      title: "Red Lion Creek",
+			      icon: 13 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 13 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(13 == 1)
+    markers_by_name["Red Lion"] = marker;
+  
+    var marker = L.marker([39.6084453,-75.66381869999999],
+			  {
+			      title: "Red Lion",
+			      icon: 14 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 14 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(14 == 1)
+    markers_by_name["Red Lion"] = marker;
+  
+    var marker = L.marker([39.6062232,-75.6538182],
+			  {
+			      title: "Red Lion State Forest",
+			      icon: 15 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 15 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(15 == 1)
+    markers_by_name["Red Lion"] = marker;
+  
+    var marker = L.marker([39.5917787,-75.6663188],
+			  {
+			      title: "Red Lion Hundred",
+			      icon: 16 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 16 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(16 == 1)
+    markers_by_name["Red Lion"] = marker;
+  
+    var marker = L.marker([39.2420543,-75.9132729],
+			  {
+			      title: "Red Lion Branch",
+			      icon: 17 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 17 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(17 == 1)
+    markers_by_name["Red Lion"] = marker;
+  
+    var marker = L.marker([40.8916578,-102.6768575],
+			  {
+			      title: "Red Lion",
+			      icon: 18 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 18 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(18 == 1)
+    markers_by_name["Red Lion"] = marker;
+  
+    var marker = L.marker([46.2563144,-113.2420029],
+			  {
+			      title: "Red Lion Ski Trail",
+			      icon: 19 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 19 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(19 == 1)
+    markers_by_name["Red Lion"] = marker;
+  
+    var marker = L.marker([46.2868703,-113.1992235],
+			  {
+			      title: "Red Lion Mountain",
+			      icon: 20 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 20 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(20 == 1)
+    markers_by_name["Red Lion"] = marker;
+  
+    var marker = L.marker([52.62775435423562,-1.403099072484207],
+			  {
+			      title: "Market Bosworth",
+			      icon: 1 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 1 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(1 == 1)
+    markers_by_name["Market Bosworth"] = marker;
+  
+    var marker = L.marker([52.6251693827348,-1.40763101928133],
+			  {
+			      title: "Market Bosworth",
+			      icon: 2 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 2 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(2 == 1)
+    markers_by_name["Market Bosworth"] = marker;
+  
+    var marker = L.marker([52.64321094181511,-1.422808641955402],
+			  {
+			      title: "Cadeby, Carlton and Market Bosworth with Shackerstone Ward",
+			      icon: 3 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 3 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(3 == 1)
+    markers_by_name["Market Bosworth"] = marker;
+  
+    var marker = L.marker([52.61099060143276,-1.458507710013369],
+			  {
+			      title: "Market Bosworth ED",
+			      icon: 4 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 4 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(4 == 1)
+    markers_by_name["Market Bosworth"] = marker;
+  
+    var marker = L.marker([52.62174193389323,-1.414629928948146],
+			  {
+			      title: "Market Bosworth CP",
+			      icon: 5 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 5 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(5 == 1)
+    markers_by_name["Market Bosworth"] = marker;
+  
+    var marker = L.marker([52.62428,-1.40174],
+			  {
+			      title: "Market Bosworth",
+			      icon: 6 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 6 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(6 == 1)
+    markers_by_name["Market Bosworth"] = marker;
+  
+    var marker = L.marker([52.62174,-1.41473],
+			  {
+			      title: "Market Bosworth",
+			      icon: 7 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 7 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(7 == 1)
+    markers_by_name["Market Bosworth"] = marker;
+  
+    var marker = L.marker([52.62461,-1.42098],
+			  {
+			      title: "Market Bosworth Railway Station",
+			      icon: 8 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 8 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(8 == 1)
+    markers_by_name["Market Bosworth"] = marker;
+  
+    var marker = L.marker([52.60134817150285,-1.38583550949419],
+			  {
+			      title: "Sutton Cheney",
+			      icon: 1 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 1 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(1 == 1)
+    markers_by_name["Sutton Cheney"] = marker;
+  
+    var marker = L.marker([52.60071131851169,-1.388701819762897],
+			  {
+			      title: "Sutton Cheney",
+			      icon: 2 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 2 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(2 == 1)
+    markers_by_name["Sutton Cheney"] = marker;
+  
+    var marker = L.marker([52.59338659944778,-1.411623488329313],
+			  {
+			      title: "Sutton Cheney CP",
+			      icon: 3 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 3 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(3 == 1)
+    markers_by_name["Sutton Cheney"] = marker;
+  
+    var marker = L.marker([52.5991,-1.38668],
+			  {
+			      title: "Sutton Cheney",
+			      icon: 4 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 4 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(4 == 1)
+    markers_by_name["Sutton Cheney"] = marker;
+  
+    var marker = L.marker([52.59343,-1.41148],
+			  {
+			      title: "Sutton Cheney",
+			      icon: 5 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 5 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(5 == 1)
+    markers_by_name["Sutton Cheney"] = marker;
+  
+    var marker = L.marker([52.67091091753478,-0.2933334163039217],
+			  {
+			      title: "Deeping St James",
+			      icon: 1 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 1 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(1 == 1)
+    markers_by_name["St James"] = marker;
+  
+    var marker = L.marker([51.76134662266848,0.4209221329814242],
+			  {
+			      title: "Chignall St James",
+			      icon: 2 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 2 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(2 == 1)
+    markers_by_name["St James"] = marker;
+  
+    var marker = L.marker([52.65853404238518,0.2462581316223678],
+			  {
+			      title: "Marshland St James",
+			      icon: 3 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 3 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(3 == 1)
+    markers_by_name["St James"] = marker;
+  
+    var marker = L.marker([51.75913727950617,0.4255857964675858],
+			  {
+			      title: "Chignall St James",
+			      icon: 4 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 4 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(4 == 1)
+    markers_by_name["St James"] = marker;
+  
+    var marker = L.marker([54.18298531952532,-1.442224780946839],
+			  {
+			      title: "Baldersby St James",
+			      icon: 5 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 5 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(5 == 1)
+    markers_by_name["St James"] = marker;
+  
+    var marker = L.marker([51.15470772838489,-1.894141824069827],
+			  {
+			      title: "Berwick St James",
+			      icon: 6 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 6 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(6 == 1)
+    markers_by_name["St James"] = marker;
+  
+    var marker = L.marker([51.15246505133389,-1.900294681104434],
+			  {
+			      title: "Berwick St James",
+			      icon: 7 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 7 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(7 == 1)
+    markers_by_name["St James"] = marker;
+  
+    var marker = L.marker([52.03011025447828,-1.164295595818635],
+			  {
+			      title: "St James' Lake",
+			      icon: 8 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 8 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(8 == 1)
+    markers_by_name["St James"] = marker;
+  
+    var marker = L.marker([51.581,-0.0323],
+			  {
+			      title: "St James Street Railway Station",
+			      icon: 9 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 9 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(9 == 1)
+    markers_by_name["St James"] = marker;
+  
+    var marker = L.marker([40.87613,-73.15192999999999],
+			  {
+			      title: "St. James",
+			      icon: 10 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 10 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(10 == 1)
+    markers_by_name["St James"] = marker;
+  
+    var marker = L.marker([51.1586,-1.90738],
+			  {
+			      title: "Berwick St. James",
+			      icon: 11 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 11 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(11 == 1)
+    markers_by_name["St James"] = marker;
+  
+    var marker = L.marker([39.57367,-77.74800999999999],
+			  {
+			      title: "St. James",
+			      icon: 12 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 12 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(12 == 1)
+    markers_by_name["St James"] = marker;
+  
+    var marker = L.marker([50.73106,-3.52234],
+			  {
+			      title: "St James Park Railway Station",
+			      icon: 13 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 13 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(13 == 1)
+    markers_by_name["St James"] = marker;
+  
+    var marker = L.marker([55.852,-4.442],
+			  {
+			      title: "Paisley St James Railway Station",
+			      icon: 14 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 14 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(14 == 1)
+    markers_by_name["St James"] = marker;
+  
+    var marker = L.marker([33.94528,-78.11412],
+			  {
+			      title: "Town of St. James",
+			      icon: 15 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 15 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(15 == 1)
+    markers_by_name["St James"] = marker;
+  
+    var marker = L.marker([54.429064948,-124.247601397],
+			  {
+			      title: "Necoslie (Fort St. James) Indian Reserve 1",
+			      icon: 16 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 16 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(16 == 1)
+    markers_by_name["St James"] = marker;
+  
+    var marker = L.marker([54.429064948,-124.247601397],
+			  {
+			      title: "Réserve indienne Necoslie (Fort St. James) 1",
+			      icon: 17 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 17 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(17 == 1)
+    markers_by_name["St James"] = marker;
+  
+    var marker = L.marker([54.440168012,-124.258802683],
+			  {
+			      title: "Fort St. James National Historic Site of Canada",
+			      icon: 18 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 18 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(18 == 1)
+    markers_by_name["St James"] = marker;
+  
+    var marker = L.marker([54.4559694102206,-124.262752532959],
+			  {
+			      title: "Fort St. James",
+			      icon: 19 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 19 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(19 == 1)
+    markers_by_name["St James"] = marker;
+  
+    var marker = L.marker([51.9373862575194,-131.016941070557],
+			  {
+			      title: "St. James Island",
+			      icon: 20 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 20 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(20 == 1)
+    markers_by_name["St James"] = marker;
+  
+    var marker = L.marker([40.36488790545252,-82.67187333888344],
+			  {
+			      title: "Ohio",
+			      icon: 1 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 1 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(1 == 1)
+    markers_by_name["Ohio"] = marker;
+  
+    var marker = L.marker([43.6231247,-72.6253749],
+			  {
+			      title: "Ohio Hill",
+			      icon: 2 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 2 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(2 == 1)
+    markers_by_name["Ohio"] = marker;
+  
+    var marker = L.marker([38.9489492,-84.853838],
+			  {
+			      title: "Ohio County",
+			      icon: 3 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 3 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(3 == 1)
+    markers_by_name["Ohio"] = marker;
+  
+    var marker = L.marker([41.6195,-83.61938000000001],
+			  {
+			      title: "Medical College of Ohio Hospital Heliport",
+			      icon: 4 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 4 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(4 == 1)
+    markers_by_name["Ohio"] = marker;
+  
+    var marker = L.marker([40.079778,-83.07302799999999],
+			  {
+			      title: "Columbus, Ohio State University Airport",
+			      icon: 5 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 5 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(5 == 1)
+    markers_by_name["Ohio"] = marker;
+  
+    var marker = L.marker([40.0797854,-83.0729642],
+			  {
+			      title: "Ohio State University Airport",
+			      icon: 6 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 6 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(6 == 1)
+    markers_by_name["Ohio"] = marker;
+  
+    var marker = L.marker([39.9725644,-83.0018498],
+			  {
+			      title: "Ohio Center Heliport",
+			      icon: 7 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 7 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(7 == 1)
+    markers_by_name["Ohio"] = marker;
+  
+    var marker = L.marker([39.9625644,-82.9993497],
+			  {
+			      title: "Ohio Building Authority Heliport",
+			      icon: 8 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 8 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(8 == 1)
+    markers_by_name["Ohio"] = marker;
+  
+    var marker = L.marker([39.9611755,-82.99879420000001],
+			  {
+			      title: "Columbus",
+			      icon: 9 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 9 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(9 == 1)
+    markers_by_name["Ohio"] = marker;
+  
+    var marker = L.marker([40.295617,-83.0518531],
+			  {
+			      title: "Ohio Department of Transportation District 6 Heliport",
+			      icon: 10 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 10 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(10 == 1)
+    markers_by_name["Ohio"] = marker;
+  
+    var marker = L.marker([40.2503398,-83.0001841],
+			  {
+			      title: "Ohio",
+			      icon: 11 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 11 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(11 == 1)
+    markers_by_name["Ohio"] = marker;
+  
+    var marker = L.marker([40.9525522,-83.9821657],
+			  {
+			      title: "Ohio Dusting Company Incorporated Airport",
+			      icon: 12 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 12 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(12 == 1)
+    markers_by_name["Ohio"] = marker;
+  
+    var marker = L.marker([40.1000728,-80.6164644],
+			  {
+			      title: "Ohio County",
+			      icon: 13 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 13 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(13 == 1)
+    markers_by_name["Ohio"] = marker;
+  
+    var marker = L.marker([36.0320053,-86.7933329],
+			  {
+			      title: "Murray Ohio Airport",
+			      icon: 14 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 14 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(14 == 1)
+    markers_by_name["Ohio"] = marker;
+  
+    var marker = L.marker([37.4592155,-86.8483248],
+			  {
+			      title: "Ohio County Airport",
+			      icon: 15 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 15 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(15 == 1)
+    markers_by_name["Ohio"] = marker;
+  
+    var marker = L.marker([37.4667155,-86.86665859999999],
+			  {
+			      title: "Ohio County",
+			      icon: 16 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 16 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(16 == 1)
+    markers_by_name["Ohio"] = marker;
+  
+    var marker = L.marker([38.8174935,-107.1214382],
+			  {
+			      title: "Ohio Peak",
+			      icon: 17 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 17 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(17 == 1)
+    markers_by_name["Ohio"] = marker;
+  
+    var marker = L.marker([37.860829,-107.6986725],
+			  {
+			      title: "Ohio Peak",
+			      icon: 18 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 18 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(18 == 1)
+    markers_by_name["Ohio"] = marker;
+  
+    var marker = L.marker([38.3713016,-120.7699348],
+			  {
+			      title: "Ohio Hill",
+			      icon: 19 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 19 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(19 == 1)
+    markers_by_name["Ohio"] = marker;
+  
+    var marker = L.marker([76.6197222,-67.4252778],
+			  {
+			      title: "Ohio Fjeld",
+			      icon: 20 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 20 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(20 == 1)
+    markers_by_name["Ohio"] = marker;
+  
+    var marker = L.marker([52.60078655943872,-1.403465551497459],
+			  {
+			      title: "Ambion Hill",
+			      icon: 1 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 1 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(1 == 1)
+    markers_by_name["Ambion Hill"] = marker;
+  
+    var marker = L.marker([38.75,22.75],
+			  {
+			      title: "Daulis",
+			      icon: 1 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 1 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(1 == 1)
+    markers_by_name["Daulis"] = marker;
+  
+    var marker = L.marker([41.8181558,-71.4161678],
+			  {
+			      title: "Armenian Euphrates Evangelical Church",
+			      icon: 1 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 1 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(1 == 1)
+    markers_by_name["Euphrates"] = marker;
+  
+    var marker = L.marker([34.44544098857848,41.52381413310725],
+			  {
+			      title: "Euphrates",
+			      icon: 2 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 2 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(2 == 1)
+    markers_by_name["Euphrates"] = marker;
+  
+    var marker = L.marker([32.13199454646592,44.49506694910851],
+			  {
+			      title: "Euphrates",
+			      icon: 3 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 3 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(3 == 1)
+    markers_by_name["Euphrates"] = marker;
+  
+    var marker = L.marker([31.39496490090127,45.11835718249964],
+			  {
+			      title: "Euphrates",
+			      icon: 4 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 4 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(4 == 1)
+    markers_by_name["Euphrates"] = marker;
+  
+    var marker = L.marker([33.57724615176511,43.1723130815203],
+			  {
+			      title: "Euphrates",
+			      icon: 5 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 5 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(5 == 1)
+    markers_by_name["Euphrates"] = marker;
+  
+    var marker = L.marker([31.13642014663123,45.91309635636146],
+			  {
+			      title: "Euphrates",
+			      icon: 6 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 6 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(6 == 1)
+    markers_by_name["Euphrates"] = marker;
+  
+    var marker = L.marker([30.94904149072207,46.91578167178776],
+			  {
+			      title: "Euphrates",
+			      icon: 7 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 7 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(7 == 1)
+    markers_by_name["Euphrates"] = marker;
+  
+    var marker = L.marker([42.3761,-83.1572],
+			  {
+			      title: "Euphrates Missionary Baptist Church",
+			      icon: 8 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 8 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(8 == 1)
+    markers_by_name["Euphrates"] = marker;
+  
+    var marker = L.marker([33.1415376,-82.6359653],
+			  {
+			      title: "Euphrates Cemetery",
+			      icon: 9 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 9 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(9 == 1)
+    markers_by_name["Euphrates"] = marker;
+  
+    var marker = L.marker([33.1418154,-82.635132],
+			  {
+			      title: "Euphrates Church",
+			      icon: 10 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 10 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(10 == 1)
+    markers_by_name["Euphrates"] = marker;
+  
+    var marker = L.marker([30.5788885650376,47.7657222747803],
+			  {
+			      title: "Euphrates River",
+			      icon: 11 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 11 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(11 == 1)
+    markers_by_name["Euphrates"] = marker;
+  
+    var marker = L.marker([-9.41667,46.25],
+			  {
+			      title: "Euphrates Islet",
+			      icon: 12 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 12 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(12 == 1)
+    markers_by_name["Euphrates"] = marker;
+  
+    var marker = L.marker([27.03333,56.4],
+			  {
+			      title: "Euphrates Patch",
+			      icon: 13 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 13 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(13 == 1)
+    markers_by_name["Euphrates"] = marker;
+  
+    var marker = L.marker([31.5,44.5],
+			  {
+			      title: "Euphrates fl.",
+			      icon: 14 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 14 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(14 == 1)
+    markers_by_name["Euphrates"] = marker;
+  
+    var marker = L.marker([51.50051,-0.12883],
+			  {
+			      title: "London",
+			      icon: 1 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 1 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(1 == 1)
+    markers_by_name["Londinium"] = marker;
+  
+    var marker = L.marker([51.5,-0.5],
+			  {
+			      title: "Londinium",
+			      icon: 2 == 1 ? green_icon : red_icon,
+    
+			      zIndexOffset: 1000 - 2 * 20
+			  });
+    marker.addTo(map);
+    markers.push(marker);
+    if(2 == 1)
+    markers_by_name["Londinium"] = marker;
+  
+
+	adjust_locations(markers);
+    }
+
+    function goto(x, y) {
+	map.flyTo([x,y]);
+    }
+
+    function goto_name(name) {
+        if(markers_by_name.hasOwnProperty(name))
+    	    map.flyTo(markers_by_name[name].getLatLng());
+    }
+
+    function show_info(name) {
+	var para = document.getElementById("message").firstChild;
+	para.nodeValue = name;
+    }
+
+    
+//<![CDATA[
+
+// adjust the locations of identically-positioned candidates so they are
+// distinguishable on the map.
+
+function adjust_locations(markers)
+{
+    markers.sort(compare_locations);
+
+    var dups = new Array();
+
+    var lastlat = 99999, lastlng = 9999;
+    for(var i=0; i < markers.length; i++)
+    {
+        var l = markers[i].getLatLng();
+        if(l.lat == lastlat && l.lng == lastlng)
+        {
+//            alert("match: " + l.lat + "," + l.lng + " = " + lastlat + ","  + lastlng);
+            dups.push(markers[i]);
+        }
+        else
+        {
+            if(dups.length > 1)
+                spread(dups);
+            dups.length = 0;
+            dups.push(markers[i]);
+        }
+        lastlat = l.lat;
+        lastlng = l.lng;
+    }
+    if(dups.length > 1)
+        spread(dups);
+}
+
+// spread an array of identically-positioned markers into a 0.005 degree circle
+
+function spread(dups)
+{
+    var latlng = dups[0].getLatLng();
+    var lat = latlng.lat, lng = latlng.lng;
+//    alert("Spreading " + dups.length + " markers from " + lat + "," + lng);
+    for(var i=0; i < dups.length; i++)
+    {
+        var newlatlng = new L.LatLng(
+            lat + Math.sin((2 * 3.14159 * i) / dups.length) * 0.005,
+            lng + Math.cos((2 * 3.14159 * i) / dups.length) * 0.005);
+        dups[i].setLatLng(newlatlng);
+//        alert(lat + " -> " + newlatlng.lat + "   " + lng + " -> " + newlatlng.lng);
+    }
+}
+
+// comparison function for sorting
+
+function compare_locations(m1, m2)
+{
+    var l1 = m1.getLatLng(), l2 = m2.getLatLng();
+    if(l1.lat == l2.lat)
+        return l1.lng - l2.lng;
+    else
+        return l1.lat - l2.lat;
+}
+//]]>
+      </script>
+  <style>
+      .found {color: red;} 
+      table  {border-collapse: collapse; empty-cells: show;}
+      tr     {border: 1px solid black;}
+      td[best="true"] {color: green;}
+      td[best="false"] {color: red;}
+    </style>
+ </head>
+ <body onload="load()">
+  <div style="height: 400px" id="map"></div>
+ </body>
+</html>

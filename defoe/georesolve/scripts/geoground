@@ -1,0 +1,72 @@
+#!/bin/sh
+
+usage="geoground -g gaz [-top] [-l lat long radius score] [-lb w n e s lscore] <input.xml >output.xml"
+descr="ground location entities"
+
+. `dirname $0`/setup
+
+while [ $# -gt 0 ]; do
+  arg=$1
+  shift
+  case $arg in
+    -g)
+      gaz=$1
+      shift
+      ;;
+    -top)
+      top="Y"
+      ;;
+    -l)
+      lat="$1"
+      long="$2"
+      radius="$3"
+      lscore="$4"
+      shift 4
+      ;;
+    -lb)
+      ltype=box
+      w="$1"
+      n="$2"
+      e="$3"
+      s="$4"
+      lscore="$5"
+      shift 5
+      ;;
+    *)
+      echo "usage: $usage" >&2
+      exit 2
+  esac
+done
+
+if [ $# -ne -0 -o -z "$gaz" ]; then
+  echo "usage: $usage" >&2
+  exit 2
+fi
+
+lib=$here/lib/georesolve
+
+cat >$tmp-input
+
+$here/scripts/geogaz -g "$gaz" <$tmp-input >$tmp-gazunres.xml
+
+if [ "$ltype" ]; then
+
+$here/scripts/georesolve -lb "$w" "$n" "$e" "$s" "$lscore" <$tmp-gazunres.xml >$tmp-gaz.xml
+
+else
+
+$here/scripts/georesolve -l "$lat" "$long" "$radius" "$lscore" <$tmp-gazunres.xml >$tmp-gaz.xml
+
+fi
+
+if [ $top ]; then
+
+cat $tmp-gaz.xml |
+lxreplace -q "place[not(@rank='1')]" |
+egrep -v '^[ ]*$' 
+
+else
+    
+cat $tmp-gaz.xml
+
+fi
