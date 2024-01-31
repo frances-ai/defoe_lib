@@ -1,12 +1,13 @@
 import os
 import subprocess
 import re
+import platform
 
 #change this according to your path
-defoe_path ="/home/rosa_filgueira_vicente/defoe/"
+defoe_path ="/Users/ly40/Documents/PhD/InformationExtraction/EncyclopaediaBritannica/NLS/"
 os_type = "sys-i386-64"
 # Use the following value for os variable in case you are running this in a MAC
-#os_type= "sys-i386-snow-leopard"
+os_type= "sys-x86-64-sierra"
 
 def longsfix_sentence(sentence):
     print("Original sentence: %s" %sentence)
@@ -14,7 +15,7 @@ def longsfix_sentence(sentence):
         sentence=sentence.replace("'", "\'\\\'\'")
 
     cmd = 'printf \'%s\' \''+ sentence + '\' | '+ defoe_path + 'defoe/long_s_fix/' + os_type + '/lxtransduce -l spelling='+ defoe_path+ 'defoe/long_s_fix/f-to-s.lex '+ defoe_path+ 'defoe/long_s_fix/fix-spelling.gr'
-
+    print(cmd)
     try:
         proc=subprocess.Popen(cmd.encode('utf-8'), shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = proc.communicate()
@@ -37,5 +38,8 @@ def longsfix_sentence(sentence):
     return fix_final
 
 
-sentence="This a fentence test"
-longsfix_sentence(sentence)
+if __name__ == "__main__":
+    platform_name = platform.system() + " " + platform.release() + " " + platform.machine()
+    print(platform_name)
+    sentence="This a fentence test"
+    longsfix_sentence(sentence)

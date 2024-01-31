@@ -11,7 +11,7 @@ defoe_path = "/Users/ly40/Documents/frances-ai/defoe_lib/defoe/"
 # os_type = "sys-i386-64"
 # Use the following value for os variable in case you are running this in a MAC
 os_type= "sys-x86-64-sierra"
-gazetteer = "deep"
+gazetteer = "geonames"
 bounding_box = ""
 
 

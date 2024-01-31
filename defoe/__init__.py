@@ -29,8 +29,3 @@ def get_geo_supported_os_type():
         return "sys-x86-64-el7"
 
     raise Exception("Geoparser does not support platform " + platform_name)
-
-
-if __name__ == "__main__":
-    print(get_root_path())
-    print(dirname("result/file.txt"))

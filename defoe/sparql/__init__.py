@@ -14,9 +14,9 @@ class Model:
       return {
         "frequency_keysearch_by_year": frequency_keysearch_by_year.do_query,
         "publication_normalized": publication_normalized.do_query,
-        "fulltext_keysearch_by_year": terms_fulltext_keysearch_by_year.do_query,
+        "fulltext_keysearch_by_year": fulltext_keysearch_by_year.do_query,
         "uris_keysearch": uris_keysearch.do_query,
-        "snippet_keysearch_by_year": terms_snippet_keysearch_by_year.do_query,
+        "snippet_keysearch_by_year": snippet_keysearch_by_year.do_query,
         "geoparser_by_year": geoparser_by_year.do_query
       }
 
