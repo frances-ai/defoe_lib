@@ -81,7 +81,7 @@ def do_query(df, config=None, logger=None, context=None):
         kg_type = "total_eb"
 
     ###### Supporting New NLS KG #######
-    if kg_type == "total_eb" :
+    if "total_eb" in kg_type:
     
         fdf = df.withColumn("definition", blank_as_null("definition"))
 
@@ -110,7 +110,7 @@ def do_query(df, config=None, logger=None, context=None):
     
 
     #(year-0, preprocess_article-1)
-    if kg_type == "total_eb" :
+    if "total_eb" in kg_type:
         preprocess_articles = articles.flatMap(
             lambda t_articles: [(t_articles[0], preprocess_clean_page(t_articles[1]+ " " + t_articles[2], preprocess_type))]) 
     else:

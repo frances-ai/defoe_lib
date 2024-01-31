@@ -110,7 +110,7 @@ def do_query(df, config=None, logger=None, context=None):
         kg_type = "total_eb"
 
     ###### Supporting New NLS KG #######
-    if kg_type == "total_eb" :
+    if "total_eb" in kg_type :
         fdf = df.withColumn("definition", blank_as_null("definition"))
     
         #(year-0, uri-1, title-2, edition-3, archive_filename-4, volume-5, letters-6, part-7, page_number-8, header-9, term-10, definition-11)
@@ -147,7 +147,7 @@ def do_query(df, config=None, logger=None, context=None):
 
  
     articles=newdf.rdd.map(tuple)
-    if kg_type == "total_eb" :
+    if "total_eb" in kg_type :
         #(year-0, uri-1, title-2, edition-3, archive_filename-4, volume-5, letters-6, part-7, page_number-8, header-9, term-10, preprocess_article-11)
     
         preprocess_articles = articles.flatMap(
@@ -231,7 +231,7 @@ def do_query(df, config=None, logger=None, context=None):
                                 year_sentence[4], year_sentence[5], year_sentence[6], year_sentence[7],
                                 year_sentence[8], year_sentence[9], year_sentence[10],
                                 year_sentence[11], sentence) for sentence in year_sentence[12]])
-    if kg_type == "total_eb":
+    if "total_eb" in kg_type:
         matching_data = matching_sentences.map(
             lambda sentence_data:
             (sentence_data[0],

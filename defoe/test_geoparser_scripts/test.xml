@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document version="3">
+    <meta>
+        <attr name="docdate" id="docdate" year="2023" month="05" date="05" sdate="2023-05-05" day-number="738644" day="Friday" wdaynum="5">20230505</attr>
+        <attr name="tokeniser_version" date="20151216"/>
+    </meta>
+    <text>
+        <p>
+            <w l="%" pws="yes" id="w13" p="NN" headn="yes" group="B-NP">%</w>
+            <w l="s" pws="no" id="w14" p="VBZ" headv="yes" group="B-VP">s</w>
+            <w pws="yes" id="w16" p="PRP" group="B-NP">I</w>
+            <w l="like" pws="yes" id="w18" p="VBP" headv="yes" group="B-VP">like</w>
+            <w pws="yes" id="w23" p="TO" group="B-VP">to</w>
+            <w l="live" pws="yes" id="w26" p="VB" headv="yes" group="I-VP">live</w>
+            <w pws="yes" id="w31" p="IN" group="B-PP">in</w>
+            <w locname="single" l="madrid" pws="yes" id="w34" p="NNP" group="B-NP">Madrid</w>
+            <w pws="no" id="w40" p="," group="O">,</w> <w pws="yes" id="w42" p="WDT" headn="yes" group="B-NP">which</w>
+            <w l="be" pws="yes" id="w48" p="VBZ" headv="yes" group="B-VP">is</w>
+            <w pws="yes" id="w51" p="DT" group="B-NP">the</w>
+            <w l="capital" pws="yes" id="w55" p="NN" common="true" headn="yes" group="I-NP">capital</w>
+            <w pws="yes" id="w63" p="IN" group="B-PP">of</w>
+            <w locname="single" l="spain" pws="yes" id="w66" p="NNP" country="true" group="B-NP">Spain</w>
+            <w sb="true" pws="no" id="w71" p="." group="O">.</w>
+        </p>
+    </text>
+    <standoff>
+        <ents source="ner-rb">
+            <ent snippet="I like to live in Madrid , which is the capital" type="location" id="rb1" lat="40.4165000" long="-3.7025600" gazref="geonames:3117735" in-country="ES" feat-type="pplc" pop-size="3117977">
+                <parts>
+                    <part ew="w34" sw="w34">Madrid</part>
+                </parts>
+            </ent>
+            <ent snippet="which is the capital of Spain .    " type="location" id="rb2" lat="40.0000000" long="-4.0000000" gazref="geonames:2510769" in-country="ES" feat-type="country" pop-size="40341462">
+                <parts>      <part ew="w66" sw="w66">Spain</part>    </parts>  </ent>
+        </ents>
+        <ents source="events">
+            <ent tense="pres" voice="act" asp="simple" modal="no" id="ev1" subtype="s" type="event">
+                <parts><part ew="w14" sw="w14">s</part></parts>
+            </ent>  <ent tense="presorbase" voice="act" asp="simple" modal="no" id="ev2" subtype="like" type="event">
+            <parts><part ew="w18" sw="w18">like</part></parts>
+        </ent>
+            <ent tense="inf" voice="act" asp="simple" modal="no" id="ev3" subtype="live" type="event"><parts>
+            <part ew="w26" sw="w26">live</part></parts></ent></ents>
+        <relations source="temprel"></relations>
+    </standoff>
+</document>

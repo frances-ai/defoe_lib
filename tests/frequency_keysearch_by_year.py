@@ -1,5 +1,5 @@
-from defoe_lib.config import DefoeConfig
-from defoe_lib.service import DefoeService
+from config import DefoeConfig
+from defoe_service import LocalDefoeService
 
 vars = {
     "sparkUrl": "local[*]",
@@ -8,23 +8,27 @@ vars = {
 }
 
 defoe_config = DefoeConfig.from_dict(vars)
-service = DefoeService(defoe_config)
+service = LocalDefoeService(defoe_config)
 
 print(service.config.spark_url)
 
 
 def get_config():
     config = {
-        "preprocess": "none",
-        "start_year": "1771",
-        "end_year": "1781",
+        "start_year": "1768",
+        "end_year": "1860",
         "hit_count": "term",
-        "data": "/Users/ly40/Documents/frances-ai/defoe_lib/queries/animal.txt",
+        "preprocess": "lemmatize",
+        "data": "/Users/ly40/Documents/PhD/lexicon/commodities.txt",
         "kg_type": "total_eb",
-        "result_file_path": "/Users/ly40/Documents/frances-ai/defoe_lib/result_animal.yml"
+        "result_file_path": "/Users/ly40/Documents/frances-ai/defoe_lib/result_commodities.yml"
     }
     return config
 
 
 def submit():
-    return service.submit_job("12", "sparql", "frequency_keysearch_by_year", get_config())
+    return submit_job("12", "sparql", "frequency_keysearch_by_year", get_config())
+
+
+if __name__ == "__main__":
+    submit()

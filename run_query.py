@@ -58,7 +58,6 @@ from google.cloud import storage
 from pyspark.sql import SparkSession
 
 from defoe import sparql
-from defoe.spark_utils import files_to_rdd
 
 
 def create_arg_parser():  # pragma: no cover
@@ -163,6 +162,7 @@ def main():
     spark = SparkSession.builder.appName("defoe").getOrCreate()
     log = spark._jvm.org.apache.log4j.LogManager.getLogger(__name__)  # pylint: disable=protected-access
 
+    print(endpoint)
     ok_data = model.endpoint_to_object(endpoint, spark)
 
     results = query(ok_data, query_config, log, spark)

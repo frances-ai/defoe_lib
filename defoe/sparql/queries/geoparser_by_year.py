@@ -4,13 +4,16 @@ We recommend to use this query when we want to select a window of words (snippet
 all the words of the page in which the term was found.
 """
 
-from defoe import query_utils, get_root_path, get_geo_supported_os_type
+from defoe import query_utils
 from defoe.sparql.query_utils import get_articles_list_matches, blank_as_null
 
 from defoe.nls.query_utils import preprocess_clean_page
+from defoe.config import GEO_PARSER_PATH
 
 import yaml, os
 from functools import reduce
+
+from defoe.utils import get_geo_supported_os_type
 
 
 def do_query(df, config=None, logger=None, context=None):
@@ -122,12 +125,12 @@ def do_query(df, config=None, logger=None, context=None):
     else:
         bounding_box = ""
 
-    defoe_path = get_root_path() + "/"
+    defoe_path = GEO_PARSER_PATH + "/"
     print(defoe_path)
     os_type = get_geo_supported_os_type()
 
     ###### Supporting New NLS KG #######
-    if kg_type == "total_eb":
+    if "total_eb" in kg_type:
         fdf = df.withColumn("definition", blank_as_null("definition"))
 
         # (year-0, uri-1, title-2, edition-3, archive_filename-4, volume-5, letters-6, part-7, page_number-8, header-9, term-10, definition-11)
@@ -284,7 +287,7 @@ def do_query(df, config=None, logger=None, context=None):
              year_page[11],
              query_utils.get_geoparser_xml(year_page[12], defoe_path, os_type, gazetteer, bounding_box))])
 
-    if kg_type == "total_eb":
+    if "total_eb" in kg_type:
         # [(year-0, uri-1, title-2, edition-3, archive_filename-4, volume-5, letters-6, part-7, page_number-8, header-9, term-10, preprocess_article-11 )]
         geo_data = geo_xml.map(
             lambda sentence_data:

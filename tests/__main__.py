@@ -1,3 +1,3 @@
-from .geoparser_by_year import submit
+from .frequency_keysearch_by_year import submit
 
 submit()

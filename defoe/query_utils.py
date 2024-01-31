@@ -509,7 +509,7 @@ def geoparser_cmd(text, defoe_path, os_type, gazetteer, bounding_box):
     if "'" in text:
         text = text.replace("'", "\'\\\'\'")
 
-    cmd = 'echo \'%s\' \'' + text + '\' | ' + defoe_path + 'geoparser-1.3/scripts/run -t plain -g ' + gazetteer + ' ' + bounding_box + ' -top | ' + defoe_path + 'georesolve/bin/' + os_type + '/lxreplace -q s | ' + defoe_path + 'geoparser-1.3/bin/' + os_type + '/lxt -s ' + defoe_path + 'geoparser-1.3/lib/georesolve/addfivewsnippet.xsl'
+    cmd = 'echo \'%s\' \'' + text + '\' | ' + defoe_path + 'geoparser-1.3/scripts/run -t plain -g ' + gazetteer + ' ' + bounding_box + ' -top | ' + defoe_path + 'geoparser-1.3/bin/' + os_type + '/lxreplace -q s | ' + defoe_path + 'geoparser-1.3/bin/' + os_type + '/lxt -s ' + defoe_path + 'geoparser-1.3/lib/georesolve/addfivewsnippet.xsl'
     while (len(geoparser_xml) < 5) and (atempt < 1000) and (flag == 1):
         try:
             proc = subprocess.Popen(cmd.encode('utf-8'), shell=True,
