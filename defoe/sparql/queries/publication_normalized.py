@@ -81,12 +81,12 @@ def do_query(df, config=None, logger=None, context=None):
     #print("-------Num Words %s ----" % num_words.show())
     
     ### Num of Volumes ###
-    if kg_type == "total_eb" :
+    if "total_eb" in kg_type:
         df_groups= newdf.groupBy("year", "volume", "numPages").count()
     else:
         df_groups= newdf.groupBy("year", "vuri", "volume", "numPages").count()
 
-    if kg_type == "total_eb" :
+    if "total_eb" in kg_type :
         num_terms=df_groups.groupBy("year").sum("count").withColumnRenamed("sum(count)", "tNumTerms")
         #print("-------NumTerms %s ----" % num_terms.show())
 
@@ -97,7 +97,7 @@ def do_query(df, config=None, logger=None, context=None):
     #print("-------NumVolumes %s ----" % num_vol.show())
     
     vol_pages=num_vol.join(num_pages, on=["year"],how="inner")
-    if kg_type == "total_eb" :
+    if "total_eb" in kg_type :
         vol_pages_terms=vol_pages.join(num_terms, on=["year"],how="inner")
         result=vol_pages_terms.join(num_words, on=["year"],how="inner")
     else:

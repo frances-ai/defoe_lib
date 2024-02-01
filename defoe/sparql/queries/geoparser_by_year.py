@@ -127,7 +127,7 @@ def do_query(df, config=None, logger=None, context=None):
     os_type = get_geo_supported_os_type()
 
     ###### Supporting New NLS KG #######
-    if kg_type == "total_eb":
+    if "total_eb" in kg_type:
         fdf = df.withColumn("definition", blank_as_null("definition"))
 
         # (year-0, uri-1, title-2, edition-3, archive_filename-4, volume-5, letters-6, part-7, page_number-8, header-9, term-10, definition-11)
@@ -199,7 +199,7 @@ def do_query(df, config=None, logger=None, context=None):
 
     articles = newdf.rdd.map(tuple)
 
-    if kg_type == "total_eb":
+    if "total_eb" in kg_type:
         # (year-0, uri-1, title-2, edition-3, archive_filename-4, volume-5, letters-6, part-7, page_number-8, header-9, term-10, preprocess_article-11, unprocess_articles-12)
 
         preprocess_articles = articles.flatMap(
@@ -284,7 +284,7 @@ def do_query(df, config=None, logger=None, context=None):
              year_page[11],
              query_utils.get_geoparser_xml(year_page[12], defoe_path, os_type, gazetteer, bounding_box))])
 
-    if kg_type == "total_eb":
+    if "total_eb" in kg_type:
         # [(year-0, uri-1, title-2, edition-3, archive_filename-4, volume-5, letters-6, part-7, page_number-8, header-9, term-10, preprocess_article-11 )]
         geo_data = geo_xml.map(
             lambda sentence_data:

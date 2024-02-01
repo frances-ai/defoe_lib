@@ -81,7 +81,7 @@ def do_query(df, config=None, logger=None, context=None):
 
     ###### Supporting New NLS KG #######
 
-    if kg_type == "total_eb": 
+    if "total_eb" in kg_type:
         fdf = df.withColumn("definition", blank_as_null("definition"))
 
         if start_year and end_year:
@@ -107,7 +107,7 @@ def do_query(df, config=None, logger=None, context=None):
     articles=newdf.rdd.map(tuple)
     
 
-    if kg_type == "total_eb" :
+    if "total_eb" in kg_type :
     #(year-0, preprocess_article-1, uri)
         preprocess_articles = articles.flatMap(
            lambda t_articles: [(t_articles[0], preprocess_clean_page(t_articles[1]+ " " + t_articles[2], preprocess_type), t_articles[3])]) 
