@@ -9,6 +9,7 @@ import os
 from pyspark.sql import SparkSession
 
 import defoe.sparql as sparql
+import defoe.hto as hto
 
 num_cores = 34
 executor_memory = "16g"
@@ -18,6 +19,7 @@ max_result_size = 0  # Unlimited result size
 
 models = {
     "sparql": sparql.Model(),
+    "hto": hto
 }
 
 jobs = {}
@@ -83,7 +85,12 @@ def run_job(id, model_name, query_name, endpoint, query_config, result_file_path
 
     try:
         print("sparql endpoint: %s", endpoint)
-        ok_data = model.endpoint_to_object(endpoint, spark)
+        if model_name == "hto":
+            collection_name = query_config["collection"]
+            source = query_config["source"]
+            ok_data = model.get_hto_df(endpoint, collection_name, source, spark)
+        else:
+            ok_data = model.endpoint_to_object(endpoint, spark)
         result = query(ok_data, query_config, log, spark)
     except Exception as e:
         print("Job " + id + " threw an exception")
