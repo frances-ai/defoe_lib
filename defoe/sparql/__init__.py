@@ -23,7 +23,7 @@ class Model:
 
   def endpoint_to_object(self, sparql_endpoint, context):
       sparql = SPARQLWrapper(sparql_endpoint)
-      if "total_eb" in sparql_endpoint:
+      if "ebo" in sparql_endpoint:
           query="""
           PREFIX eb: <https://w3id.org/eb#>
           PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>

@@ -63,8 +63,8 @@ def do_query(df, config=None, logger=None, context=None):
     if "kg_type" in config:
         kg_type = config["kg_type"]
     else:
-        kg_type = "total_eb"
-    if kg_type == "total_eb" :
+        kg_type = "ebo_total"
+    if "kg_type" in config :
         fdf = df.withColumn("definition", blank_as_null("definition"))
         newdf=fdf.filter(fdf.definition.isNotNull()).select(fdf.year, fdf.vuri, fdf.volume, fdf.numPages, fdf.numWords)
     else:
@@ -81,12 +81,12 @@ def do_query(df, config=None, logger=None, context=None):
     #print("-------Num Words %s ----" % num_words.show())
     
     ### Num of Volumes ###
-    if "total_eb" in kg_type:
+    if "ebo" in kg_type:
         df_groups= newdf.groupBy("year", "volume", "numPages").count()
     else:
         df_groups= newdf.groupBy("year", "vuri", "volume", "numPages").count()
 
-    if "total_eb" in kg_type :
+    if "ebo" in kg_type :
         num_terms=df_groups.groupBy("year").sum("count").withColumnRenamed("sum(count)", "tNumTerms")
         #print("-------NumTerms %s ----" % num_terms.show())
 
@@ -97,7 +97,7 @@ def do_query(df, config=None, logger=None, context=None):
     #print("-------NumVolumes %s ----" % num_vol.show())
     
     vol_pages=num_vol.join(num_pages, on=["year"],how="inner")
-    if "total_eb" in kg_type :
+    if "ebo" in kg_type :
         vol_pages_terms=vol_pages.join(num_terms, on=["year"],how="inner")
         result=vol_pages_terms.join(num_words, on=["year"],how="inner")
     else:
@@ -111,7 +111,7 @@ def do_query(df, config=None, logger=None, context=None):
         r[year]=[]
         r[year].append(row["tNumVol"])
         r[year].append(row["tNumPages"])
-        if kg_type == "total_eb":
+        if "ebo" in kg_type:
             r[year].append(row["tNumTerms"])
         r[year].append(row["tNumWords"])
       
