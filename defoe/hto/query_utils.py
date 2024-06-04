@@ -33,7 +33,7 @@ def get_sentences_list_matches(text, keysentence):
     return sorted(match)
 
 
-def get_articles_list_matches(text, keysentence):
+def get_articles_list_matches(text, keysentences):
     """
     o	Article count: The query counts as a “hint” every time that finds an article with a particular term from our lexicon in the previously selected articles (by the target words or/and time period).  So, if a term is repeated several times in an article, it will be counted just as ONE. In this way, we are basically calculating the “frequency of articles” over time.
 
@@ -49,7 +49,7 @@ def get_articles_list_matches(text, keysentence):
 
     match = []
     text_list = text.split()
-    for sentence in keysentence:
+    for sentence in keysentences:
         if len(sentence.split()) > 1:
             if sentence in text:
                 match.append(sentence)
@@ -62,7 +62,7 @@ def get_articles_list_matches(text, keysentence):
     return sorted(match)
 
 
-def get_articles_text_matches(text, keysentence):
+def get_articles_text_matches(text, keysentences):
     """
      TERM count: The query counts as a “hint” every time that finds a hit with a particular term from our lexicon in the previously selected articles (by the target words or/and time period).  So, if a term is repeated several times in an article, it will be counted SEVERAL TIMES
 
@@ -77,7 +77,7 @@ def get_articles_text_matches(text, keysentence):
     """
     match = []
     text_list = text.split()
-    for sentence in keysentence:
+    for sentence in keysentences:
         if len(sentence.split()) > 1:
             if sentence in text:
                 results = [matches.start() for matches in re.finditer(sentence, text)]
