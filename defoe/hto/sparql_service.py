@@ -310,7 +310,7 @@ def get_hto_object(sparql_endpoint, collection_name, source):
                               ]
             results = get_eb_terms_from_editions_with_source_provider(hto_sparql_wrapper, edition_mmsids,
                                                                       Agent.NLS)
-        elif source == "Neuspell":
+        elif source == "NeuSpell":
             edition_mmsids = ["992277653804341"  # 1st 1771
                 , "9929192893804340"  # 1st 1773
                 , "997902523804341"  # 2nd 1778

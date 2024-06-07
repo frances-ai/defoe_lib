@@ -3,7 +3,7 @@ from enum import Enum
 from pyspark import SQLContext
 from pyspark.sql.types import StructType, StructField, StringType, ArrayType, IntegerType
 
-from .queries import publication_normalized
+from .queries import publication_normalized, frequency_keysearch_by_year
 from .sparql_service import get_hto_object, NLSCollection
 
 default_hto_sparql_endpoint = "http://127.0.0.1:3030/hto"
@@ -12,6 +12,7 @@ default_hto_sparql_endpoint = "http://127.0.0.1:3030/hto"
 def get_queries():
     return {
         "publication_normalized": publication_normalized.do_query,
+        "frequency_keysearch_by_year": frequency_keysearch_by_year.do_query
     }
 
 
