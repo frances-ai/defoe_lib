@@ -111,8 +111,7 @@ class TestFrequencyKeysearchByYear(PySparkTestCase):
                         # word count: 14
                         'description': 'under, and y Xuirra, tongue, in Anatomy, two glands of the tongue.',
                         'volume_uri': 'https://w3id.org/hto/Volume/7_12',
-                        'volume_number': 12,
-                        'num_pages': 902},
+                        'volume_number': 12},
                        {'term_uri': 'https://w3id.org/hto/ArticleTermRecord/test_term_2',
                         'term_name': 'EDOM',
                         'alter_names': ['IDUMAEA'],

@@ -40,6 +40,7 @@ def get_nls_page_from_nls(hto_sparql_wrapper, collection_name):
             prov:value ?source_filepath.
         ?agent foaf:name "%s".
         ?volume a hto:Volume;
+            hto:title ?volume_title;
             hto:number ?volume_number;
             hto:numberOfPages ?number_pages;
             hto:hadMember ?page.
@@ -68,6 +69,7 @@ def get_nls_page_from_nls(hto_sparql_wrapper, collection_name):
              "series_title": r["series_title"]["value"],
              "series_number": int(r["series_number"]["value"]),
              "volume_uri": r["volume"]["value"],
+             "volume_title": r["volume_title"]["value"],
              "volume_number": int(r["volume_number"]["value"]),
              "num_pages": int(r["number_pages"]["value"]),
              "year": r["year"]["value"]
@@ -104,6 +106,7 @@ def get_neuspell_corrected_eb_terms_from_editions(hto_sparql_wrapper, edition_mm
             ?page hto:number ?page_number.
             OPTIONAL {?page hto:header ?header}
             ?volume a hto:Volume;
+                hto:title ?volume_title;
                 hto:number ?volume_number;
                 hto:numberOfPages ?number_pages;
                 hto:hadMember ?page.
@@ -150,6 +153,7 @@ def get_neuspell_corrected_eb_terms_from_editions(hto_sparql_wrapper, edition_mm
              "edition_title": r["edition_title"]["value"],
              "edition_number": edition_number,
              "volume_uri": r["volume"]["value"],
+             "volume_title": r["volume_title"]["value"],
              "volume_number": int(r["volume_number"]["value"]),
              "num_pages": int(r["number_pages"]["value"]),
              "letters": letters,
@@ -223,6 +227,7 @@ def get_eb_terms_from_editions_with_source_provider(hto_sparql_wrapper, edition_
         ?page hto:number ?page_number.
         OPTIONAL {?page hto:header ?header}
         ?volume a hto:Volume;
+            hto:title ?volume_title;
             hto:number ?volume_number;
             hto:numberOfPages ?number_pages;
             hto:hadMember ?page.
@@ -273,6 +278,7 @@ def get_eb_terms_from_editions_with_source_provider(hto_sparql_wrapper, edition_
              "edition_title": r["edition_title"]["value"],
              "edition_number": edition_number,
              "volume_uri": r["volume"]["value"],
+             "volume_title": r["volume_title"]["value"],
              "volume_number": int(r["volume_number"]["value"]),
              "num_pages": int(r["number_pages"]["value"]),
              "letters": letters,

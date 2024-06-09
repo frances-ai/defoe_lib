@@ -10,7 +10,7 @@ class TestSparqlService(unittest.TestCase):
     def setUp(self):
         self.edition_1st_1771_mmsid = "992277653804341"
         self.edition_7th_1842_mmsid = "9910796273804340"
-        self.hto_sparql_endpoint = "http://127.0.0.1:3030/hto"
+        self.hto_sparql_endpoint = "http://query.frances-ai.com/hto"
         self.hto_sparql_wrapper = SPARQLWrapper(self.hto_sparql_endpoint)
 
     def test_eb_terms_Ash_1st_1771(self):
