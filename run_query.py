@@ -78,6 +78,7 @@ def create_arg_parser():  # pragma: no cover
     parser.add_argument('--hit_count', help='target_sentences', default=None)
     parser.add_argument('--window', help='target_sentences', default=None)
     parser.add_argument('--gazetteer', help='gazetteer', default=None)
+    parser.add_argument('--level', help='level', default=None)
     parser.add_argument('--bounding_box', help='bounding_box', default=None)
     parser.add_argument('--data', metavar='input file', default=None,
                         help='file containing input dataset in TXT')
@@ -135,6 +136,9 @@ def load_inputs(args, bucket):
 
     if args.bounding_box is not None:
         query_config['bounding_box'] = args.bounding_box
+
+    if args.level is not None:
+        query_config['level'] = args.level
 
     return query_config, query_name, model_name, endpoint, result_file_path
 
