@@ -292,6 +292,10 @@ def longsfix_sentence(sentence, defoe_path, os_type):
     return fix_final
 
 
+def tokenize(text):
+    return text.split()
+
+
 def spacy_nlp(text, lang_model):
     nlp = spacy.load(lang_model)
     doc = nlp(text)

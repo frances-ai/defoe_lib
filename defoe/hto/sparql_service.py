@@ -25,6 +25,7 @@ def get_nls_page_from_nls(hto_sparql_wrapper, collection_name):
     :return: eb_terms_nls, a list of terms with their descriptions and metadata extracted from NLS dataset.
     """
     source_provider_name = Agent.NLS.value
+    collection_name += " Collection"
     pages = []
     query = """
       PREFIX hto: <https://w3id.org/hto#>
@@ -54,7 +55,7 @@ def get_nls_page_from_nls(hto_sparql_wrapper, collection_name):
             hto:hadMember ?series.
     }
     """ % (source_provider_name, collection_name)
-    print(query)
+    #print(query)
     hto_sparql_wrapper.setQuery(query)
     hto_sparql_wrapper.setReturnFormat(JSON)
     results = hto_sparql_wrapper.query().convert()
@@ -124,7 +125,7 @@ def get_neuspell_corrected_eb_terms_from_editions(hto_sparql_wrapper, edition_mm
                 hto:hadMember ?edition.
         }
         """ % (neuspell_uri, mmsid_filter_string, collection_name)
-    print(query)
+    #print(query)
     hto_sparql_wrapper.setQuery(query)
     hto_sparql_wrapper.setReturnFormat(JSON)
     results = hto_sparql_wrapper.query().convert()
@@ -245,7 +246,7 @@ def get_eb_terms_from_editions_with_source_provider(hto_sparql_wrapper, edition_
             hto:hadMember ?edition.
     }
     """ % (source_provider.value, mmsid_filter_string, collection_name)
-    print(query)
+    #print(query)
     hto_sparql_wrapper.setQuery(query)
     hto_sparql_wrapper.setReturnFormat(JSON)
     results = hto_sparql_wrapper.query().convert()

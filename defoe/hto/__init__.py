@@ -1,7 +1,7 @@
 from pyspark.sql.types import StructType, StructField, StringType, ArrayType, IntegerType
 
 from .queries import publication_normalized, frequency_keysearch_by_year, snippet_keysearch_by_year, \
-    fulltext_keysearch_by_year
+    fulltext_keysearch_by_year, geoparser_by_year, lexicon_diversity
 from .sparql_service import get_hto_object, NLSCollection
 
 default_hto_sparql_endpoint = "http://127.0.0.1:3030/hto"
@@ -12,7 +12,9 @@ def get_queries():
         "publication_normalized": publication_normalized.do_query,
         "frequency_keysearch_by_year": frequency_keysearch_by_year.do_query,
         "snippet_keysearch_by_year": snippet_keysearch_by_year.do_query,
-        "fulltext_keysearch_by_year": fulltext_keysearch_by_year.do_query
+        "fulltext_keysearch_by_year": fulltext_keysearch_by_year.do_query,
+        "geoparser_by_year": geoparser_by_year.do_query,
+        "lexicon_diversity": lexicon_diversity.do_query
     }
 
 

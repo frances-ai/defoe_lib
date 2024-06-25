@@ -3,9 +3,11 @@ Gets the snippet of each term (from a list of keywords or keysentences) along wi
 We recommend to use this query when we want to select a window of words (snippet lenght) around each term, instead of selecting
 all the words of the page in which the term was found.
 """
+from pyspark.sql.functions import concat_ws, col
 
 from defoe import query_utils, get_root_path, get_geo_supported_os_type
-from defoe.sparql.query_utils import get_articles_list_matches, blank_as_null
+from defoe.hto.query_utils import blank_as_null
+from defoe.hto.sparql_service import NLSCollection
 
 from defoe.nls.query_utils import preprocess_clean_page
 
@@ -107,10 +109,9 @@ def do_query(df, config=None, logger=None, context=None):
     else:
         target_filter = "or"
 
-    if "kg_type" in config:
-        kg_type = config["kg_type"]
-    else:
-        kg_type = "ebo_total"
+    collection = NLSCollection.EB.value
+    if "collection" in config:
+        collection = config["collection"]
 
     if "gazetteer" in config:
         gazetteer = config["gazetteer"]
@@ -126,94 +127,111 @@ def do_query(df, config=None, logger=None, context=None):
     print(defoe_path)
     os_type = get_geo_supported_os_type()
 
-    ###### Supporting New NLS KG #######
-    if "ebo" in kg_type:
-        fdf = df.withColumn("definition", blank_as_null("definition"))
-
-        # (year-0, uri-1, title-2, edition-3, archive_filename-4, volume-5, letters-6, part-7, page_number-8, header-9, term-10, definition-11)
+    if collection == NLSCollection.EB.value:
+        fdf = df.withColumn("description",
+                            concat_ws(" ", col("term_name"), col("note"),
+                                      concat_ws(" ", col("alter_names"))
+                                      , col("description")))
         if start_year and end_year:
-            newdf = fdf.filter(fdf.definition.isNotNull()).filter(fdf.year >= start_year).filter(
-                fdf.year <= end_year).select(fdf.year, fdf.uri, fdf.title, fdf.edition, fdf.archive_filename,
-                                             fdf.volume, fdf.letters, fdf.part, fdf.page, fdf.header, fdf.term,
-                                             fdf.definition)
-
+            newdf = fdf.filter(fdf.description.isNotNull()).filter(fdf.year >= start_year).filter(
+                fdf.year <= end_year).select(fdf.year, fdf.term_uri, fdf.description, fdf.term_name, fdf.edition_title,
+                                             fdf.edition_uri,
+                                             fdf.edition_number, fdf.source_file_uri, fdf.source_file_path,
+                                             fdf.volume_uri, fdf.volume_number, fdf.start_page_uri,
+                                             fdf.start_page_number)
         elif start_year:
-            newdf = fdf.filter(fdf.definition.isNotNull()).filter(fdf.year >= start_year).select(fdf.year, fdf.uri,
-                                                                                                 fdf.title, fdf.edition,
-                                                                                                 fdf.archive_filename,
-                                                                                                 fdf.volume,
-                                                                                                 fdf.letters, fdf.part,
-                                                                                                 fdf.page, fdf.header,
-                                                                                                 fdf.term,
-                                                                                                 fdf.definition)
-
+            newdf = fdf.filter(fdf.description.isNotNull()).filter(fdf.year >= start_year).select(fdf.year,
+                                                                                                  fdf.term_uri,
+                                                                                                  fdf.description,
+                                                                                                  fdf.term_name,
+                                                                                                  fdf.edition_title,
+                                                                                                  fdf.edition_uri,
+                                                                                                  fdf.edition_number,
+                                                                                                  fdf.source_file_uri,
+                                                                                                  fdf.source_file_path,
+                                                                                                  fdf.volume_uri,
+                                                                                                  fdf.volume_number,
+                                                                                                  fdf.start_page_uri,
+                                                                                                  fdf.start_page_number)
         elif end_year:
-            newdf = fdf.filter(fdf.definition.isNotNull()).filter(fdf.year <= end_year).select(fdf.year, fdf.uri,
-                                                                                               fdf.title, fdf.edition,
-                                                                                               fdf.archive_filename,
-                                                                                               fdf.volume, fdf.letters,
-                                                                                               fdf.part, fdf.page,
-                                                                                               fdf.header, fdf.term,
-                                                                                               fdf.definition)
-
+            newdf = fdf.filter(fdf.description.isNotNull()).filter(fdf.year <= end_year).select(fdf.year, fdf.term_uri,
+                                                                                                fdf.description,
+                                                                                                fdf.term_name,
+                                                                                                fdf.edition_title,
+                                                                                                fdf.edition_uri,
+                                                                                                fdf.edition_number,
+                                                                                                fdf.source_file_uri,
+                                                                                                fdf.source_file_path,
+                                                                                                fdf.volume_uri,
+                                                                                                fdf.volume_number,
+                                                                                                fdf.start_page_uri,
+                                                                                                fdf.start_page_number)
         else:
-            newdf = fdf.filter(fdf.definition.isNotNull()).select(fdf.year, fdf.uri, fdf.title, fdf.edition,
-                                                                  fdf.archive_filename, fdf.volume, fdf.letters,
-                                                                  fdf.part, fdf.page, fdf.header, fdf.term,
-                                                                  fdf.definition)
-
-
+            newdf = fdf.filter(fdf.description.isNotNull()).select(fdf.year, fdf.term_uri, fdf.description,
+                                                                   fdf.term_name, fdf.edition_title, fdf.edition_uri,
+                                                                   fdf.edition_number, fdf.source_file_uri,
+                                                                   fdf.source_file_path,
+                                                                   fdf.volume_uri, fdf.volume_number,
+                                                                   fdf.start_page_uri,
+                                                                   fdf.start_page_number)
     else:
-        fdf = df.withColumn("text", blank_as_null("text"))
-
-        # (year-0, uri-1, title-2, serie-3, archive_filename-4, volume-5, volumeTitle-6, part-7, page_number-8, volumeId-9, numWords-10, text-11)
+        fdf = df.withColumn("description", blank_as_null("description"))
         if start_year and end_year:
-            newdf = fdf.filter(fdf.text.isNotNull()).filter(fdf.year >= start_year).filter(fdf.year <= end_year).select(
-                fdf.year, fdf.uri, fdf.title, fdf.serie, fdf.archive_filename, fdf.volume, fdf.vtitle, fdf.part,
-                fdf.page, fdf.volumeId, fdf.numWords, fdf.text)
-
+            newdf = fdf.filter(fdf.description.isNotNull()).filter(fdf.year >= start_year).filter(
+                fdf.year <= end_year).select(fdf.year, fdf.page_uri, fdf.description, fdf.page_number, fdf.series_title,
+                                             fdf.series_uri,
+                                             fdf.series_number, fdf.source_file_uri, fdf.source_file_path,
+                                             fdf.volume_uri, fdf.volume_title, fdf.volume_number)
         elif start_year:
-            newdf = fdf.filter(fdf.text.isNotNull()).filter(fdf.year >= start_year).select(fdf.year, fdf.uri, fdf.title,
-                                                                                           fdf.serie,
-                                                                                           fdf.archive_filename,
-                                                                                           fdf.volume, fdf.vtitle,
-                                                                                           fdf.part, fdf.page,
-                                                                                           fdf.volumeId,
-                                                                                           fdf.numWords.fdf.text)
-
-
+            newdf = fdf.filter(fdf.description.isNotNull()).filter(fdf.year >= start_year).select(fdf.year,
+                                                                                                  fdf.page_uri,
+                                                                                                  fdf.description,
+                                                                                                  fdf.page_number,
+                                                                                                  fdf.series_title,
+                                                                                                  fdf.series_uri,
+                                                                                                  fdf.series_number,
+                                                                                                  fdf.source_file_uri,
+                                                                                                  fdf.source_file_path,
+                                                                                                  fdf.volume_uri,
+                                                                                                  fdf.volume_title,
+                                                                                                  fdf.volume_number)
         elif end_year:
-            newdf = fdf.filter(fdf.text.isNotNull()).filter(fdf.year <= end_year).select(fdf.year, fdf.uri, fdf.title,
-                                                                                         fdf.serie,
-                                                                                         fdf.archive_filename,
-                                                                                         fdf.volume, fdf.vtitle,
-                                                                                         fdf.part, fdf.page,
-                                                                                         fdf.volumeId, fdf.numWords,
-                                                                                         fdf.text)
-
-
+            newdf = fdf.filter(fdf.description.isNotNull()).filter(fdf.year <= end_year).select(fdf.year, fdf.page_uri,
+                                                                                                fdf.description,
+                                                                                                fdf.page_number,
+                                                                                                fdf.series_title,
+                                                                                                fdf.series_uri,
+                                                                                                fdf.series_number,
+                                                                                                fdf.source_file_uri,
+                                                                                                fdf.source_file_path,
+                                                                                                fdf.volume_uri,
+                                                                                                fdf.volume_title,
+                                                                                                fdf.volume_number)
         else:
-            newdf = fdf.filter(fdf.text.isNotNull()).select(fdf.year, fdf.uri, fdf.title, fdf.serie,
-                                                            fdf.archive_filename, fdf.volume, fdf.vtitle, fdf.part,
-                                                            fdf.page, fdf.volumeId, fdf.numWords, fdf.text)
+            newdf = fdf.filter(fdf.description.isNotNull()).select(fdf.year, fdf.page_uri, fdf.description,
+                                                                   fdf.page_number, fdf.series_title, fdf.series_uri,
+                                                                   fdf.series_number, fdf.source_file_uri,
+                                                                   fdf.source_file_path,
+                                                                   fdf.volume_uri, fdf.volume_title, fdf.volume_number)
 
     articles = newdf.rdd.map(tuple)
 
-    if "ebo" in kg_type:
-        # (year-0, uri-1, title-2, edition-3, archive_filename-4, volume-5, letters-6, part-7, page_number-8, header-9, term-10, preprocess_article-11, unprocess_articles-12)
-
+    if collection == NLSCollection.EB.value:
+        # (year-0, term_uri-1, description-2, term_name-3, edition_title-4, edition_uri-5, edition_number-6, source_file_uri-7, source_file_path-8, volume_uri-9, volume_number-10, start_page_uri-11, start_page_number-12)
         preprocess_articles = articles.flatMap(
             lambda t_articles: [
-                (t_articles[0], t_articles[1], t_articles[2], t_articles[3], t_articles[4], t_articles[5],
+                (t_articles[0], t_articles[1], preprocess_clean_page(t_articles[2], preprocess_type), t_articles[2],
+                 t_articles[3], t_articles[4], t_articles[5],
                  t_articles[6], t_articles[7], t_articles[8], t_articles[9], t_articles[10],
-                 preprocess_clean_page(t_articles[10] + " " + t_articles[11], preprocess_type), t_articles[11])])
+                 t_articles[11], t_articles[12])])
     else:
-        # (year-0, uri-1, title-2, serie-3, archive_filename-4, volume-5, volumeTitle-6, part-7, page_number-8, volumeId-9, numWords-10, preprocess_article-11, unprocess_articles-12)
+        # (year-0, page_uri-1, description-2, page_number-3, series_title-4, series_uri-5, series_number-6, source_file_uri-7, source_file_path-8, volume_uri-9, volume_title-10, volume_number-11)
         preprocess_articles = articles.flatMap(
             lambda t_articles: [
-                (t_articles[0], t_articles[1], t_articles[2], t_articles[3], t_articles[4], t_articles[5],
+                (t_articles[0], t_articles[1], preprocess_clean_page(t_articles[2], preprocess_type), t_articles[2],
+                 t_articles[3], t_articles[4], t_articles[5],
                  t_articles[6], t_articles[7], t_articles[8], t_articles[9], t_articles[10],
-                 preprocess_clean_page(t_articles[11], preprocess_type), t_articles[11])])
+                 t_articles[11])])
 
     if data_file:
         keysentences = []
@@ -223,7 +241,6 @@ def do_query(df, config=None, logger=None, context=None):
         else:
             # cloud file
             data_stream = data_file.open('r')
-
         with data_stream as f:
             for keysentence in list(f):
                 k_split = keysentence.split()
@@ -252,71 +269,84 @@ def do_query(df, config=None, logger=None, context=None):
             clean_target_sentences.append(sentence_norm)
         if target_filter == "or":
             target_articles = preprocess_articles.filter(
-                lambda year_page: any(target_s in year_page[11] for target_s in clean_target_sentences))
+                lambda year_page: any(target_s in year_page[2] for target_s in clean_target_sentences))
         else:
             target_articles = preprocess_articles
-            target_articles = reduce(lambda r, target_s: r.filter(lambda year_page: target_s in year_page[11]),
+            target_articles = reduce(lambda r, target_s: r.filter(lambda year_page: target_s in year_page[2]),
                                      clean_target_sentences, target_articles)
     else:
         target_articles = preprocess_articles
 
     if data_file:
         filter_articles = target_articles.filter(
-            lambda year_page: any(keysentence in year_page[11] for keysentence in keysentences))
+            lambda year_page: any(keysentence in year_page[2] for keysentence in keysentences))
 
     else:
         filter_articles = target_articles
-        # keysentences = clean_target_sentences
+        #keysentences = clean_target_sentences
 
-    geo_xml = filter_articles.flatMap(
-        lambda year_page: [
-            (year_page[0],
-             year_page[1],
-             year_page[2],
-             year_page[3],
-             year_page[4],
-             year_page[5],
-             year_page[6],
-             year_page[7],
-             year_page[8],
-             year_page[9],
-             year_page[10],
-             year_page[11],
-             query_utils.get_geoparser_xml(year_page[12], defoe_path, os_type, gazetteer, bounding_box))])
-
-    if "ebo" in kg_type:
-        # [(year-0, uri-1, title-2, edition-3, archive_filename-4, volume-5, letters-6, part-7, page_number-8, header-9, term-10, preprocess_article-11 )]
+    # (year-0, term_uri-1, preprocessed-description-2, description-3 term_name-4, edition_title-5, edition_uri-6, edition_number-7, source_file_uri-8, source_file_path-9, volume_uri-10, volume_number-11, start_page_uri-12, start_page_number-13)
+    if collection == NLSCollection.EB.value:
+        geo_xml = filter_articles.flatMap(
+            lambda year_page: [
+                (year_page[0],
+                 year_page[1],
+                 query_utils.get_geoparser_xml(year_page[3], defoe_path, os_type, gazetteer, bounding_box),
+                 year_page[4],
+                 year_page[5],
+                 year_page[6],
+                 year_page[7],
+                 year_page[8],
+                 year_page[9],
+                 year_page[10],
+                 year_page[11],
+                 year_page[12],
+                 year_page[13])])
         geo_data = geo_xml.map(
             lambda sentence_data:
             (sentence_data[0],
-             {"title": sentence_data[2],
-              "edition": sentence_data[3],
-              "archive_filename": sentence_data[4],
-              "volume": sentence_data[5],
-              "letters": sentence_data[6],
-              "part": sentence_data[7],
-              "page number": sentence_data[8],
-              "header": sentence_data[9],
-              "term": sentence_data[10],
-              "uri": sentence_data[1],
-              "georesolution": query_utils.geoparser_coord_xml(sentence_data[12])}))
-
+             {"term_uri": sentence_data[1],
+              "term_name": sentence_data[3],
+              "edition_title": sentence_data[4],
+              "edition_uri": sentence_data[5],
+              "edition_number": sentence_data[6],
+              "source_file_uri": sentence_data[7],
+              "source_file_path": sentence_data[8],
+              "volume_uri": sentence_data[9],
+              "volume_number": sentence_data[10],
+              "start_page_uri": sentence_data[11],
+              "start_page_number": sentence_data[12],
+              "georesolution": query_utils.geoparser_coord_xml(sentence_data[2])}))
     else:
-        # (year-0, uri-1, title-2, serie-3, archive_filename-4, volume-5, volumeTitle-6, part-7, page_number-8, volumeId-9, numWords-10, preprocess_article-11)
+        # (year-0, page_uri-1, preprocessed-description-2, description-3, page_number-4, series_title-5, series_uri-6, series_number-7, source_file_uri-8, source_file_path-9, volume_uri-10, volume_title-11, volume_number-12)
+        geo_xml = filter_articles.flatMap(
+            lambda year_page: [
+                (year_page[0],
+                 year_page[1],
+                 query_utils.get_geoparser_xml(year_page[3], defoe_path, os_type, gazetteer, bounding_box),
+                 year_page[4],
+                 year_page[5],
+                 year_page[6],
+                 year_page[7],
+                 year_page[8],
+                 year_page[9],
+                 year_page[10],
+                 year_page[11],
+                 year_page[12])])
         geo_data = geo_xml.map(
             lambda sentence_data:
             (sentence_data[0],
-             {"title": sentence_data[2],
-              "serie": sentence_data[3],
-              "archive_filename": sentence_data[4],
-              "volume": sentence_data[5],
-              "volumeTitle": sentence_data[6],
-              "part": sentence_data[7],
-              "page number": sentence_data[8],
-              "volumeId": sentence_data[9],
-              "numWords": sentence_data[10],
-              "uri": sentence_data[1],
-              "georesolution": query_utils.geoparser_coord_xml(sentence_data[12])}))
+             {"page_uri": sentence_data[1],
+              "page_number": sentence_data[3],
+              "series_title": sentence_data[4],
+              "series_uri": sentence_data[5],
+              "series_number": sentence_data[6],
+              "source_file_uri": sentence_data[7],
+              "source_file_path": sentence_data[8],
+              "volume_uri": sentence_data[9],
+              "volume_title": sentence_data[10],
+              "volume_number": sentence_data[11],
+              "georesolution": query_utils.geoparser_coord_xml(sentence_data[2])}))
 
     # remove data with no places identified
     geo_data = geo_data.filter(lambda sentence_data: bool(sentence_data[1]["georesolution"]) and isinstance(sentence_data[1]["georesolution"], dict))
