@@ -65,8 +65,7 @@ class TestLexiconDiversity(PySparkTestCase):
         sample_data = self.chapbooks_sample_data
         config = {
             "collection": "Chapbooks printed in Scotland",
-            "level": "volume",
-            "data": "/Users/ly40/Documents/frances-ai/defoe_lib/defoe/test/hto/test_lexicon.txt"
+            "level": "volume"
         }
         # Create a Spark DataFrame
         original_df = self.spark.createDataFrame(sample_data)
@@ -101,8 +100,7 @@ class TestLexiconDiversity(PySparkTestCase):
         sample_data = self.chapbooks_sample_data
         config = {
             "collection": "Chapbooks printed in Scotland",
-            "level": "series",
-            "data": "/Users/ly40/Documents/frances-ai/defoe_lib/defoe/test/hto/test_lexicon.txt"
+            "level": "series"
         }
         # Create a Spark DataFrame
         original_df = self.spark.createDataFrame(sample_data)
@@ -134,7 +132,6 @@ class TestLexiconDiversity(PySparkTestCase):
         config = {
             "collection": "Chapbooks printed in Scotland",
             "level": "year",
-            "data": "/Users/ly40/Documents/frances-ai/defoe_lib/defoe/test/hto/test_lexicon.txt"
         }
         # Create a Spark DataFrame
         original_df = self.spark.createDataFrame(sample_data)
@@ -156,3 +153,26 @@ class TestLexiconDiversity(PySparkTestCase):
                 self.assertAlmostEqual(row[3], expect_row[3])
                 # mtld
                 self.assertAlmostEqual(row[4], expect_row[4])
+
+    def test_chapbooks_collection_level(self):
+        sample_data = self.chapbooks_sample_data
+        config = {
+            "collection": "Chapbooks printed in Scotland",
+            "level": "collection",
+        }
+        # Create a Spark DataFrame
+        original_df = self.spark.createDataFrame(sample_data)
+        context = self.spark.sparkContext
+        logger = context._jvm.org.apache.log4j.LogManager.getLogger(__name__)
+        result = lexicon_diversity.do_query(original_df, config, logger, context)
+        print(result)
+        expect_result = {'terms': 20, 'words': 39, 'ttr': 0.5128205128205128, 'maas': 0.04975749509601646, 'mtld': 20.05188679245283}
+        self.assertEqual(result["terms"], expect_result["terms"])
+        self.assertEqual(result["words"], expect_result["words"])
+        # ttr
+        self.assertAlmostEqual(result["ttr"], expect_result["ttr"])
+        # Maas
+        self.assertAlmostEqual(result["maas"], expect_result["maas"])
+        # mtld
+        self.assertAlmostEqual(result["mtld"], expect_result["mtld"])
+

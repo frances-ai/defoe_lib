@@ -15,8 +15,8 @@ from defoe.nls.query_utils import get_text_keysentence_idx, get_concordance_stri
 from defoe.nls.query_utils import preprocess_clean_page
 from lexicalrichness import LexicalRichness
 
+from functools import reduce
 
-from functools import  reduce
 
 def do_query(df, config=None, logger=None, context=None):
     """
@@ -119,87 +119,131 @@ def do_query(df, config=None, logger=None, context=None):
         if start_year and end_year:
             newdf = fdf.filter(fdf.description.isNotNull()).filter(fdf.year >= start_year).filter(
                 fdf.year <= end_year).select(fdf.year, fdf.edition_title, fdf.edition_uri,
-                                             fdf.edition_number, fdf.volume_uri, fdf.volume_title, fdf.volume_number, fdf.description)
+                                             fdf.edition_number, fdf.volume_uri, fdf.volume_title, fdf.volume_number,
+                                             fdf.description)
         elif start_year:
-            newdf = fdf.filter(fdf.description.isNotNull()).filter(fdf.year >= start_year).select(fdf.year, fdf.edition_title, fdf.edition_uri,
-                                             fdf.edition_number, fdf.volume_uri, fdf.volume_title, fdf.volume_number, fdf.description)
+            newdf = fdf.filter(fdf.description.isNotNull()).filter(fdf.year >= start_year).select(fdf.year,
+                                                                                                  fdf.edition_title,
+                                                                                                  fdf.edition_uri,
+                                                                                                  fdf.edition_number,
+                                                                                                  fdf.volume_uri,
+                                                                                                  fdf.volume_title,
+                                                                                                  fdf.volume_number,
+                                                                                                  fdf.description)
         elif end_year:
-            newdf = fdf.filter(fdf.description.isNotNull()).filter(fdf.year <= end_year).select(fdf.year, fdf.edition_title, fdf.edition_uri,
-                                             fdf.edition_number, fdf.volume_uri, fdf.volume_title, fdf.volume_number, fdf.description)
+            newdf = fdf.filter(fdf.description.isNotNull()).filter(fdf.year <= end_year).select(fdf.year,
+                                                                                                fdf.edition_title,
+                                                                                                fdf.edition_uri,
+                                                                                                fdf.edition_number,
+                                                                                                fdf.volume_uri,
+                                                                                                fdf.volume_title,
+                                                                                                fdf.volume_number,
+                                                                                                fdf.description)
         else:
             newdf = fdf.filter(fdf.description.isNotNull()).select(fdf.year, fdf.edition_title, fdf.edition_uri,
-                                             fdf.edition_number, fdf.volume_uri, fdf.volume_title, fdf.volume_number, fdf.description)
+                                                                   fdf.edition_number, fdf.volume_uri, fdf.volume_title,
+                                                                   fdf.volume_number, fdf.description)
     else:
         fdf = df.withColumn("description", blank_as_null("description"))
         if start_year and end_year:
             newdf = fdf.filter(fdf.description.isNotNull()).filter(fdf.year >= start_year).filter(
                 fdf.year <= end_year).select(fdf.year, fdf.series_title, fdf.series_uri,
-                                             fdf.series_number, fdf.volume_uri, fdf.volume_title, fdf.volume_number, fdf.description)
+                                             fdf.series_number, fdf.volume_uri, fdf.volume_title, fdf.volume_number,
+                                             fdf.description)
         elif start_year:
-            newdf = fdf.filter(fdf.description.isNotNull()).filter(fdf.year >= start_year).select(fdf.year, fdf.series_title, fdf.series_uri,
-                                             fdf.series_number, fdf.volume_uri, fdf.volume_title, fdf.volume_number, fdf.description)
+            newdf = fdf.filter(fdf.description.isNotNull()).filter(fdf.year >= start_year).select(fdf.year,
+                                                                                                  fdf.series_title,
+                                                                                                  fdf.series_uri,
+                                                                                                  fdf.series_number,
+                                                                                                  fdf.volume_uri,
+                                                                                                  fdf.volume_title,
+                                                                                                  fdf.volume_number,
+                                                                                                  fdf.description)
         elif end_year:
-            newdf = fdf.filter(fdf.description.isNotNull()).filter(fdf.year <= end_year).select(fdf.year, fdf.series_title, fdf.series_uri,
-                                             fdf.series_number, fdf.volume_uri, fdf.volume_title, fdf.volume_number, fdf.description)
+            newdf = fdf.filter(fdf.description.isNotNull()).filter(fdf.year <= end_year).select(fdf.year,
+                                                                                                fdf.series_title,
+                                                                                                fdf.series_uri,
+                                                                                                fdf.series_number,
+                                                                                                fdf.volume_uri,
+                                                                                                fdf.volume_title,
+                                                                                                fdf.volume_number,
+                                                                                                fdf.description)
         else:
             newdf = fdf.filter(fdf.description.isNotNull()).select(fdf.year, fdf.series_title, fdf.series_uri,
-                                             fdf.series_number, fdf.volume_uri, fdf.volume_title, fdf.volume_number, fdf.description)
+                                                                   fdf.series_number, fdf.volume_uri, fdf.volume_title,
+                                                                   fdf.volume_number, fdf.description)
 
     articles = newdf.rdd.map(tuple)
     # preprocess
     # EB: year-0, edition_title-1, edition_uri-2, edition_number-3, volume_uri-4, volume_title-5, volume_number-6, description-7,
     # NLS: year-0, series_title-1, series_uri-2, series_number-3, volume_uri-4, volume_title-5, volume_number-6, description-7,
-    preprocess_articles = articles.flatMap(lambda t_articles: [(t_articles[0], t_articles[1], t_articles[2], t_articles[3],
-                                                               t_articles[4], t_articles[5], t_articles[6],
-                                                               preprocess_clean_page(t_articles[7], preprocess_type))])
+    preprocess_articles = articles.flatMap(
+        lambda t_articles: [(t_articles[0], t_articles[1], t_articles[2], t_articles[3],
+                             t_articles[4], t_articles[5], t_articles[6],
+                             preprocess_clean_page(t_articles[7], preprocess_type))])
 
     result = None
 
     if level == "volume":
         # Map to key-value pairs ((year-0, edition_title-1, edition_uri-2, edition_number-3, volume_uri-4, volume_title-5, volume_number-6), description-7)
         volumes_texts = preprocess_articles.map(lambda p_article: ((p_article[0], p_article[1], p_article[2],
-                                                                    p_article[3], p_article[4], p_article[5], p_article[6]),
+                                                                    p_article[3], p_article[4], p_article[5],
+                                                                    p_article[6]),
                                                                    p_article[7]))
         volumes = volumes_texts.groupByKey().mapValues(lambda descriptions: ' '.join(descriptions))
 
         volumes_ld = volumes.map(lambda volume: (volume[0][0], volume[0][1], volume[0][2], volume[0][3], volume[0][4],
                                                  volume[0][5], volume[0][6],
-                                                 LexicalRichness(text=volume[1], preprocessor=None, tokenizer=query_utils.tokenize)))
+                                                 LexicalRichness(text=volume[1], preprocessor=None,
+                                                                 tokenizer=query_utils.tokenize)))
         # year-0, (edition_title-1, edition_uri-2, edition_number-3, volume_uri-4, volume_title-5, volume_number-6, terms-7, words-8, ttr-9, Maas-10, mtld-11)
-        volumes_ld = volumes_ld.map(lambda ld: (ld[0], (ld[1], ld[2], ld[3], ld[4],ld[5], ld[6], ld[7].terms, ld[7].words, ld[7].ttr, ld[7].Maas, ld[7].mtld())))
-        result = volumes_ld.groupByKey()\
-            .map(lambda year_volumes_ld: (year_volumes_ld[0], list(year_volumes_ld[1])))\
+        volumes_ld = volumes_ld.map(lambda ld: (ld[0], (
+        ld[1], ld[2], ld[3], ld[4], ld[5], ld[6], ld[7].terms, ld[7].words, ld[7].ttr, ld[7].Maas, ld[7].mtld())))
+        result = volumes_ld.groupByKey() \
+            .map(lambda year_volumes_ld: (year_volumes_ld[0], list(year_volumes_ld[1]))) \
             .collect()
     elif level == "edition" or level == "series":
         # Map to key-value pairs ((year-0, edition_title-1, edition_uri-2, edition_number-3), description-4)
         es_texts = preprocess_articles.map(lambda p_article: ((p_article[0], p_article[1], p_article[2], p_article[3]),
-                                                                   p_article[7]))
+                                                              p_article[7]))
         es = es_texts.groupByKey().mapValues(lambda descriptions: ' '.join(descriptions))
 
-        es_ld = es.map(lambda volume: (volume[0][0], volume[0][1], volume[0][2], volume[0][3],
-                                                 LexicalRichness(text=volume[1], preprocessor=None,
-                                                                 tokenizer=query_utils.tokenize)))
+        es_ld = es.map(lambda es: (es[0][0], es[0][1], es[0][2], es[0][3],
+                                   LexicalRichness(text=es[1], preprocessor=None,
+                                                   tokenizer=query_utils.tokenize)))
         # year-0, (edition_title-1, edition_uri-2, edition_number-3, terms-4, words-5, ttr-6, Maas-7, mtld-8)
-        es_ld = es_ld.map(lambda ld: (ld[0], (ld[1], ld[2], ld[3], ld[4].terms, ld[4].words, ld[4].ttr, ld[4].Maas, ld[4].mtld())))
+        es_ld = es_ld.map(
+            lambda ld: (ld[0], (ld[1], ld[2], ld[3], ld[4].terms, ld[4].words, ld[4].ttr, ld[4].Maas, ld[4].mtld())))
         result = es_ld.groupByKey() \
             .map(lambda year_volumes_ld: (year_volumes_ld[0], list(year_volumes_ld[1]))) \
             .collect()
 
     elif level == "year":
         # Map to key-value pairs ((year-0), description-1)
-        es_texts = preprocess_articles.map(lambda p_article: (p_article[0],
-                                                              p_article[7]))
-        es = es_texts.groupByKey().mapValues(lambda descriptions: ' '.join(descriptions))
+        texts = preprocess_articles.map(lambda p_article: (p_article[0], p_article[7]))
+        year_texts = texts.groupByKey().mapValues(lambda descriptions: ' '.join(descriptions))
 
-        es_ld = es.map(lambda volume: (volume[0],
-                                       LexicalRichness(text=volume[1], preprocessor=None,
-                                                       tokenizer=query_utils.tokenize)))
+        year_ld = year_texts.map(lambda year: (year[0],
+                                               LexicalRichness(text=year[1], preprocessor=None,
+                                                               tokenizer=query_utils.tokenize)))
         # year-0, (terms-1, words-2, ttr-3, Maas-4, mtld-5)
-        es_ld = es_ld.map(lambda ld: (ld[0], (ld[1].terms, ld[1].words, ld[1].ttr, ld[1].Maas, ld[1].mtld())))
-        result = es_ld.groupByKey() \
+        year_ld = year_ld.map(lambda ld: (ld[0], (ld[1].terms, ld[1].words, ld[1].ttr, ld[1].Maas, ld[1].mtld())))
+        result = year_ld.groupByKey() \
             .map(lambda year_volumes_ld: (year_volumes_ld[0], list(year_volumes_ld[1]))) \
             .collect()
+    elif level == "collection":
+        # Map to key-value pairs ((year-0), description-1)
+        combined_text = preprocess_articles.map(lambda p_article: (p_article[7])) \
+            .reduce(lambda text_a, text_b: text_a + " " + text_b)
+        ld = LexicalRichness(text=combined_text, preprocessor=None,
+                             tokenizer=query_utils.tokenize)
+        # terms-1, words-2, ttr-3, Maas-4, mtld-5
+        result = {
+            "terms": ld.terms,
+            "words": ld.words,
+            "ttr": ld.ttr,
+            "maas": ld.Maas,
+            "mtld": ld.mtld()
+        }
 
     return result
-
-
