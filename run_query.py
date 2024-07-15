@@ -78,6 +78,7 @@ def create_arg_parser():  # pragma: no cover
     parser.add_argument('--hit_count', help='target_sentences', default=None)
     parser.add_argument('--window', help='target_sentences', default=None)
     parser.add_argument('--gazetteer', help='gazetteer', default=None)
+    parser.add_argument('--exclude_words', help='exclude_words', default=None)
     parser.add_argument('--level', help='level', default=None)
     parser.add_argument('--bounding_box', help='bounding_box', default=None)
     parser.add_argument('--data', metavar='input file', default=None,
@@ -115,6 +116,9 @@ def load_inputs(args, bucket):
 
     if args.target_sentences is not None:
         query_config['target_sentences'] = args.target_sentences.split(",")
+
+    if args.exclude_words is not None:
+        query_config['exclude_words'] = args.exclude_words.split(",")
 
     if args.target_filter is not None:
         query_config['target_filter'] = args.target_filter

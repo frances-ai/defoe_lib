@@ -15,4 +15,5 @@ panda
 grpcio
 grpcio-tools
 lexicalrichness
+gender-guesser
 

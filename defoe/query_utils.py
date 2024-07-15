@@ -8,6 +8,8 @@ import time
 import subprocess
 import re
 import enum
+
+import nltk.tokenize
 from lxml import etree
 from nltk.stem import PorterStemmer, WordNetLemmatizer
 import spacy
@@ -296,10 +298,41 @@ def tokenize(text):
     return text.split()
 
 
+def get_sentences(text):
+    return nltk.tokenize.sent_tokenize(text)
+
+
+class SpacyMagic(object):
+    """
+    Simple Spacy Magic to minimize loading time. see https://github.com/sparklingpandas/sparklingml/blob/627c8f23688397a53e2e9e805e92a54c2be1cf3d/sparklingml/transformation_functions.py#L53
+    """
+    _spacys = {}
+
+    @classmethod
+    def get(cls, lang):
+        if lang not in cls._spacys:
+            import spacy
+            cls._spacys[lang] = spacy.load(lang)
+        return cls._spacys[lang]
+
+
 def spacy_nlp(text, lang_model):
     nlp = spacy.load(lang_model)
     doc = nlp(text)
     return doc
+
+
+def extract_persons_from_text(text, exclude_words=None):
+    if exclude_words is None:
+        exclude_words = []
+    en_nlp = SpacyMagic.get('en_core_web_sm')
+    doc = en_nlp(text)
+    persons = []
+    for ent in doc.ents:
+        if ent.label_ == "PERSON" and re.search('^[A-Z]', ent.text) and ent.text not in exclude_words:
+            persons.append(ent.text)
+
+    return persons
 
 
 def serialize_doc(doc):
