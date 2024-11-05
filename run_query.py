@@ -53,6 +53,8 @@ Run Spark text query job.
   format. Default: "results.yml".
 """
 import argparse
+import time
+
 import yaml
 from google.cloud import storage
 from pyspark.sql import SparkSession
@@ -179,20 +181,29 @@ def main():
     # Submit job.
     spark = SparkSession.builder.appName("defoe").getOrCreate()
     log = spark._jvm.org.apache.log4j.LogManager.getLogger(__name__)  # pylint: disable=protected-access
-
+    data_loading_start_time = time.time()
     if model_name == "hto":
         collection_name = query_config["collection"]
         source = query_config["source"]
         ok_data = model.get_hto_df(endpoint, collection_name, source, spark)
     else:
         ok_data = model.endpoint_to_object(endpoint, spark)
-
+    data_loading_end_time = time.time()
+    data_loading_duration = data_loading_end_time - data_loading_start_time
+    data_processing_start_time = data_loading_end_time
     results = query(ok_data, query_config, log, spark)
+    data_processing_end_time = time.time()
+    data_processing_duration = data_processing_end_time - data_processing_start_time
+    result2file_start_time = data_processing_end_time
     result_file = bucket.blob(result_file_path)
-
     if results is not None:
         with result_file.open('w') as f:
             f.write(yaml.safe_dump(dict(results)))
+    result2file_end_time = time.time()
+    result2file_duration = result2file_end_time - result2file_start_time
+    print(f"data loading time: {data_loading_duration}s")
+    print(f"data processing time: {data_processing_duration}s")
+    print(f"result writing to file time: {result2file_duration}s")
 
 
 if __name__ == "__main__":
