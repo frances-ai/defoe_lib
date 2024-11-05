@@ -4,13 +4,15 @@ Use this query ONLY for searching in the EB articles stored in the Knowledge Gra
 """
 
 from operator import add
+
+from pyspark.sql.functions import concat_ws, col
+
 from defoe import query_utils
-from defoe.sparql.query_utils import get_articles_list_matches, blank_as_null, get_articles_text_matches
-from pyspark.sql import SQLContext
-from pyspark.sql.functions import col, when
+from defoe.hto.sparql_service import NLSCollection
+from defoe.hto.query_utils import get_articles_list_matches, blank_as_null, get_articles_text_matches
 from defoe.nls.query_utils import preprocess_clean_page
-import yaml, os
-from functools import partial, reduce
+from functools import reduce
+
 
 def do_query(df, config=None, logger=None, context=None):
     """
@@ -45,7 +47,7 @@ def do_query(df, config=None, logger=None, context=None):
     by date
     :rtype: dict
     """
-
+    # by default, preprocess type will be lemmatisation
     preprocess_type = query_utils.extract_preprocess_word_type(config)
     data_file = config.get("data", None)
 
@@ -58,67 +60,54 @@ def do_query(df, config=None, logger=None, context=None):
         end_year = int(config["end_year"])
     else:
         end_year = None
-    
+
     if "target_sentences" in config:
-        target_sentences=config["target_sentences"]
+        target_sentences = config["target_sentences"]
     else:
         target_sentences = None
 
     if "target_filter" in config:
-        target_filter=config["target_filter"]
+        target_filter = config["target_filter"]
     else:
         target_filter = "or"
 
     if "hit_count" in config:
         hit_count = config["hit_count"]
-
     else:
         hit_count = "term"
 
-    if "kg_type" in config:
-        kg_type = config["kg_type"]
-    else:
-        kg_type = "ebo_total"
+    collection = NLSCollection.EB.value
+    if "collection" in config:
+        collection = config["collection"]
 
     ###### Supporting New NLS KG #######
-    if "ebo" in kg_type:
-    
-        fdf = df.withColumn("definition", blank_as_null("definition"))
-
-        if start_year and end_year:
-            newdf=fdf.filter(fdf.definition.isNotNull()).filter(fdf.year >= start_year).filter(fdf.year <= end_year).select(fdf.year, fdf.term, fdf.definition)
-        elif start_year:
-            newdf=fdf.filter(fdf.definition.isNotNull()).filter(fdf.year >= start_year).select(fdf.year, fdf.term, fdf.definition)
-        elif end_year:
-            newdf=fdf.filter(fdf.definition.isNotNull()).filter(fdf.year <= end_year).select(fdf.year, fdf.term, fdf.definition)
-        else:
-            newdf=fdf.filter(fdf.definition.isNotNull()).select(fdf.year, fdf.term, fdf.definition)
-
+    if collection == NLSCollection.EB.value:
+        fdf = df.withColumn("description",
+                            concat_ws(" ", col("term_name"), col("note"),
+                                      concat_ws(" ", col("alter_names"))
+                                      , col("description")))
     else:
-        fdf = df.withColumn("text", blank_as_null("text"))
+        fdf = df.withColumn("description", blank_as_null("description"))
 
-        if start_year and end_year:
-            newdf=fdf.filter(fdf.text.isNotNull()).filter(fdf.year >= start_year).filter(fdf.year <= end_year).select(fdf.year, fdf.text)
-        elif start_year:
-            newdf=fdf.filter(fdf.text.isNotNull()).filter(fdf.year >= start_year).select(fdf.year, fdf.text)
-        elif end_year:
-            newdf=fdf.filter(fdf.text.isNotNull()).filter(fdf.year <= end_year).select(fdf.year, fdf.text)
-        else:
-            newdf=fdf.filter(fdf.text.isNotNull()).select(fdf.year, fdf.text)
-
-    articles=newdf.rdd.map(tuple)
-    
-
-    #(year-0, preprocess_article-1)
-    if "ebo" in kg_type :
-        preprocess_articles = articles.flatMap(
-            lambda t_articles: [(t_articles[0], preprocess_clean_page(t_articles[1]+ " " + t_articles[2], preprocess_type))]) 
+    if start_year and end_year:
+        newdf = fdf.filter(fdf.description.isNotNull()).filter(fdf.year >= start_year).filter(
+            fdf.year <= end_year).select(fdf.year, fdf.description)
+    elif start_year:
+        newdf = fdf.filter(fdf.description.isNotNull()).filter(fdf.year >= start_year).select(fdf.year,
+                                                                                             fdf.description)
+    elif end_year:
+        newdf = fdf.filter(fdf.description.isNotNull()).filter(fdf.year <= end_year).select(fdf.year,
+                                                                                           fdf.description)
     else:
-        preprocess_articles = articles.flatMap(
-            lambda t_articles: [(t_articles[0], preprocess_clean_page(t_articles[1], preprocess_type))]) 
+        newdf = fdf.filter(fdf.description.isNotNull()).select(fdf.year, fdf.description)
 
+    articles = newdf.rdd.map(tuple)
+
+    preprocess_articles = articles.flatMap(
+        lambda t_articles: [(t_articles[0], preprocess_clean_page(t_articles[1], preprocess_type))])
+
+    keysentences = []
     if data_file:
-        keysentences = []
         if isinstance(data_file, str):
             # local file
             data_stream = open(data_file, 'r')
@@ -129,6 +118,7 @@ def do_query(df, config=None, logger=None, context=None):
         with data_stream as f:
             for keysentence in list(f):
                 k_split = keysentence.split()
+                # apply the same preprocess the lexicons
                 sentence_word = [query_utils.preprocess_word(
                     word, preprocess_type) for word in k_split]
                 sentence_norm = ''
@@ -138,8 +128,6 @@ def do_query(df, config=None, logger=None, context=None):
                     else:
                         sentence_norm += " " + word
                 keysentences.append(sentence_norm)
-
-
 
     if target_sentences:
         clean_target_sentences = []
@@ -156,45 +144,35 @@ def do_query(df, config=None, logger=None, context=None):
             clean_target_sentences.append(sentence_norm)
         if target_filter == "or":
             target_articles = preprocess_articles.filter(
-                lambda year_page: any( target_s in year_page[1] for target_s in clean_target_sentences))
+                lambda year_page: any(target_s in year_page[1] for target_s in clean_target_sentences))
         else:
             target_articles = preprocess_articles
-            target_articles = reduce(lambda r, target_s: r.filter(lambda year_page: target_s in year_page[1]), clean_target_sentences, target_articles)
-        
+            target_articles = reduce(lambda r, target_s: r.filter(lambda year_page: target_s in year_page[1]),
+                                     clean_target_sentences, target_articles)
     else:
         target_articles = preprocess_articles
 
-    if data_file:
+    if len(keysentences) > 0:
         filter_articles = target_articles.filter(
             lambda year_page: any( keysentence in year_page[1] for keysentence in keysentences))
     else:
         filter_articles = target_articles
-        keysentences = clean_target_sentences
-
-
-    #(year-0, list_sentences-1)
 
     if hit_count == "term" or hit_count == "page":
         matching_articles = filter_articles.map(
-            lambda year_article: (year_article[0], 
-                                     get_articles_list_matches(year_article[1], keysentences)))
+            lambda year_article: (year_article[0],
+                                  get_articles_list_matches(year_article[1], keysentences)))
     else:
         matching_articles = filter_articles.map(
-            lambda year_article: (year_article[0], 
-                                     get_articles_text_matches(year_article[1], keysentences)))
-    
-    #(year-0, sentence-1)
+            lambda year_article: (year_article[0],
+                                  get_articles_text_matches(year_article[1], keysentences)))
+
+    # (year-0, sentence-1)
     matching_sentences = matching_articles.flatMap(
-        lambda year_sentence: [((year_sentence[0], sentence),1) for sentence in year_sentence[1]])
+        lambda year_sentence: [((year_sentence[0], sentence), 1) for sentence in year_sentence[1]])
 
-    # [((year, keysentence), num_keysentences), ...]
-    # =>
-    # [(year, (keysentence, num_keysentences)), ...]
-    # =>
-    # [(year, [keysentence, num_keysentences]), ...]
-
-    result = matching_sentences\
-        .reduceByKey(add)\
+    result = matching_sentences \
+        .reduceByKey(add) \
         .map(lambda yearsentence_count:
              (yearsentence_count[0][0],
               (yearsentence_count[0][1], yearsentence_count[1]))) \

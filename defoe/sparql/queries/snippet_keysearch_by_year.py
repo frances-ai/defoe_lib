@@ -117,10 +117,10 @@ def do_query(df, config=None, logger=None, context=None):
     if "kg_type" in config:
         kg_type = config["kg_type"]
     else:
-        kg_type = "total_eb"
+        kg_type = "ebo_total"
 
     ###### Supporting New NLS KG #######
-    if "total_eb" in kg_type :
+    if "ebo" in kg_type :
         fdf = df.withColumn("definition", blank_as_null("definition"))
     
         #(year-0, uri-1, title-2, edition-3, archive_filename-4, volume-5, letters-6, part-7, page_number-8, header-9, term-10, definition-11)
@@ -157,7 +157,7 @@ def do_query(df, config=None, logger=None, context=None):
 
 
     articles=newdf.rdd.map(tuple)
-    if "total_eb" in kg_type :
+    if "ebo" in kg_type :
         #(year-0, uri-1, title-2, edition-3, archive_filename-4, volume-5, letters-6, part-7, page_number-8, header-9, term-10, preprocess_article-11)
     
         preprocess_articles = articles.flatMap(
@@ -243,7 +243,7 @@ def do_query(df, config=None, logger=None, context=None):
     )
 
 
-    if "total_eb" in kg_type :
+    if "ebo" in kg_type :
         # [(year-0, uri-1, title-2, edition-3, archive_filename-4, volume-5, letters-6, part-7, page_number-8, header-9, term-10, preprocess_article-11 )]
 
         concordance_words = maching_idx.flatMap(

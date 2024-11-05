@@ -53,11 +53,13 @@ Run Spark text query job.
   format. Default: "results.yml".
 """
 import argparse
+import time
+
 import yaml
 from google.cloud import storage
 from pyspark.sql import SparkSession
 
-from defoe import sparql
+from defoe import sparql, hto
 from defoe.spark_utils import files_to_rdd
 
 
@@ -68,6 +70,8 @@ def create_arg_parser():  # pragma: no cover
     parser.add_argument('--model_name', help='name of data model', required=True)
     parser.add_argument('--endpoint', help='endpoint of dataset')
     parser.add_argument('--kg_type', help='type of knowledge graph', default=None)
+    parser.add_argument('--collection', help='name of digital collection', required=True)
+    parser.add_argument('--source', help='name of textual source', required=True)
     parser.add_argument('--preprocess', help='preprocess name', default=None)
     parser.add_argument('--target_sentences', help='target_sentences', default=None)
     parser.add_argument('--target_filter', help='target_sentences', default=None)
@@ -76,6 +80,8 @@ def create_arg_parser():  # pragma: no cover
     parser.add_argument('--hit_count', help='target_sentences', default=None)
     parser.add_argument('--window', help='target_sentences', default=None)
     parser.add_argument('--gazetteer', help='gazetteer', default=None)
+    parser.add_argument('--exclude_words', help='exclude_words', default=None)
+    parser.add_argument('--level', help='level', default=None)
     parser.add_argument('--bounding_box', help='bounding_box', default=None)
     parser.add_argument('--data', metavar='input file', default=None,
                         help='file containing input dataset in TXT')
@@ -98,6 +104,12 @@ def load_inputs(args, bucket):
     if args.kg_type is not None:
         query_config['kg_type'] = args.kg_type
 
+    if args.collection is not None:
+        query_config['collection'] = args.collection
+
+    if args.source is not None:
+        query_config['source'] = args.source
+
     if args.data is not None:
         query_config['data'] = bucket.blob(args.data)
 
@@ -106,6 +118,9 @@ def load_inputs(args, bucket):
 
     if args.target_sentences is not None:
         query_config['target_sentences'] = args.target_sentences.split(",")
+
+    if args.exclude_words is not None:
+        query_config['exclude_words'] = args.exclude_words.split(",")
 
     if args.target_filter is not None:
         query_config['target_filter'] = args.target_filter
@@ -128,11 +143,15 @@ def load_inputs(args, bucket):
     if args.bounding_box is not None:
         query_config['bounding_box'] = args.bounding_box
 
+    if args.level is not None:
+        query_config['level'] = args.level
+
     return query_config, query_name, model_name, endpoint, result_file_path
 
 
 models = {
     "sparql": sparql.Model(),
+    "hto": hto
 }
 
 
@@ -162,15 +181,29 @@ def main():
     # Submit job.
     spark = SparkSession.builder.appName("defoe").getOrCreate()
     log = spark._jvm.org.apache.log4j.LogManager.getLogger(__name__)  # pylint: disable=protected-access
-
-    ok_data = model.endpoint_to_object(endpoint, spark)
-
+    data_loading_start_time = time.time()
+    if model_name == "hto":
+        collection_name = query_config["collection"]
+        source = query_config["source"]
+        ok_data = model.get_hto_df(endpoint, collection_name, source, spark)
+    else:
+        ok_data = model.endpoint_to_object(endpoint, spark)
+    data_loading_end_time = time.time()
+    data_loading_duration = data_loading_end_time - data_loading_start_time
+    data_processing_start_time = data_loading_end_time
     results = query(ok_data, query_config, log, spark)
+    data_processing_end_time = time.time()
+    data_processing_duration = data_processing_end_time - data_processing_start_time
+    result2file_start_time = data_processing_end_time
     result_file = bucket.blob(result_file_path)
-
     if results is not None:
         with result_file.open('w') as f:
             f.write(yaml.safe_dump(dict(results)))
+    result2file_end_time = time.time()
+    result2file_duration = result2file_end_time - result2file_start_time
+    print(f"data loading time: {data_loading_duration}s")
+    print(f"data processing time: {data_processing_duration}s")
+    print(f"result writing to file time: {result2file_duration}s")
 
 
 if __name__ == "__main__":
