@@ -58,6 +58,13 @@ def get_jobs(job_id):
 
 
 def run_job(id, model_name, query_name, endpoint, query_config, result_file_path):
+    config = {}
+    for config_key in query_config:
+        if config_key == "target_sentences" or config_key == "exclude_words":
+            config[config_key] = query_config[config_key].split(",")
+        else:
+            config[config_key] = query_config[config_key]
+
     job = get_jobs(id)
 
     if model_name not in models:
@@ -86,12 +93,12 @@ def run_job(id, model_name, query_name, endpoint, query_config, result_file_path
     try:
         print("sparql endpoint: %s", endpoint)
         if model_name == "hto":
-            collection_name = query_config["collection"]
-            source = query_config["source"]
+            collection_name = config["collection"]
+            source = config["source"]
             ok_data = model.get_hto_df(endpoint, collection_name, source, spark)
         else:
             ok_data = model.endpoint_to_object(endpoint, spark)
-        result = query(ok_data, query_config, log, spark)
+        result = query(ok_data, config, log, spark)
     except Exception as e:
         print("Job " + id + " threw an exception")
         print(traceback.format_exc())
