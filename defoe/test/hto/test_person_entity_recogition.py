@@ -104,7 +104,7 @@ class TestPersonEntityRecognition(PySparkTestCase):
         logger = context._jvm.org.apache.log4j.LogManager.getLogger(__name__)
         result = person_entity_recognition.do_query(original_df, config, logger, context)
         print(result)
-        expect_result = {'persons_freq': [('1771', [('Test Series Title', 'https://w3id.org/hto/Series/7', 7, [('Elon Musk', 'male', 1)]), ('Test Series Title', 'https://w3id.org/hto/Series/1', 1, [('Marie Curie', 'female', 1), ('Taylor Swift', 'mostly_male', 1)])])], 'genders_freq': [('1771', [('Test Series Title', 'https://w3id.org/hto/Series/7', 7, [('male', 1)]), ('Test Series Title', 'https://w3id.org/hto/Series/1', 1, [('mostly_male', 1), ('female', 1)])])]}
+        expect_result = [('1771', [('Test Series Title', 'https://w3id.org/hto/Series/7', 7, {'persons_freq': [('Elon Musk', 'male', 1)], 'genders_freq': [('male', 1)]}), ('Test Series Title', 'https://w3id.org/hto/Series/1', 1, {'persons_freq': [('Marie Curie', 'female', 1), ('Taylor Swift', 'mostly_male', 1)], 'genders_freq': [('mostly_male', 1), ('female', 1)]})])]
         self.assertEqual(result, expect_result)
 
     def test_chapbooks_volume_level(self):
@@ -119,7 +119,7 @@ class TestPersonEntityRecognition(PySparkTestCase):
         logger = context._jvm.org.apache.log4j.LogManager.getLogger(__name__)
         result = person_entity_recognition.do_query(original_df, config, logger, context)
         print(result)
-        expect_result = {'persons_freq': [('1771', [('Test Series Title', 'https://w3id.org/hto/Series/1', 1, 'https://w3id.org/hto/Volume/1', 'Test Volume Title', 1, [('Marie Curie', 'female', 1)]), ('Test Series Title', 'https://w3id.org/hto/Series/1', 1, 'https://w3id.org/hto/Volume/2', 'Test Volume Title', 2, [('Taylor Swift', 'mostly_male', 1)]), ('Test Series Title', 'https://w3id.org/hto/Series/7', 7, 'https://w3id.org/hto/Volume/1', 'Test Volume Title', 1, [('Elon Musk', 'male', 1)])])], 'genders_freq': [('1771', [('Test Series Title', 'https://w3id.org/hto/Series/1', 1, 'https://w3id.org/hto/Volume/1', 'Test Volume Title', 1, [('female', 1)]), ('Test Series Title', 'https://w3id.org/hto/Series/1', 1, 'https://w3id.org/hto/Volume/2', 'Test Volume Title', 2, [('mostly_male', 1)]), ('Test Series Title', 'https://w3id.org/hto/Series/7', 7, 'https://w3id.org/hto/Volume/1', 'Test Volume Title', 1, [('male', 1)])])]}
+        expect_result = [('1771', [('Test Series Title', 'https://w3id.org/hto/Series/1', 1, 'https://w3id.org/hto/Volume/1', 'Test Volume Title', 1, {'persons_freq': [('Marie Curie', 'female', 1)], 'genders_freq': [('female', 1)]}), ('Test Series Title', 'https://w3id.org/hto/Series/1', 1, 'https://w3id.org/hto/Volume/2', 'Test Volume Title', 2, {'persons_freq': [('Taylor Swift', 'mostly_male', 1)], 'genders_freq': [('mostly_male', 1)]}), ('Test Series Title', 'https://w3id.org/hto/Series/7', 7, 'https://w3id.org/hto/Volume/1', 'Test Volume Title', 1, {'persons_freq': [('Elon Musk', 'male', 1)], 'genders_freq': [('male', 1)]})])]
         self.assertEqual(result, expect_result)
 
     def test_chapbooks_year_level(self):
@@ -134,5 +134,5 @@ class TestPersonEntityRecognition(PySparkTestCase):
         logger = context._jvm.org.apache.log4j.LogManager.getLogger(__name__)
         result = person_entity_recognition.do_query(original_df, config, logger, context)
         print(result)
-        expect_result = {'persons_freq': [('1771', [('Marie Curie', 'female', 1), ('Taylor Swift', 'mostly_male', 1), ('Elon Musk', 'male', 1)])], 'genders_freq': [('1771', [('male', 1), ('female', 1), ('mostly_male', 1)])]}
+        expect_result = [('1771', {'persons_freq': [('Marie Curie', 'female', 1), ('Taylor Swift', 'mostly_male', 1), ('Elon Musk', 'male', 1)], 'genders_freq': [('male', 1), ('female', 1), ('mostly_male', 1)]})]
         self.assertEqual(result, expect_result)

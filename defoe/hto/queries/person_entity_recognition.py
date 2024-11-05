@@ -238,16 +238,12 @@ def do_query(df, config=None, logger=None, context=None):
                                                  person[6], person[7], get_gender(person[7])))
         volumes_persons_freq = volumes_persons_with_gender.map(lambda person_with_gender: (person_with_gender, 1)).reduceByKey(
             lambda x, y: x + y).sortBy(lambda x: x[1], ascending=False)
-        volumes_freq_grouped = volumes_persons_freq.map(
+        volumes_persons_freq_grouped = volumes_persons_freq.map(
             lambda person_freq: ((person_freq[0][0], person_freq[0][1], person_freq[0][2], person_freq[0][3],
                                  person_freq[0][4], person_freq[0][5], person_freq[0][6]),
                                  (person_freq[0][7], person_freq[0][8], person_freq[1]))) \
             .groupByKey().mapValues(list)
-        volumes_freq_group_by_year = volumes_freq_grouped.map(
-            lambda es_freq: (es_freq[0][0], (es_freq[0][1], es_freq[0][2], es_freq[0][3], es_freq[0][4], es_freq[0][5],
-                                             es_freq[0][6], es_freq[1][:TOP_N]))) \
-            .groupByKey() \
-            .map(lambda year_es_freq: (year_es_freq[0], list(year_es_freq[1])))
+
         volumes_genders_freq = volumes_persons_with_gender.map(
             lambda person_with_gender: ((person_with_gender[0], person_with_gender[1], person_with_gender[2],
                                          person_with_gender[3], person_with_gender[4], person_with_gender[5],
@@ -260,15 +256,16 @@ def do_query(df, config=None, logger=None, context=None):
                                   gender_freq[0][4], gender_freq[0][5], gender_freq[0][6]),
                                  (gender_freq[0][7], gender_freq[1]))) \
             .groupByKey().mapValues(list)
-        volumes_genders_freq_group_by_year = volumes_genders_freq_grouped.map(
-            lambda es_freq: (es_freq[0][0], (es_freq[0][1], es_freq[0][2], es_freq[0][3], es_freq[0][4], es_freq[0][5],
-                                             es_freq[0][6], es_freq[1][:TOP_N]))) \
+        volumes_result_combined = volumes_persons_freq_grouped.union(volumes_genders_freq_grouped)\
+            .reduceByKey(lambda x, y: {"persons_freq": x[:TOP_N], "genders_freq": y})
+        volumes_result_combined_grouped_by_year = volumes_result_combined.map(
+            lambda vol_freq: (vol_freq[0][0], (vol_freq[0][1], vol_freq[0][2], vol_freq[0][3], vol_freq[0][4],
+                                             vol_freq[0][5], vol_freq[0][6], vol_freq[1]))) \
             .groupByKey() \
-            .map(lambda year_es_freq: (year_es_freq[0], list(year_es_freq[1])))
-        result = {
-            "persons_freq": volumes_freq_group_by_year.collect(),
-            "genders_freq": volumes_genders_freq_group_by_year.collect()
-        }
+            .map(lambda year_vol_freq: (year_vol_freq[0], list(year_vol_freq[1])))
+
+        result = volumes_result_combined_grouped_by_year.collect()
+
     elif level == "edition" or level == "series":
         # (year-0, edition_title-1, edition_uri-2, edition_number-3, sentence-4)
         es_sentences = articles.flatMap(
@@ -288,11 +285,7 @@ def do_query(df, config=None, logger=None, context=None):
             lambda person_freq: ((person_freq[0][0], person_freq[0][1], person_freq[0][2], person_freq[0][3]),
                                  (person_freq[0][4], person_freq[0][5], person_freq[1]))) \
             .groupByKey().mapValues(list)
-        es_persons_freq_group_by_year = es_persons_freq_grouped.map(
-            lambda es_freq: (es_freq[0][0], (es_freq[0][1], es_freq[0][2],
-                                             es_freq[0][3], es_freq[1][:TOP_N]))) \
-            .groupByKey() \
-            .map(lambda year_es_freq: (year_es_freq[0], list(year_es_freq[1])))
+
         es_genders_freq = es_persons_with_gender.map(
             lambda person_with_gender: ((person_with_gender[0], person_with_gender[1], person_with_gender[2],
                                          person_with_gender[3], person_with_gender[5]), 1)) \
@@ -303,21 +296,20 @@ def do_query(df, config=None, logger=None, context=None):
             lambda gender_freq: ((gender_freq[0][0], gender_freq[0][1], gender_freq[0][2], gender_freq[0][3]),
                                  (gender_freq[0][4], gender_freq[1]))) \
             .groupByKey().mapValues(list)
-        es_genders_freq_group_by_year = es_genders_freq_grouped.map(
+        es_result_combined = es_persons_freq_grouped.union(es_genders_freq_grouped)\
+            .reduceByKey(lambda x, y: {"persons_freq": x[:TOP_N], "genders_freq": y})
+        es_result_combined_grouped_by_year = es_result_combined.map(
             lambda es_freq: (es_freq[0][0], (es_freq[0][1], es_freq[0][2],
-                                             es_freq[0][3], es_freq[1][:TOP_N]))) \
+                                             es_freq[0][3], es_freq[1]))) \
             .groupByKey() \
             .map(lambda year_es_freq: (year_es_freq[0], list(year_es_freq[1])))
-        result = {
-            "persons_freq": es_persons_freq_group_by_year.collect(),
-            "genders_freq": es_genders_freq_group_by_year.collect()
-        }
+
+        result = es_result_combined_grouped_by_year.collect()
 
     elif level == "collection":
         sentences = articles.flatMap(lambda article: query_utils.get_sentences(article[7]))
         persons = sentences.flatMap(lambda sentence: query_utils.extract_persons_from_text(sentence, exclude_words))
         persons_with_gender = persons.map(lambda person: (person, get_gender(person)))
-        print(persons_with_gender.count())
         persons_freq = persons_with_gender.map(lambda person_with_gender: (person_with_gender, 1)).reduceByKey(
             lambda x, y: x + y) \
             .sortBy(lambda x: x[1], ascending=False).map(lambda person_freq: (person_freq[0][0], person_freq[0][1],
@@ -349,9 +341,7 @@ def do_query(df, config=None, logger=None, context=None):
             .sortBy(lambda x: x[1], ascending=False).map(lambda gender_freq: (gender_freq[0][0],
                                                                               (gender_freq[0][1], gender_freq[1])))
         year_genders_freq_grouped = year_genders_freq.groupByKey().mapValues(list)
-        result = {
-            "persons_freq": year_persons_freq_grouped.collect(),
-            "genders_freq": year_genders_freq_grouped.collect()
-        }
+        result = year_persons_freq_grouped.union(year_genders_freq_grouped)\
+            .reduceByKey(lambda x, y: {"persons_freq": x, "genders_freq": y}).collect()
 
     return result
