@@ -6,6 +6,7 @@ import re
 
 from lxml import etree
 from defoe.nls.page import Page
+from defoe.nls.mods_subject import MODSSubject
 
 
 class Document(object):
@@ -65,6 +66,7 @@ class Document(object):
         else:
             self.year = None
         self.date = self.single_query('//mods:dateIssued/text()')
+        self.subjects = [MODSSubject.from_xml_element(el, self.namespaces).to_dict() for el in self.query('//mods:subject')]
         self.document_type = "book"
         self.model = "nls"
 
