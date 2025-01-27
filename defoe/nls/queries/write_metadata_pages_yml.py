@@ -39,10 +39,8 @@ def do_query(archives, config_file=None, logger=None, context=None):
     documents = archives.flatMap(
         lambda archive: [(document.archive.filename, document.edition, document.title, document.subtitle, \
                           document.name, document.name_date, document.name_termsOfAddress, \
-                          document.genre, document.topic, document.geographic, document.temporal, \
-                          document.publisher, document.place, document.country, document.city, \
-                          document.year, document.date, document.num_pages, document.language, \
-                          document.shelfLocator, document.MMSID, document.physicalDesc, document.referencedBy,  \
+                          document.genre, document.publisher, document.place, document.year, document.date, document.num_pages, \
+                          document.language, document.shelfLocator, document.MMSID, document.physicalDesc, document.referencedBy,  \
                           document, document.subjects) for document in list(archive)])
    
     documents_pages = documents.flatMap(
@@ -50,12 +48,10 @@ def do_query(archives, config_file=None, logger=None, context=None):
                                year_document[3], year_document[4], year_document[5], year_document[6], \
                                year_document[7], year_document[8], year_document[9], year_document[10], \
                                year_document[11], year_document[12], year_document[13], year_document[14], \
-                               year_document[15], year_document[16], year_document[17], year_document[18], \
-                               year_document[19], year_document[20], year_document[21], year_document[22], year_document[24], \
+                               year_document[15], year_document[16], year_document[17], year_document[19], \
                                get_page_as_string(page, preprocess_none), clean_page_as_string(page, defoe_path, os_type), \
-                               len(page.words), page.code, page.page_id) for page in year_document[23]])
-    
-   
+                               len(page.words), page.code, page.page_id) for page in year_document[18]])
+
     results_pages = documents_pages.map(
         lambda document:
         (document[0],
@@ -66,30 +62,25 @@ def do_query(archives, config_file=None, logger=None, context=None):
           "editor_date": document[5],
           "name_termsOfAddress": document[6],
           "genre": document[7],
-          "topic": document[8],
-          "geographic": document[9],
-          "temporal": document[10],
-          "publisher": document[11],
-          "place": document[12],
-          "country": document[13],
-          "city": document[14],
-          "year": document[15],
-          "dateIssued": document[16],
-          "num_pages": document[17], 
-          "language": document[18],
-          "shelfLocator": document[19],
-          "MMSID": document[20],
+          "publisher": document[8],
+          "place": document[9],
+          "year": document[10],
+          "dateIssued": document[11],
+          "num_pages": document[12],
+          "language": document[13],
+          "shelfLocator": document[14],
+          "MMSID": document[15],
           "volumeId": document[0].split("/")[-1], 
           "metsXML": document[0].split("/")[-1] + "-mets.xml",
           "permanentURL": "https://digital.nls.uk/"+ document[0].split("/")[-1],
-          "physical_description": document[21],
-          "referenced_by": document[22],
-           "subjects": document[23],
-          ## using the clean_text instead  the raw text. Position 25 instead Position 24.
-          "text": document[25],
-          "num_words":document[26],
-          "source_text_file": document[27],
-          "text_unit_id": document[28]}))
+          "physical_description": document[16],
+          "referenced_by": document[17],
+           "subjects": document[18],
+          ## using the clean_text instead  the raw text. Position 20 instead Position 19.
+          "text": document[20],
+          "num_words":document[21],
+          "source_text_file": document[22],
+          "text_unit_id": document[23]}))
  
     result = results_pages \
         .groupByKey() \

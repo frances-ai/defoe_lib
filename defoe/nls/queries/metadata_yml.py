@@ -34,11 +34,9 @@ def do_query(archives, config_file=None, logger=None, context=None):
     documents = archives.flatMap(
         lambda archive: [(document.archive.filename, document.edition, document.title, document.subtitle, \
                           document.name, document.name_date, document.name_termsOfAddress, \
-                          document.genre, document.topic, document.geographic, document.temporal, \
-                          document.publisher, document.place, document.country, document.city, \
                           document.year, document.date, document.num_pages, document.language, \
-                          document.shelfLocator, document.MMSID, document.physicalDesc, document.referencedBy\
-                          ) for document in list(archive)])
+                          document.genre, document.publisher, document.place, document.shelfLocator, document.MMSID, \
+                          document.physicalDesc, document.referencedBy, document.subjects) for document in list(archive)])
     
     
     
@@ -52,21 +50,19 @@ def do_query(archives, config_file=None, logger=None, context=None):
           "editor_date": document[5],
           "name_termsOfAddress": document[6],
           "genre": document[7],
-          "topic": document[8],
-          "geographic": document[9],
-          "temporal": document[10],
-          "publisher": document[11],
-          "place": document[12],
-          "country": document[13],
-          "city": document[14],
-          "year": document[15],
-          "dateIssued": document[16],
-          "num_pages": document[17], 
-          "language": document[18],
-          "shelfLocator": document[19],
-          "MMSID": document[20],
-          "physical_description": document[21],
-          "referenced_by": document[22]})).collect()
+          "publisher": document[8],
+          "place": document[9],
+          "year": document[10],
+          "dateIssued": document[11],
+          "num_pages": document[12],
+          "language": document[13],
+          "shelfLocator": document[14],
+          "MMSID": document[15],
+          "physical_description": document[16],
+          "referenced_by": document[17],
+            "subjects": document[18]
+             }
+         )).collect()
  
     return results
     
