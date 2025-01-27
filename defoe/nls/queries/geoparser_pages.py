@@ -3,7 +3,7 @@ Identify the locations per page and geo-resolve them.
 It uses the Original Edinburgh geoparser pipeline for identifying all the posible locations within a page and georesolve them.
 """
 
-from defoe import query_utils
+from defoe import query_utils, get_geo_supported_os_type, get_root_path
 from defoe.nls.query_utils import clean_page_as_string
 from pyspark.sql import Row, SparkSession, SQLContext
 
@@ -60,17 +60,8 @@ def do_query(archives, config_file=None, logger=None, context=None):
         bounding_box = " -lb " + config["bounding_box"] + " 2"
     else:
         bounding_box = ""
-    if "os_type" in config:
-        if config["os_type"] == "linux":
-            os_type = "sys-i386-64"
-        else:
-            os_type= "sys-i386-snow-leopard"
-    else:
-            os_type = "sys-i386-64"
-    if "defoe_path" in config :
-        defoe_path = config["defoe_path"]
-    else:
-        defoe_path = "./"
+    os_type = get_geo_supported_os_type()
+    defoe_path = get_root_path() + "/"
 
     documents = archives.flatMap(
         lambda archive: [(document.year, document.title, document.edition, \

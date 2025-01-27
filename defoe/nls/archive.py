@@ -43,7 +43,7 @@ class Archive(AltoArchive):
         :return: pattern
         :rtype: str or unicode
         """
-        return '([0-9]*)[-_]met([[a-zA-Z]*)\.xml'
+        return '([0-9]*)[-_]met([a-zA-Z]*)\.xml'
 
     def get_page_pattern(self):
         """
