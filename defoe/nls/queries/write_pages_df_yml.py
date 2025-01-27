@@ -3,7 +3,7 @@ Pages as string to a YML file, and some metadata associated with each document.
 The text is cleaned using the long-S and hyphen fixes.
 """
 
-from defoe import query_utils
+from defoe import query_utils, get_geo_supported_os_type, get_root_path
 from defoe.nls.query_utils import get_page_as_string, clean_page_as_string, preprocess_clean_page
 from pyspark.sql import Row, SparkSession, SQLContext
 
@@ -30,19 +30,8 @@ def do_query(archives, config_file=None, logger=None, context=None):
     :rtype: string
     """
 
-    with open(config_file, "r") as f:
-        config = yaml.load(f)
-    if "os_type" in config:
-        if config["os_type"] == "linux":
-            os_type = "sys-i386-64"
-        else:
-            os_type= "sys-i386-snow-leopard"
-    else:
-            os_type = "sys-i386-64"
-    if "defoe_path" in config :
-        defoe_path = config["defoe_path"]
-    else:
-        defoe_path = "./"
+    os_type = get_geo_supported_os_type()
+    defoe_path = get_root_path() + "/"
     
     preprocess_none = query_utils.parse_preprocess_word_type("none")
     preprocess_normalize = query_utils.parse_preprocess_word_type("normalize")

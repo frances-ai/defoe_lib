@@ -5,7 +5,7 @@ and group the results by years.
 
 from operator import add
 
-from defoe import query_utils
+from defoe import query_utils, get_geo_supported_os_type, get_root_path
 from defoe.nls.query_utils import preprocess_clean_page, clean_page_as_string
 from defoe.nls.query_utils import get_sentences_list_matches_per_page
 
@@ -46,17 +46,8 @@ def do_query(archives, config_file=None, logger=None, context=None):
     """
     with open(config_file, "r") as f:
         config = yaml.load(f)
-    if "os_type" in config:
-        if config["os_type"] == "linux":
-            os_type = "sys-i386-64"
-        else:
-            os_type= "sys-i386-snow-leopard"
-    else:
-            os_type = "sys-i386-64"
-    if "defoe_path" in config :
-        defoe_path= config["defoe_path"]
-    else:
-        defoe_path = "./"
+    os_type = get_geo_supported_os_type()
+    defoe_path = get_root_path() + "/"
 
     preprocess_type = query_utils.extract_preprocess_word_type(config)
     data_file = query_utils.extract_data_file(config, os.path.dirname(config_file))
