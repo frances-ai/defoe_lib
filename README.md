@@ -1,12 +1,12 @@
 # "Defoe" - analysis of historical books and newspapers data
 
-This repository contains code to analyse historical books and newspapers datasets using Apache Spark - .
+This repository contains code to analyse historical books and newspapers datasets using Apache Spark.
+It is an improved version of [defoe](https://github.com/defoe-code/defoe)
 
 ---
 
-This repository an improved version of [defoe](https://github.com/defoe-code/defoe)
+[📖 Defoe Tutorial & Hands-On Installation](https://eur02.safelinks.protection.outlook.com/?url=https%3A%2F%2Fcolab.research.google.com%2Fdrive%2F1v244q6Y024EKjPFbC3tEMLPrmnOLtdq4%3Fusp%3Dsharing&data=05%7C02%7C%7Cf765665efcd348614e5a08dd409c7a7a%7C2e9f06b016694589878910a06934dc61%7C0%7C0%7C638737762981075444%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=P00abW5cb92Z8wNSvrl%2BHpaOD%2FWq0hhzcRDQKi7z%2Flo%3D&reserved=0)
 
----
 ## Supported datasets
 
 Defoe supports already several datasets. In order to query a daset, defoe needs a list of files and/or directories that conform the dataset. Many of those files (used so far), can be found under the [others](./others) directory. Those files would need to be modifed, in order to update them with the corresponding paths. 
