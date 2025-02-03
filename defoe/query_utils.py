@@ -581,6 +581,13 @@ def combine_geoparser_xmls(main_xml, cont_xml, chunk_id):
     main_root = etree.fromstring(main_xml)
     cont_root = etree.fromstring(cont_xml)
 
+    # update the id, ew, sw, ref in cont_xml
+    update_attributes = ["id", "ew", "sw", "ref"]
+    for element in cont_root.iter():
+        for attribute in update_attributes:
+            if attribute in element.attrib:
+                element.set(attribute, element.attrib[attribute] + "-" + chunk_id)
+
     # add all children elements of <p> tag in cont_root to main_root
     main_p_element = main_root.find(".//p")
     cont_p_element = cont_root.find(".//p")
