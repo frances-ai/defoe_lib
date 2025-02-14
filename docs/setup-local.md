@@ -72,6 +72,13 @@ In your terminal, navigate to this folder: `defoe_lib`. Zip the defoe folder usi
 zip -r defoe.zip defoe
 ```
 
+If you need to run any geoparsing related query, please download an extra lib into `defoe/geoparser-1.3` with following command:
+```bash
+cd defoe/geoparser-1.3
+wget https://storage.googleapis.com/damon_public_files/dataframes/
+unzip lib.zip
+```
+
 Check the query file you want to run, see if you need data from configuration file. If you do, create `config.yml` file.
 
 Run the query in command line in the following format:
