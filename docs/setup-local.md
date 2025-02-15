@@ -75,7 +75,7 @@ zip -r defoe.zip defoe
 If you need to run any geoparsing related query, please download an extra lib into `defoe/geoparser-1.3` with following command:
 ```bash
 cd defoe/geoparser-1.3
-wget https://storage.googleapis.com/damon_public_files/dataframes/
+wget https://storage.googleapis.com/damon_public_files/eb_geoparser/lib.zip
 unzip lib.zip
 ```
 
