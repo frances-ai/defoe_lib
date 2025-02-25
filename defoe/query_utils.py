@@ -725,8 +725,8 @@ def geoparser_xml_tojson(geo_xml, text):
                                     "longitude": longitude,
                                     "gazetteer_ref": gazref,
                                     "population": pop,
-                                    "in_cc": in_cc,
-                                    "type": type,
+                                    "in_country": in_cc,
+                                    "feature-type": type,
                                     "snippet": snippet_er,
                                     "start_index": words_indices[start_word_id]["start_index"],
                                     "end_index": words_indices[end_word_id]["end_index"]
