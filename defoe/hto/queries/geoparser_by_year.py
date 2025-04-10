@@ -291,7 +291,7 @@ def do_query(df, config=None, logger=None, context=None):
             lambda year_page: [
                 (year_page[0],
                  year_page[1],
-                 query_utils.get_geoparser_xml(year_page[3], defoe_path, os_type, gazetteer, bounding_box),
+                 query_utils.get_geoparser_xml_stanza(year_page[3], defoe_path, gazetteer, bounding_box),
                  year_page[4],
                  year_page[5],
                  year_page[6],
@@ -316,14 +316,14 @@ def do_query(df, config=None, logger=None, context=None):
               "volume_number": sentence_data[10],
               "start_page_uri": sentence_data[11],
               "start_page_number": sentence_data[12],
-              "georesolution": query_utils.geoparser_coord_xml(sentence_data[2])}))
+              "georesolution": query_utils.georesolved_xml_to_dict(sentence_data[2])}))
     else:
         # (year-0, page_uri-1, preprocessed-description-2, description-3, page_number-4, series_title-5, series_uri-6, series_number-7, source_file_uri-8, source_file_path-9, volume_uri-10, volume_title-11, volume_number-12)
         geo_xml = filter_articles.flatMap(
             lambda year_page: [
                 (year_page[0],
                  year_page[1],
-                 query_utils.get_geoparser_xml(year_page[3], defoe_path, os_type, gazetteer, bounding_box),
+                 query_utils.get_geoparser_xml_stanza(year_page[3], defoe_path, gazetteer, bounding_box),
                  year_page[4],
                  year_page[5],
                  year_page[6],
@@ -346,7 +346,7 @@ def do_query(df, config=None, logger=None, context=None):
               "volume_uri": sentence_data[9],
               "volume_title": sentence_data[10],
               "volume_number": sentence_data[11],
-              "georesolution": query_utils.geoparser_coord_xml(sentence_data[2])}))
+              "georesolution": query_utils.georesolved_xml_to_dict(sentence_data[2])}))
 
     # remove data with no places identified
     geo_data = geo_data.filter(lambda sentence_data: bool(sentence_data[1]["georesolution"]) and isinstance(sentence_data[1]["georesolution"], dict))

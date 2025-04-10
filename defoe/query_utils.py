@@ -316,6 +316,50 @@ class SpacyMagic(object):
         return cls._spacys[lang]
 
 
+class StanzaMagic(object):
+    """
+    Simple Stanza Magic to minimize loading time.
+    """
+    _stanzas = {}
+
+    @classmethod
+    def get(cls, lang):
+        if lang not in cls._stanzas:
+            import stanza
+            stanza.download(lang) # download language model
+            cls._stanzas[lang] = stanza.Pipeline(lang)
+        return cls._stanzas[lang]
+
+
+def geo_tagging_stanza(text, lang):
+    nlp = StanzaMagic.get(lang)
+    doc = nlp(text)
+    tagged_tokens = []
+    char_offset = 50
+    for ent in doc.ents:
+        #print(ent.text, ent.type)
+        if ent.type == "LOC" or ent.type == "GPE" or ent.type == "FAC":
+            toponym = ent.text
+            start_index = ent.start_char
+            end_index = ent.end_char
+            prefix_search_start = start_index - char_offset
+            if prefix_search_start < 0:
+                prefix_search_start = 0
+            prefix_start_index = text.find(' ', prefix_search_start, start_index)
+            suffix_search_end = end_index + char_offset
+            if suffix_search_end > len(text):
+                suffix_search_end = len(text)
+            suffix_end_index = text.rfind(' ', end_index, suffix_search_end)
+            tagged_tokens.append({
+                "start": start_index,
+                "end": end_index,
+                "name": toponym,
+                'prefix':text[prefix_start_index:start_index],
+                'suffix': text[end_index:suffix_end_index],
+            })
+    return tagged_tokens
+
+
 def spacy_nlp(text, lang_model):
     nlp = spacy.load(lang_model)
     doc = nlp(text)
@@ -378,11 +422,27 @@ def xml_geo_entities(doc):
         if ent.label_ == "LOC" or ent.label_ == "GPE":
             id = id + 1
             toponym = ent.text
-            child = '<placename id="' + str(id) + '" name="' + toponym + '"/> '
+            start_index = ent.start_char
+            end_index = ent.end_char
+            child = f'<placename id="{str(id)}" start="{start_index}" end="{end_index}" name="{toponym}"/> '
             xml_doc = xml_doc + child
             flag = 1
     xml_doc = xml_doc + '</placenames>'
     return flag, xml_doc
+
+
+def construct_places_xml(tagged_tokens):
+    xml_doc = '<placenames> '
+    for index, token in enumerate(tagged_tokens):
+        id = index + 1
+        toponym = token['name']
+        start_index = token['start']
+        end_index = token['end']
+        snippet = token['prefix'] + toponym + token['suffix']
+        child = f'<placename id="{str(id)}" start="{start_index}" end="{end_index}" name="{toponym}" snippet="{snippet}"/> '
+        xml_doc = xml_doc + child
+    xml_doc = xml_doc + '</placenames>'
+    return xml_doc
 
 
 def xml_geo_entities_snippet(doc):
@@ -421,7 +481,6 @@ def xml_geo_entities_snippet(doc):
     xml_doc = xml_doc + '</placenames>'
     return flag, xml_doc, snippet
 
-
 def georesolve_cmd(in_xml, defoe_path, gazetteer, bounding_box):
     georesolve_xml = ''
     atempt = 0
@@ -447,6 +506,49 @@ def georesolve_cmd(in_xml, defoe_path, gazetteer, bounding_box):
                 georesolve_xml = stdout
         atempt += 1
     return georesolve_xml
+
+def georesolved_xml_tojson(resolved_xml):
+    geo_list = []
+    if len(resolved_xml) > 5:
+        root = etree.fromstring(resolved_xml)
+        for child in root:
+            toponymName = child.attrib["name"]
+            toponymId = child.attrib["id"]
+            startIndex = int(child.attrib["start"])
+            endIndex = int(child.attrib["end"])
+            latitude = ''
+            longitude = ''
+            pop = ''
+            in_cc = ''
+            type = ''
+            gazref = ''
+            if len(child) >= 1:
+                top_child = child[0]
+                if "lat" in top_child.attrib:
+                    latitude = top_child.attrib["lat"]
+                if "long" in top_child.attrib:
+                    longitude = top_child.attrib["long"]
+                if "pop" in top_child.attrib:
+                    pop = top_child.attrib["pop"]
+                if "in-cc" in top_child.attrib:
+                    in_cc = top_child.attrib["in-cc"]
+                if "type" in top_child.attrib:
+                    type = top_child.attrib["type"]
+                if 'gazref' in top_child.attrib:
+                    gazref = top_child.attrib['gazref']
+            geo_list.append({
+                "name": toponymName,
+                "id": toponymId,
+                "latitude": latitude,
+                "longitude": longitude,
+                "gazetteer_ref": gazref,
+                "population": pop,
+                "in_country": in_cc,
+                "feature_type": type,
+                "start_index": startIndex,
+                "end_index": endIndex
+            })
+    return geo_list
 
 
 def coord_xml(geo_xml):
@@ -620,6 +722,16 @@ def combine_geoparser_xmls(main_xml, cont_xml, chunk_id):
         main_relations_element.append(cont_relations_child)
     return etree.tostring(main_root, encoding="utf-8")
 
+def get_geoparser_xml_stanza(text, defoe_path, gazetteer, bounding_box):
+    # geotagging with stanza
+    language_model = "en"
+    tagged_tokens = geo_tagging_stanza(text, language_model)
+    places_xml = construct_places_xml(tagged_tokens)
+
+    # georesolving with edinburgh geoparser
+    resolved_xml = georesolve_cmd(places_xml, defoe_path, gazetteer, bounding_box)
+    return resolved_xml
+
 
 def get_geoparser_xml(text, defoe_path, os_type, gazetteer, bounding_box):
     MAX_LENGTH = 100000
@@ -734,6 +846,43 @@ def geoparser_xml_tojson(geo_xml, text):
     except:
         pass
     return geo_list
+
+
+def georesolved_xml_to_dict(geo_xml):
+    dResolvedLocs = dict()
+    try:
+        root = etree.fromstring(geo_xml)
+        for child in root:
+            toponymName = child.attrib["name"]
+            toponymId = child.attrib["id"]
+            snippet = child.attrib["snippet"]
+            #startIndex = int(child.attrib["start"])
+            #endIndex = int(child.attrib["end"])
+            latitude = ''
+            longitude = ''
+            pop = ''
+            in_cc = ''
+            type = ''
+            #gazref = ''
+            if len(child) >= 1:
+                top_child = child[0]
+                if "lat" in top_child.attrib:
+                    latitude = top_child.attrib["lat"]
+                if "long" in top_child.attrib:
+                    longitude = top_child.attrib["long"]
+                if "pop" in top_child.attrib:
+                    pop = top_child.attrib["pop"]
+                if "in-cc" in top_child.attrib:
+                    in_cc = top_child.attrib["in-cc"]
+                if "type" in top_child.attrib:
+                    type = top_child.attrib["type"]
+
+            dResolvedLocs[toponymName + "-" + toponymId] = {"lat": latitude, "long": longitude,
+                                                            "pop": pop, "in-cc": in_cc,
+                                                            "type": type, "snippet": snippet}
+    except:
+        pass
+    return dResolvedLocs
 
 
 def geoparser_coord_xml(geo_xml):
