@@ -4,7 +4,6 @@ Query-related utility functions and types.
 
 import os
 import textwrap
-import time
 import subprocess
 import re
 import enum
@@ -545,8 +544,8 @@ def georesolved_xml_tojson(resolved_xml):
                 "population": pop,
                 "in_country": in_cc,
                 "feature_type": type,
-                "start_index": startIndex,
-                "end_index": endIndex
+                "start": startIndex,
+                "end": endIndex
             })
     return geo_list
 
