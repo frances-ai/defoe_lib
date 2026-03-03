@@ -4,18 +4,18 @@ from . import defoe_pb2
 
 from concurrent import futures
 import logging
-import defoe_service
+import s3_defoe_service
 
 
 class DefoeServer(defoe_pb2_grpc.DefoeServicer):
 
     def submit_job(self, request, context):
-        defoe_service.submit_job(request.job_id, request.model_name,
+        s3_defoe_service.submit_job(request.job_id, request.model_name,
                                  request.query_name, request.endpoint, request.query_config, request.result_file_path)
         return defoe_pb2.JobSubmitResponse(job_id=request.job_id)
 
     def get_job(self, request, context):
-        job = defoe_service.get_jobs(request.job_id)
+        job = s3_defoe_service.get_jobs(request.job_id)
         return defoe_pb2.JobResponse(job_id=job.id, state=job.state, result_file_path=job.result_path, error=job.error)
 
 
